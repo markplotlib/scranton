@@ -5,7 +5,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
-#define PORT 8080 
+#define PORT 8077 
 int main(int argc, char const *argv[]) 
 { 
     int server_fd, new_socket, valread; 
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
     if (bind(server_fd, (struct sockaddr *)&address, 
                                 sizeof(address))<0) 
     { 
-        perror("bind failed"); 
+        perror("bind failed, uh-oh"); 
         exit(EXIT_FAILURE); 
     } 
     if (listen(server_fd, 3) < 0) 
