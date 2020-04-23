@@ -1,10 +1,11 @@
 // Client side C/C++ program to demonstrate Socket programming 
+// ports: Peter 12117, Jara 12115, Mark 12104
 #include <stdio.h> 
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <unistd.h> 
 #include <string.h> 
-#define PORT 8080 
+#define PORT 12104
 
 int main(int argc, char const *argv[]) 
 { 
