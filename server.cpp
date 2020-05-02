@@ -7,7 +7,7 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <iostream>
-#define PORT 12104
+#define PORT 12117
 using namespace std;
 
 int main(int argc, char const *argv[]) 
@@ -17,7 +17,8 @@ int main(int argc, char const *argv[])
     int opt = 1; 
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    const char *HELLO = "Hello from server"; 
+    // const char *HELLO = "Hello from server";
+    char HELLO[1024] = "Hello from server"; 
     char DISCONNECT_RPC[1024] = "disconnect"; 
     char DISCONNECT_MSG[1024] = {0}; 
     
@@ -72,7 +73,8 @@ int main(int argc, char const *argv[])
 
         int counter = 0;
         // inner while loop
-        while (!disconnectFlag) {
+        // FIXME remove max 10
+        while (!disconnectFlag && counter != 10) {
             counter++;
             cout << "You're in the INNER while-loop" << endl;
 
@@ -83,7 +85,7 @@ int main(int argc, char const *argv[])
             // FIXME
             cout << buffer << endl;
             cout << DISCONNECT_RPC << endl;
-            if (buffer == DISCONNECT_RPC) {
+            if (*buffer == *DISCONNECT_RPC) {
                 cout << "If clause" << endl;
 
                 // TODO, if broken here: buffer = DISCONNECT_MSG?
@@ -99,6 +101,7 @@ int main(int argc, char const *argv[])
                 // message sent back to client.
                 send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
+            memset(buffer, 0, sizeof(buffer));
         }
 
         cout << "Inner loop counter: " << DISCONNECT_RPC << counter << endl;
