@@ -4,14 +4,16 @@
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <unistd.h> 
-#include <string.h> 
-#define PORT 12104
+#include <string.h>
+//mark: 12104 
+#define PORT 12117
 
 int main(int argc, char const *argv[]) 
 { 
-    int sock = 0, valread; 
+    int sock = 0;
+    int valread;
     struct sockaddr_in serv_addr; 
-    char *hello = "Hello from client"; 
+    const char *hello = "Hello from client"; 
     char buffer[1024] = {0}; 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
@@ -33,11 +35,15 @@ int main(int argc, char const *argv[])
     { 
         printf("\nConnection Failed \n"); 
         return -1; 
-    } 
-    send(sock , hello , strlen(hello) , 0 ); 
-    printf("Hello message sent\n"); 
-    valread = read( sock , buffer, 1024); 
-    printf("%s\n",buffer ); 
+    }
+
+    send(sock , hello , strlen(hello) , 0 );
+    printf("Hello message sent\n");
+    
+    // read incoming message
+    valread = read(sock, buffer, 1024);
+    
+    printf("%s\n", buffer);
     return 0; 
 } 
 
