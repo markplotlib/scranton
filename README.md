@@ -1,9 +1,15 @@
-A student project to test aspects of Software Engineering
+A team project to demonstrate Interprocess Communication
+and Multithreading in Software Engineering
+
 SQ2020, Seattle University
-Next test: slithey toves
 
 Authors:
 
 Mark Chesney, 
-Peter Loyd,
-Jara Lindsay 
+Jara Lindsay,
+Peter Loyd
+
+### how to run Makefile
+
+In CLI, simply run:
+`make`
