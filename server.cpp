@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
     const char *HELLO = "Hello from server"; 
-    const char *DISCONNECT_RPC = "disconnect"; 
+    char DISCONNECT_RPC[1024] = "disconnect"; 
     char DISCONNECT_MSG[1024] = {0}; 
     
     // Creating socket file descriptor 
@@ -57,35 +57,54 @@ int main(int argc, char const *argv[])
         cout << "You're in the outer while-loop" << endl;
         if (listen(server_fd, 3) < 0)
         { 
-            perror("listen"); 
+            cout << endl << "Listen error" << endl;
+            perror("listen");
             exit(EXIT_FAILURE); 
         } 
         // creating the temporary socket, by which we're communicating to the server????
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
                         (socklen_t*)&addrlen))<0) 
         { 
-            perror("accept"); 
+            cout << endl << "accept error" << endl;
+            perror("accept");
             exit(EXIT_FAILURE); 
         }
 
+        int counter = 0;
+        // inner while loop
         while (!disconnectFlag) {
+            counter++;
             cout << "You're in the INNER while-loop" << endl;
 
             valread = read(new_socket, buffer, 1024);
+            // troubleshooting
+            cout << endl << "read value = " << valread << endl;
+
+            // FIXME
+            cout << buffer << endl;
+            cout << DISCONNECT_RPC << endl;
             if (buffer == DISCONNECT_RPC) {
+                cout << "If clause" << endl;
+
                 // TODO, if broken here: buffer = DISCONNECT_MSG?
                 send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
                 disconnectFlag = true;
+                
+                // close active socket
+                close(new_socket);
             } else {
+                cout << "Else clause" << endl;
                 // stay connected. 
                 // RPC executes.
                 // message sent back to client.
                 send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
         }
+
+        cout << "Inner loop counter: " << DISCONNECT_RPC << counter << endl;
+
+        cout << endl << "DISCONNECTING BUDDY FROM OTHER BUDDY! NO MORE FRIENDS" << endl;
         disconnectFlag = false;
-        // close active socket
-        close(new_socket);
     }
 
     printf("%s, valread = %d\n",buffer, valread);

@@ -49,9 +49,10 @@ int main(int argc, char const *argv[])
     send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
     printf("Disconnect message sent\n");    
     // disconnect message sent
-    valread = read(sock, buffer, 1024);
 
+    valread = read(sock, buffer, 1024);
     printf("%s\n%d", buffer, valread);
+
     return 0; 
 } 
 
