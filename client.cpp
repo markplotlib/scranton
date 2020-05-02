@@ -5,16 +5,18 @@
 #include <arpa/inet.h> 
 #include <unistd.h> 
 #include <string.h>
-//mark: 12104 
-#define PORT 12117
+#define PORT 12104
 
 int main(int argc, char const *argv[]) 
 { 
     int sock = 0;
     int valread;
     struct sockaddr_in serv_addr; 
-    const char *hello = "Hello from client"; 
+    const char *HELLO = "Hello from server"; 
+    const char *DISCONNECT_RPC = "disconnect"; 
     char buffer[1024] = {0}; 
+//    char DISCONNECT_MSG[1024] = {0}; 
+    
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
         printf("\n Socket creation error \n"); 
@@ -37,12 +39,18 @@ int main(int argc, char const *argv[])
         return -1; 
     }
 
-    send(sock , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
-    
+    send(sock , HELLO , strlen(HELLO) , 0 );
+    printf("Hello message sent\n");    
     // read incoming message
     valread = read(sock, buffer, 1024);
-    
+    printf("%s\n%d", buffer, valread);
+
+    // server is in listening loop
+    send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
+    printf("Disconnect message sent\n");    
+    // disconnect message sent
+    valread = read(sock, buffer, 1024);
+
     printf("%s\n%d", buffer, valread);
     return 0; 
 } 

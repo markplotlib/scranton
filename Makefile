@@ -1,5 +1,5 @@
 #flag, can be either gcc or g++
-CC=gcc
+CC=g++
 CFLAGS= -std=c++11 -Wall -Werror -pedantic -ggdb
 
 # default target for makefile
@@ -23,4 +23,4 @@ client: client.cpp
 # so you have to delete them
 # It's best practice to clear all .o files before any compile
 clean:
-	rm *.o
+	rm server client
