@@ -12,7 +12,8 @@ using namespace std;
 
 int main(int argc, char const *argv[]) 
 { 
-    int server_fd, new_socket, valread;
+    int server_fd, new_socket;
+    // int valread;
     struct sockaddr_in address;
     int opt = 1; 
     int addrlen = sizeof(address); 
@@ -51,18 +52,17 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
 
-    bool disconnectFlag = false;
     // this loop is the server remaining active 
+    bool disconnectFlag = false;
     while (true) {
-        // Listen
-        cout << "You're in the outer while-loop" << endl;
+        // cout << "You're in the outer while-loop" << endl;
         if (listen(server_fd, 3) < 0)
         { 
             cout << endl << "Listen error" << endl;
             perror("listen");
             exit(EXIT_FAILURE); 
         } 
-        // creating the temporary socket, by which we're communicating to the server????
+        // new_socket is where we'll be communicating to the client
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
                         (socklen_t*)&addrlen))<0) 
         { 
@@ -71,48 +71,34 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
-        int counter = 0;
         // inner while loop
         // FIXME remove max 10
-        while (!disconnectFlag && counter != 10) {
-            counter++;
-            cout << "You're in the INNER while-loop" << endl;
+        while (!disconnectFlag) {
 
-            valread = read(new_socket, buffer, 1024);
-            // troubleshooting
-            cout << endl << "read value = " << valread << endl;
+            // valread = (would equal size of message)
+            read(new_socket, buffer, 1024);
 
-            // FIXME
-            cout << buffer << endl;
-            cout << DISCONNECT_RPC << endl;
             if (*buffer == *DISCONNECT_RPC) {
-                cout << "If clause" << endl;
-
-                // TODO, if broken here: buffer = DISCONNECT_MSG?
                 send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
                 disconnectFlag = true;
                 
                 // close active socket
                 close(new_socket);
             } else {
-                cout << "Else clause" << endl;
-                // stay connected. 
-                // RPC executes.
                 // message sent back to client.
                 send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
+            // TODO test if this is necessary
             memset(buffer, 0, sizeof(buffer));
         }
 
-        cout << "Inner loop counter: " << DISCONNECT_RPC << counter << endl;
 
-        cout << endl << "DISCONNECTING BUDDY FROM OTHER BUDDY! NO MORE FRIENDS" << endl;
         disconnectFlag = false;
     }
 
-    printf("%s, valread = %d\n",buffer, valread);
+    // printf("%s, valread = %d\n",buffer, valread);
     send(new_socket , HELLO , strlen(HELLO) , 0 ); 
-    printf("Hello message sent\n");
+    // printf("Hello message sent\n");
 
     return 0; 
 } 

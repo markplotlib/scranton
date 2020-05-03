@@ -10,7 +10,6 @@
 int main(int argc, char const *argv[]) 
 { 
     int sock = 0;
-    int valread;
     struct sockaddr_in serv_addr; 
     const char *HELLO = "Hello from server"; 
     const char *DISCONNECT_RPC = "disconnect"; 
@@ -41,17 +40,18 @@ int main(int argc, char const *argv[])
 
     send(sock , HELLO , strlen(HELLO) , 0 );
     printf("Hello message sent\n");    
+
     // read incoming message
-    valread = read(sock, buffer, 1024);
-    printf("%s\n%d", buffer, valread);
+    read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
+    printf("%s\n", buffer);
 
     // server is in listening loop
     send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
-    printf("Disconnect message sent\n");    
+    printf("Disconnect message sent");    
     // disconnect message sent
 
-    valread = read(sock, buffer, 1024);
-    printf("%s\n%d", buffer, valread);
+    read(sock, buffer, 1024);
+    printf("%s\n", buffer);
 
     return 0; 
 } 
