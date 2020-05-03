@@ -5,10 +5,15 @@
 #include <arpa/inet.h> 
 #include <unistd.h> 
 #include <string.h>
-#define PORT 12117
+#include <iostream>
+#define PORT 12104
+using namespace std;
 
 int main(int argc, char const *argv[]) 
 { 
+    srand (time(NULL));    
+    const int SLEEP_TIME = rand() % 10 + 1;  // Sleep for 1 to 10 seconds
+
     int sock = 0;
     struct sockaddr_in serv_addr; 
     const char *HELLO = "Hello from server"; 
@@ -44,6 +49,12 @@ int main(int argc, char const *argv[])
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
     printf("%s\n", buffer);
+
+    // sleep timer
+    cout << "\ntime to disconnect: " << SLEEP_TIME << " seconds";
+    cout.flush();
+    sleep(SLEEP_TIME);
+    cout << endl;
 
     // server is in listening loop
     send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
