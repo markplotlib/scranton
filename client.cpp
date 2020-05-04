@@ -9,8 +9,17 @@
 #define PORT 12104
 using namespace std;
 
+int loginClient(string pszUserName, string pszPass) {
+    cout << "This is the connect method" << endl;
+	cout << "Username = " << pszUserName << ", Password = " << pszPass << endl;
+	return 0;
+}
+
 int main(int argc, char const *argv[]) 
 { 
+    string username = "mike";
+    string password = "mikePassword";
+
     srand (time(NULL));    
     const int SLEEP_TIME = rand() % 10 + 1;  // Sleep for 1 to 10 seconds
 
@@ -37,11 +46,17 @@ int main(int argc, char const *argv[])
         return -1; 
     } 
 
+    // connects the socket (referred to by the file descriptor sockfd)
+    // to the address specified by addr. (Server’s address and port is specified in addr).
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
     { 
         printf("\nConnection Failed \n"); 
         return -1; 
     }
+
+    // here's our login RPC, which Mike calls "connect"
+    int statusCode = loginClient(username, password);
+    cout << "Result of login: " << statusCode << endl;
 
     send(sock , HELLO , strlen(HELLO) , 0 );
     printf("Hello message sent\n");    
