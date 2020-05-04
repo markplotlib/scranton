@@ -13,7 +13,7 @@
 using namespace std;
 
 
-// KeyValue: A data structure that holds a username/password pair, and responds to inquiries about it.
+// KeyValue: A data structure that holds a tuple, and responds to inquiries about it.
 
 /*
 class KeyValue
@@ -140,7 +140,7 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
     
-    // Forcefully attaching socket to the port 8080 
+    // Forcefully attaching socket to the port
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
                                                 &opt, sizeof(opt))) 
     { 
@@ -152,7 +152,7 @@ int main(int argc, char const *argv[])
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );       // htons = host to network short. Accounts for computer-side short storage peculiarities.
     
-    // Forcefully attaching socket to the port 8080 
+    // Forcefully attaching socket to the port
     if (bind(server_fd, (struct sockaddr *)&address, 
                                 sizeof(address))<0) 
     { 
@@ -171,6 +171,7 @@ int main(int argc, char const *argv[])
             perror("listen");
             exit(EXIT_FAILURE); 
         } 
+
         // new_socket is where we'll be communicating to the client
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
                         (socklen_t*)&addrlen))<0) 
@@ -180,6 +181,9 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
+
+        // TODO: put initial login RPC here
+        // read(new_socket, buffer, 1024);
 
         // This loop interprets commands from a client
         while (!disconnectFlag) {
@@ -212,3 +216,47 @@ int main(int argc, char const *argv[])
     return 0; 
 } 
 
+/*
+int main()
+{
+
+	// Create a couple of buffers, and see if works
+	const char *szTest1 = "rpc=connect;user=mike;password=123;";
+	RawKeyValueString *pRawKey = new RawKeyValueString((char *)szTest1);
+	KeyValue rpcKeyValue;
+	char *pszRpcKey;
+	char *pszRpcValue;
+
+	// Figure out which rpc it is
+
+	pRawKey->getNextKeyValue(rpcKeyValue);
+	pszRpcKey = rpcKeyValue.getKey();
+	pszRpcValue = rpcKeyValue.getValue();
+
+	if (strcmp(pszRpcKey, "rpc") == 0)
+	{
+		if (strcmp(pszRpcValue, "connect") == 0)
+		{
+			// Get the next two arguments (user and password);
+			KeyValue userKeyValue;
+			KeyValue passKeyValue;
+
+			char *pszUserKey;
+			char *pszUserValue;
+			char *pszPassKey;
+			char *pszPassValue;
+			int status;
+
+			pRawKey->getNextKeyValue(userKeyValue);
+			pszUserKey = userKeyValue.getKey();
+			pszUserValue = userKeyValue.getValue();
+
+			pRawKey->getNextKeyValue(passKeyValue);
+			pszPassKey = passKeyValue.getKey();
+			pszPassValue = passKeyValue.getValue();
+
+			status = Connect(pszUserValue, pszPassValue);
+		}
+	}
+}
+*/
