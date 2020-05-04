@@ -7,8 +7,118 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <iostream>
+// next line from MM
+#include "assert.h"
 #define PORT 12104
 using namespace std;
+
+
+// KeyValue: A data structure that holds a username/password pair, and responds to inquiries about it.
+
+/*
+class KeyValue
+{
+private:
+	char m_szKey[128];
+	char m_szValue[2048];
+
+public:
+
+	KeyValue() {};
+	void setKeyValue(char *pszBuff)
+	{	
+		char *pch1;
+
+		// find out where the "=" sign is, and take everything to the left of the equal for the key
+		// go one beyond the = sign, and take everything else
+		pch1 = strchr(pszBuff, '=');
+		assert(pch1);
+		int keyLen = (int)(pch1 - pszBuff);
+		strncpy(m_szKey, pszBuff, keyLen);
+		m_szKey[keyLen] = 0;
+		strcpy(m_szValue, pszBuff + keyLen + 1);
+	}
+
+	char *getKey()
+	{
+		return m_szKey;
+	}
+
+	char *getValue()
+	{
+
+		return m_szValue;
+	}
+
+};
+*/
+
+
+// This class will take a string that is passed to it in this format:
+// input to constructor:
+// <variable1>=<value1>;<variable2>=<value2>;
+// You will then call the method getNextKeyValue until getNextKeyValue returns NULL.
+// getNextKeyValue will return a KeyValue object. Inside of that KeyValue object will contain the variable and the value
+// You will then call getKey or getValue to get the contents of those fields.
+// The example in main() will show how to call this function.
+// By extracting the contents you then can determine the rpc you need to switch to, along with variables you will need
+// You can also use this class in your client program, since you will need to determine the contents that you receive from server
+class RawKeyValueString
+{
+private:
+
+	char m_szRawString[32768];
+	int m_currentPosition;
+	KeyValue *m_pKeyValue;
+	char *m_pch;
+public:
+
+	RawKeyValueString(char *szUnformattedString)
+	{
+		assert(strlen(szUnformattedString));
+		strcpy(m_szRawString, szUnformattedString);
+
+		m_pch = m_szRawString;
+		
+	}
+	~RawKeyValueString()
+	{
+		if (m_pKeyValue)
+			delete (m_pKeyValue);
+	}
+
+	void getNextKeyValue(KeyValue & keyVal)
+	{
+		// It will attempt to parse out part of the string all the way up to the ";",
+        // it will then create a new KeyValue object with that partial string
+		// If it can't it will return null;
+		char *pch1;
+		char szTemp[32768];
+
+		pch1 = strchr(m_pch, ';');                      // returns the location of the next ';'
+		assert(pch1 != NULL);                     // TODO is this debugging code?
+		int subStringSize = (int)(pch1 - m_pch);        // creates a substring of the string, using m_pch
+		strncpy(szTemp, m_pch, subStringSize);          // copies that substring to szTemp
+		szTemp[subStringSize] = 0;                      // 
+		m_pch = pch1 + 1;
+		if (m_pKeyValue)
+			delete (m_pKeyValue);
+		keyVal.setKeyValue(szTemp);
+
+	}
+
+};
+
+
+// I believe this is a sample, not actually something that needs to be included.
+/*
+int Connect(char *pszUserName, char *pszPass)
+{
+	printf("Username = %s  Password = %s", pszUserName, pszPass);
+	return 0;
+}
+*/
+
 
 int main(int argc, char const *argv[]) 
 { 
@@ -40,9 +150,7 @@ int main(int argc, char const *argv[])
 
     address.sin_family = AF_INET; 
     address.sin_addr.s_addr = INADDR_ANY;
-
-    // htons = host to network short. Accounts for computer-side short storage peculiarities.
-    address.sin_port = htons( PORT );
+    address.sin_port = htons( PORT );       // htons = host to network short. Accounts for computer-side short storage peculiarities.
     
     // Forcefully attaching socket to the port 8080 
     if (bind(server_fd, (struct sockaddr *)&address, 
@@ -55,7 +163,8 @@ int main(int argc, char const *argv[])
     // this loop is the server remaining active 
     bool disconnectFlag = false;
     while (true) {
-        // cout << "You're in the outer while-loop" << endl;
+
+        // Establish a new connection.
         if (listen(server_fd, 3) < 0)
         { 
             cout << endl << "Listen error" << endl;
@@ -71,34 +180,34 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
-        // inner while loop
-        // FIXME remove max 10
+
+        // This loop interprets commands from a client
         while (!disconnectFlag) {
 
             // valread = (would equal size of message)
+            // take in an RPC
             read(new_socket, buffer, 1024);
+
+
 
             if (*buffer == *DISCONNECT_RPC) {
                 send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
                 disconnectFlag = true;
-                
                 // close active socket
                 close(new_socket);
             } else {
                 // message sent back to client.
                 send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
-            // TODO test if this is necessary
+            // TODO might not be necessary
             memset(buffer, 0, sizeof(buffer));
         }
 
 
         disconnectFlag = false;
-    }
+    }   // end of always on loop
 
-    // printf("%s, valread = %d\n",buffer, valread);
-    send(new_socket , HELLO , strlen(HELLO) , 0 ); 
-    // printf("Hello message sent\n");
+
 
     return 0; 
 } 
