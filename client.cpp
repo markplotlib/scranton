@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 
     int sock = 0;
     struct sockaddr_in serv_addr; 
-    const char *HELLO = "Hello from server"; 
+    const char *CONNECT_RPC = "rpc=connect;user=mike;password=123;"; 
     const char *DISCONNECT_RPC = "disconnect"; 
     char buffer[1024] = {0}; 
 //    char DISCONNECT_MSG[1024] = {0}; 
@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
         return -1; 
     }
 
-    send(sock , HELLO , strlen(HELLO) , 0 );
+    send(sock , CONNECT_RPC , strlen(CONNECT_RPC) , 0 );
     printf("Hello message sent\n");    
 
     // read incoming message

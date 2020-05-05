@@ -13,20 +13,15 @@
 using namespace std;
 
 
-// KeyValue: A data structure that holds a tuple, and responds to inquiries about it.
-
-/*
+// key/value storage structure
 class KeyValue
 {
 private:
 	char m_szKey[128];
 	char m_szValue[2048];
-
 public:
-
 	KeyValue() {};
-	void setKeyValue(char *pszBuff)
-	{	
+	void setKeyValue(char *pszBuff) {	
 		char *pch1;
 
 		// find out where the "=" sign is, and take everything to the left of the equal for the key
@@ -39,89 +34,85 @@ public:
 		strcpy(m_szValue, pszBuff + keyLen + 1);
 	}
 
-	char *getKey()
-	{
+	char *getKey() {
 		return m_szKey;
 	}
 
-	char *getValue()
-	{
-
+	char *getValue() {
 		return m_szValue;
 	}
 
 };
-*/
 
 
 // This class will take a string that is passed to it in this format:
+
 // input to constructor:
 // <variable1>=<value1>;<variable2>=<value2>;
-// You will then call the method getNextKeyValue until getNextKeyValue returns NULL.
+//You will then call the method  getNextKeyValue until getNextKeyValue returns NULL.
 // getNextKeyValue will return a KeyValue object. Inside of that KeyValue object will contain the variable and the value
 // You will then call getKey or getValue to get the contents of those fields.
 // The example in main() will show how to call this function.
 // By extracting the contents you then can determine the rpc you need to switch to, along with variables you will need
 // You can also use this class in your client program, since you will need to determine the contents that you receive from server
-class RawKeyValueString
+
+class Interpreter
 {
 private:
 
-	char m_szRawString[32768];
+	char rawString[32768];                         // The original string is copied here
 	int m_currentPosition;
 	KeyValue *m_pKeyValue;
-	char *m_pch;
+	char *m_pch;                                   // This is another copy of it
 public:
 
-	RawKeyValueString(char *szUnformattedString)
+	Interpreter(char *szUnformattedString)
 	{
-		assert(strlen(szUnformattedString));
-		strcpy(m_szRawString, szUnformattedString);
-
-		m_pch = m_szRawString;
-		
+		assert(strlen(szUnformattedString));            // debugging code, makes sure that there's a string maybe?
+		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
+		m_pch = rawString;                          // copies again, into a character array
 	}
-	~RawKeyValueString()
+
+	Interpreter()
+	{}
+
+	~Interpreter()
 	{
 		if (m_pKeyValue)
 			delete (m_pKeyValue);
 	}
+
+    void newRPC(char *szUnformattedString) {
+        assert(strlen(szUnformattedString));         // debugging code, makes sure that there's a string maybe?
+		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
+		m_pch = rawString;
+    }
 
 	void getNextKeyValue(KeyValue & keyVal)
 	{
-		// It will attempt to parse out part of the string all the way up to the ";",
-        // it will then create a new KeyValue object with that partial string
-		// If it can't it will return null;
-		char *pch1;
-		char szTemp[32768];
+		// It will attempt to parse out part of the string all the way up to the ";", it will then create a new KeyValue object  with that partial string
+		// If it can;t it will return null;
+		char *pch1;                               // pointer character 1
+		char szTemp[32768];                       
 
-		pch1 = strchr(m_pch, ';');                      // returns the location of the next ';'
-		assert(pch1 != NULL);                     // TODO is this debugging code?
-		int subStringSize = (int)(pch1 - m_pch);        // creates a substring of the string, using m_pch
-		strncpy(szTemp, m_pch, subStringSize);          // copies that substring to szTemp
-		szTemp[subStringSize] = 0;                      // 
+		pch1 = strchr(m_pch, ';');                // returns a pointer to the first instance of ;
+		assert(pch1 != NULL);                     // debugging: assert that pch1 doesn't point to null
+		int subStringSize = (int)(pch1 - m_pch);  // creates a new string starting from pch1
+		strncpy(szTemp, m_pch, subStringSize);    // copies the string from m_pch to szTemp, subStringSize characters
+		szTemp[subStringSize] = 0;                // the final character is now 0; ???
 		m_pch = pch1 + 1;
 		if (m_pKeyValue)
 			delete (m_pKeyValue);
-		keyVal.setKeyValue(szTemp);
+		keyVal.setKeyValue(szTemp);               // sends szTemp to keyValue
 
 	}
 
 };
 
 
-// I believe this is a sample, not actually something that needs to be included.
-/*
-int Connect(char *pszUserName, char *pszPass)
-{
-	printf("Username = %s  Password = %s", pszUserName, pszPass);
-	return 0;
-}
-*/
-
-
 int main(int argc, char const *argv[]) 
 { 
+
     int server_fd, new_socket;
     // int valread;
     struct sockaddr_in address;
@@ -129,7 +120,7 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
     // const char *HELLO = "Hello from server";
-    char HELLO[1024] = "Hello from server"; 
+    // char HELLO[1024] = "Hello from server"; 
     char DISCONNECT_RPC[1024] = "disconnect"; 
     char DISCONNECT_MSG[1024] = {0}; 
     
@@ -141,8 +132,8 @@ int main(int argc, char const *argv[])
     } 
     
     // Forcefully attaching socket to the port
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
-                                                &opt, sizeof(opt))) 
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+                                             &opt, sizeof(opt))) 
     { 
         perror("setsockopt"); 
         exit(EXIT_FAILURE); 
@@ -171,10 +162,9 @@ int main(int argc, char const *argv[])
             perror("listen");
             exit(EXIT_FAILURE); 
         } 
-
         // new_socket is where we'll be communicating to the client
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
-                        (socklen_t*)&addrlen))<0) 
+                            (socklen_t*)&addrlen))<0) 
         { 
             cout << endl << "accept error" << endl;
             perror("accept");
@@ -182,81 +172,63 @@ int main(int argc, char const *argv[])
         }
 
 
-        // TODO: put initial login RPC here
-        // read(new_socket, buffer, 1024);
+        // TODO: put initial login RPC logic here
+        /*
+        takes the incoming login information.
+        Passes it to the interpreter
+        Interpreter ....
+        */
 
-        // This loop interprets commands from a client
+        // setup
+        Interpreter *interpreter = new Interpreter();   // previous: (char *)testMSG
+        KeyValue rpcKeyValue;
+        
+        char *rpcKey;
+	    char *rpcValue;
+
+        read(new_socket, buffer, 1024);
+
+        interpreter->newRPC(buffer);                    // give the interpreter the message  
+        interpreter->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
+
+        rpcKey = rpcKeyValue.getKey();
+        rpcValue = rpcKeyValue.getValue();
+
+        // revisit this for refactoring
+        // rpcKey = "rpc";
+        // rpcValue = "connect";
+
+        // 
+
+        // if login credentials match, send either connect conf, or disconnect.
+        send(new_socket , buffer , strlen(buffer) , 0 );
+
         while (!disconnectFlag) {
 
-            // valread = (would equal size of message)
-            // take in an RPC
-            read(new_socket, buffer, 1024);
+                // valread = (would equal size of message)
+                // take in an RPC
+                read(new_socket, buffer, 1024);
 
 
 
-            if (*buffer == *DISCONNECT_RPC) {
-                send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
-                disconnectFlag = true;
-                // close active socket
-                close(new_socket);
-            } else {
-                // message sent back to client.
-                send(new_socket , buffer , strlen(buffer) , 0 ); 
+                if (*buffer == *DISCONNECT_RPC) {
+                    send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
+                    disconnectFlag = true;
+                    // close active socket
+                    close(new_socket);
+                } else {
+                    // message sent back to client.
+                    send(new_socket , buffer , strlen(buffer) , 0 ); 
+                }
+                // TODO might not be necessary
+                memset(buffer, 0, sizeof(buffer));
             }
-            // TODO might not be necessary
-            memset(buffer, 0, sizeof(buffer));
-        }
 
 
-        disconnectFlag = false;
-    }   // end of always on loop
+            disconnectFlag = false;
+        }   // end of always on loop
 
 
 
     return 0; 
 } 
-
-/*
-int main()
-{
-
-	// Create a couple of buffers, and see if works
-	const char *szTest1 = "rpc=connect;user=mike;password=123;";
-	RawKeyValueString *pRawKey = new RawKeyValueString((char *)szTest1);
-	KeyValue rpcKeyValue;
-	char *pszRpcKey;
-	char *pszRpcValue;
-
-	// Figure out which rpc it is
-
-	pRawKey->getNextKeyValue(rpcKeyValue);
-	pszRpcKey = rpcKeyValue.getKey();
-	pszRpcValue = rpcKeyValue.getValue();
-
-	if (strcmp(pszRpcKey, "rpc") == 0)
-	{
-		if (strcmp(pszRpcValue, "connect") == 0)
-		{
-			// Get the next two arguments (user and password);
-			KeyValue userKeyValue;
-			KeyValue passKeyValue;
-
-			char *pszUserKey;
-			char *pszUserValue;
-			char *pszPassKey;
-			char *pszPassValue;
-			int status;
-
-			pRawKey->getNextKeyValue(userKeyValue);
-			pszUserKey = userKeyValue.getKey();
-			pszUserValue = userKeyValue.getValue();
-
-			pRawKey->getNextKeyValue(passKeyValue);
-			pszPassKey = passKeyValue.getKey();
-			pszPassValue = passKeyValue.getValue();
-
-			status = Connect(pszUserValue, pszPassValue);
-		}
-	}
-}
-*/

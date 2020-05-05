@@ -8,7 +8,7 @@ CFLAGS= -std=c++11 -Wall -Werror -pedantic -ggdb
 # syntax:
 # [name]:[target]
 # [tab][command]
-all: server client
+all: server client test
 
 # type "make server" into terminal to only compile server
 server: server.cpp
