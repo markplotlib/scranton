@@ -17,6 +17,8 @@ int main(int argc, char const *argv[])
     int sock = 0;
     struct sockaddr_in serv_addr; 
     const char *CONNECT_RPC = "rpc=connect;user=mike;password=123;"; 
+    //const char *PWD_FAILURE_RPC = "rpc=connect;user=mike;password=WRONG_PW;";     
+    //const char *USSR_FAILURE_RPC = "rpc=connect;user=miky;password=123;";     
     const char *DISCONNECT_RPC = "disconnect"; 
     char buffer[1024] = {0}; 
 //    char DISCONNECT_MSG[1024] = {0}; 

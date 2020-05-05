@@ -12,7 +12,6 @@
 #define PORT 12104
 using namespace std;
 
-
 // key/value storage structure
 class KeyValue
 {
@@ -198,7 +197,50 @@ int main(int argc, char const *argv[])
         // rpcKey = "rpc";
         // rpcValue = "connect";
 
-        // 
+        // TODO: ensure that statusCode is returned (int), on client side, -1
+        const char *CORRECT_UN = "mike";
+        const char *CORRECT_PW = "123";
+
+        if (strcmp(rpcKey, "rpc") == 0) {
+            if (strcmp(rpcValue, "connect") == 0) {
+
+                // Get the next two arguments (user and password);
+                KeyValue userKeyValue;
+                KeyValue passKeyValue;
+
+                //char *pszUserKey;       // should match "user"
+                char *pszUserValue;     // should match *CORRECT_UN
+                //char *pszPassKey;       // should match "password"
+                char *pszPassValue;     // should match *CORRECT_PW
+                // int status;
+
+                interpreter->getNextKeyValue(userKeyValue);
+                // pszUserKey = userKeyValue.getKey();
+                pszUserValue = userKeyValue.getValue();
+
+                interpreter->getNextKeyValue(passKeyValue);
+                // pszPassKey = passKeyValue.getKey();
+                pszPassValue = passKeyValue.getValue();
+
+                if (strcmp(pszUserValue, CORRECT_UN) == 0) {
+                    cout << pszUserValue << endl;
+                    if (strcmp(pszPassValue, CORRECT_PW) == 0)
+                        cout << "Success" << endl;
+                    else
+                        cout << "Password failure" << endl;
+                } else
+                    cout << "username failure" << endl;
+
+// step 0: (now) code that works
+// step 1: (milestone 1) connect is a function
+// step 2: (milestone 2) func in a class
+
+                // step 1: 
+                // status = Connect(pszUserValue, pszPassValue);
+            }
+        } else {
+            // send disconnect
+        }
 
         // if login credentials match, send either connect conf, or disconnect.
         send(new_socket , buffer , strlen(buffer) , 0 );
