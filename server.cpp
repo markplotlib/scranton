@@ -223,14 +223,15 @@ int main(int argc, char const *argv[])
                 pszPassValue = passKeyValue.getValue();
 
                 if (strcmp(pszUserValue, CORRECT_UN) == 0) {
-                    cout << pszUserValue << endl;
+                    cout << "Validated: username=" << pszUserValue << ". ";
                     if (strcmp(pszPassValue, CORRECT_PW) == 0)
-                        cout << "Success" << endl;
+                        cout << "Successful login." << endl;
                     else
-                        cout << "Password failure" << endl;
+                        cout << "Unsuccessful login: bad password entered." << endl;
                 } else
-                    cout << "username failure" << endl;
+                    cout << "Unsuccessful login: user does not exist." << endl;
 
+                cout << "\n\n\n";
 // step 0: (now) code that works
 // step 1: (milestone 1) connect is a function
 // step 2: (milestone 2) func in a class
@@ -243,6 +244,7 @@ int main(int argc, char const *argv[])
         }
 
         // if login credentials match, send either connect conf, or disconnect.
+// TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
         while (!disconnectFlag) {

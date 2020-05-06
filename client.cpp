@@ -19,12 +19,23 @@ int main(int argc, char** argv) {
 
     int sock = 0;
     struct sockaddr_in serv_addr; 
-    const char *CONNECT_RPC = "rpc=connect;user=mike;password=123;"; 
+    char buffer[1024] = {0}; 
+    strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
+    strcat(buffer, "user=");
+    strcat(buffer, argv[1]);
+    strcat(buffer, ";password=");
+    strcat(buffer, argv[2]);
+    strcat(buffer, ";");
+    puts(buffer);  // another way to print to screen
+
+	// printf("\nUsername = %s  Password = %s", argv[1], argv[2]);
+
+
+    // char *CONNECT_RPC = "rpc=connect;user=mike;password=123;";
     //const char *PWD_FAILURE_RPC = "rpc=connect;user=mike;password=WRONG_PW;";     
     //const char *USSR_FAILURE_RPC = "rpc=connect;user=miky;password=123;";     
     const char *DISCONNECT_RPC = "disconnect"; 
-    char buffer[1024] = {0}; 
-//    char DISCONNECT_MSG[1024] = {0}; 
+    // char DISCONNECT_MSG[1024] = {0}; 
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
@@ -50,17 +61,18 @@ int main(int argc, char** argv) {
         return -1; 
     }
 
-    send(sock , CONNECT_RPC , strlen(CONNECT_RPC) , 0 );
-	printf("\nUsername = %s  Password = %s", argv[1], argv[2]);
-	printf("\nWelcome %s", argv[1]);
-	printf("\n");
+    send(sock , buffer , strlen(buffer) , 0 );
+
+    // TODO: please fix! should not always print!
+    // int statusCode = 0; // 0 = no error
+    // if (statusCode == 0)
+    // 	printf("\nWelcome %s", argv[1]);
 
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
-    printf("%s\n", buffer);
 
     // sleep timer
-    cout << "\ntime to disconnect: " << SLEEP_TIME << " seconds";
+    cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
     cout.flush();
     sleep(SLEEP_TIME);
     cout << endl;
@@ -71,7 +83,7 @@ int main(int argc, char** argv) {
     // disconnect message sent
 
     read(sock, buffer, 1024);
-    printf("%s\n", buffer);
+    printf("%s\n\n", buffer);
 
     return 0; 
 } 
