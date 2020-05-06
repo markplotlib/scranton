@@ -9,17 +9,11 @@
 #define PORT 12104
 using namespace std;
 
-int loginClient(string pszUserName, string pszPass) {
-    cout << "This is the connect method" << endl;
-	cout << "Username = " << pszUserName << ", Password = " << pszPass << endl;
-	return 0;
-}
-
-int main(int argc, char const *argv[]) 
-{ 
-    string username = "mike";
-    string password = "mikePassword";
-
+int main(int argc, char** argv) { 
+    if (argc != 3) {
+        cout << "WARNING: please enter username and password into CLI, separated by a space." << endl;
+        cout << "Recommended: user=mike, p/w=123" << endl;
+    }
     srand (time(NULL));    
     const int SLEEP_TIME = rand() % 10 + 1;  // Sleep for 1 to 10 seconds
 
@@ -57,7 +51,9 @@ int main(int argc, char const *argv[])
     }
 
     send(sock , CONNECT_RPC , strlen(CONNECT_RPC) , 0 );
-    printf("Hello message sent\n");    
+	printf("\nUsername = %s  Password = %s", argv[1], argv[2]);
+	printf("\nWelcome %s", argv[1]);
+	printf("\n");
 
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
