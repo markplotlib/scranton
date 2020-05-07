@@ -9,7 +9,7 @@
 #include <iostream>
 // next line from MM
 // #include "assert.h"
-#define PORT 12104
+#define PORT 12115
 using namespace std;
 
 // key/value storage structure
@@ -111,7 +111,7 @@ public:
 
 // TODO: somebody to write desc
 // TODO: somebody to write desc
-// TODO: somebody to write desc
+// @return  status code: 0 if success, 
 int connect(char *username, char *password) {
     bool loginSuccess = true;
     if (loginSuccess)
@@ -120,6 +120,13 @@ int connect(char *username, char *password) {
         return -1;
 }
 
+// D
+int disconnect(int socket_num, char *buff){
+    char disconnectMsg[1024] = {0};
+    send(socket_num, disconnectMsg, strlen(buff) , 0 ); 
+    // close active socket
+    return close(socket_num);
+}
 
 int main(int argc, char const *argv[]) 
 { 
@@ -132,8 +139,7 @@ int main(int argc, char const *argv[])
     char buffer[1024] = {0};
     // const char *HELLO = "Hello from server";
     // char HELLO[1024] = "Hello from server"; 
-    char DISCONNECT_RPC[1024] = "disconnect"; 
-    char DISCONNECT_MSG[1024] = {0}; 
+    const char DISCONNECT_RPC[1024] = "disconnect"; 
     
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -204,8 +210,8 @@ int main(int argc, char const *argv[])
         interpreter->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
         
 // TODO
-// int statusCode = connect(rpcKeyValue.getKey(), rpcKeyValue.getValue());
-// cout << statusCode << endl;
+// int statusConnect = connect(rpcKeyValue.getKey(), rpcKeyValue.getValue());
+// cout << statusConnect << endl;
 rpcKey = rpcKeyValue.getKey();
 rpcValue = rpcKeyValue.getValue();
 
@@ -269,13 +275,9 @@ rpcValue = rpcKeyValue.getValue();
                 // take in an RPC
                 read(new_socket, buffer, 1024);
 
-
-
                 if (*buffer == *DISCONNECT_RPC) {
-                    send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
-                    disconnectFlag = true;
-                    // close active socket
-                    close(new_socket);
+                    if (disconnect(new_socket, buffer) == 0)  // disconnection is successful
+                        disconnectFlag = true;
                 } else {
                     // message sent back to client.
                     send(new_socket , buffer , strlen(buffer) , 0 ); 
@@ -284,11 +286,8 @@ rpcValue = rpcKeyValue.getValue();
                 memset(buffer, 0, sizeof(buffer));
             }
 
-
             disconnectFlag = false;
         }   // end of always on loop
-
-
 
     return 0; 
 } 
