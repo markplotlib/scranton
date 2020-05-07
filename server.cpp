@@ -9,7 +9,7 @@
 #include <iostream>
 // next line from MM
 // #include "assert.h"
-#define PORT 12115
+#define PORT 12117
 using namespace std;
 
 // key/value storage structure
@@ -55,7 +55,7 @@ public:
 // By extracting the contents you then can determine the rpc you need to switch to, along with variables you will need
 // You can also use this class in your client program, since you will need to determine the contents that you receive from server
 
-class Interpreter
+class stringParser
 {
 private:
 
@@ -65,17 +65,17 @@ private:
 	char *m_pch;                                   // This is another copy of it
 public:
 
-	Interpreter(char *szUnformattedString)
+	stringParser(char *szUnformattedString)
 	{
 		// assert(strlen(szUnformattedString));     // debugging code, makes sure that there's a string maybe?
 		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
 		m_pch = rawString;                          // copies again, into a character array
 	}
 
-	Interpreter()
+	stringParser()
 	{}
 
-	~Interpreter()
+	~stringParser()
 	{
 		if (m_pKeyValue)
 			delete (m_pKeyValue);
@@ -109,25 +109,22 @@ public:
 };
 
 
-
 // return 0 = password/username passed.
-// return -1 = incorrect password
-// return -2 = incorrect username
+// return -2 = incorrect password
+// return -1 = username does not exist
 int connect(char *username, char *password) {
     // TODO: replace the following hardcoded username/password with
     // a datavault class, or something better.
     const char *CORRECT_UN = "mike";
     const char *CORRECT_PW = "123";
 
-    cout << username << password << endl;
-
     if (strcmp(username, CORRECT_UN) == 0) {
         if (strcmp(password, CORRECT_PW) == 0)
             return 0;
         else
-            return -1;
+            return -2;
     } else
-        return -2;
+        return -1;
 }
 
 // D
@@ -147,13 +144,9 @@ int main(int argc, char const *argv[])
     int opt = 1; 
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    // const char *HELLO = "Hello from server";
-    // char HELLO[1024] = "Hello from server"; 
     char DISCONNECT_RPC[1024] = "disconnect"; 
-    char DISCONNECT_MSG[1024] = {0}; 
-    Interpreter *interpreter = new Interpreter();   // previous: (char *)testMSG
+    stringParser *parser = new stringParser();   // previous: (char *)testMSG
     KeyValue rpcKeyValue;
-
 
 
     // Creating socket file descriptor 
@@ -183,21 +176,20 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
 
-    // this loop is the server remaining active 
-    bool disconnectFlag = false;
+    // this loop is the server remaining active
+    bool disconnectFlag;
     while (true) {
+        disconnectFlag = false;
 
         // Establish a new connection.
-        if (listen(server_fd, 3) < 0)
-        { 
+        if (listen(server_fd, 3) < 0) { 
             cout << endl << "Listen error" << endl;
             perror("listen");
             exit(EXIT_FAILURE); 
         } 
         // new_socket is where we'll be communicating to the client
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
-                            (socklen_t*)&addrlen))<0) 
-        { 
+                            (socklen_t*)&addrlen))<0) { 
             cout << endl << "accept error" << endl;
             perror("accept");
             exit(EXIT_FAILURE); 
@@ -206,8 +198,8 @@ int main(int argc, char const *argv[])
         // TODO: put initial login RPC logic here
         /*
         takes the incoming login information.
-        Passes it to the interpreter
-        Interpreter ....
+        Passes it to the parser
+        stringParser ....
         */
 
         read(new_socket, buffer, 1024);
@@ -218,8 +210,8 @@ int main(int argc, char const *argv[])
         char *rpcKey;
 	    char *rpcValue;
 
-        interpreter->newRPC(buffer);                    // give the interpreter the message  
-        interpreter->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
+        parser->newRPC(buffer);                    // give the parser the message  
+        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
 
         rpcKey = rpcKeyValue.getKey();
         rpcValue = rpcKeyValue.getValue();
@@ -234,27 +226,23 @@ int main(int argc, char const *argv[])
                 // Get the next two arguments (user and password);
                 KeyValue userKeyValue;
                 KeyValue passKeyValue;
-                // char *pszUserKey;       // should match "user"
-                // char *pszUserValue;     // should match *CORRECT_UN
-                // char *pszPassKey;       // should match "password"
-                // char *pszPassValue;     // should match *CORRECT_PW
-                // int status;
+                parser->getNextKeyValue(userKeyValue);
+                parser->getNextKeyValue(passKeyValue);
 
-                interpreter->getNextKeyValue(userKeyValue);
-                // pszUserKey = userKeyValue.getKey();
-                // pszUserValue = userKeyValue.getValue();
-
-                interpreter->getNextKeyValue(passKeyValue);
-                // pszPassKey = passKeyValue.getKey();
-                // pszPassValue = passKeyValue.getValue();
-
+                /* 
+                calls the login function
+                statusCode 0 = credentials confirmed
+                statusCode -1 = username does not exist
+                statusCode -2 = password incorrect
+                */
                 int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());
                 cout << "Statuscode: " << statusCode << endl;
+                disconnectFlag = (statusCode < 0);
             } else {
-                // send disconnect
+                // TODO disconnect parser in client
             }
         } else {
-            // send disconnect
+            // TODO disconnect parser in client
         }
 
         // TODO: SEND A BINARY VALUE
@@ -262,23 +250,22 @@ int main(int argc, char const *argv[])
 
         while (!disconnectFlag) {
 
-                // valread = (would equal size of message)
-                // take in an RPC
-                read(new_socket, buffer, 1024);
+            // valread = (would equal size of message)
+            // take in an RPC
+            read(new_socket, buffer, 1024);
 
-                if (*buffer == *DISCONNECT_RPC) {
-                    if (disconnect(new_socket, buffer) == 0)  // disconnection is successful
-                        disconnectFlag = true;
-                } else {
-                    // message sent back to client.
-                    send(new_socket , buffer , strlen(buffer) , 0 ); 
-                }
-                // TODO might not be necessary
-                memset(buffer, 0, sizeof(buffer));
+            if (*buffer == *DISCONNECT_RPC) {
+                if (disconnect(new_socket, buffer) == 0)  // disconnection is successful
+                    disconnectFlag = true;
+            } else {
+                // message sent back to client.
+                send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
+            // TODO might not be necessary
+            memset(buffer, 0, sizeof(buffer));
+        }
 
-            disconnectFlag = false;
-        }   // end of always on loop
+    }   // end of always on loop
 
     return 0; 
 } 

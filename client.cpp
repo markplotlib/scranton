@@ -6,7 +6,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#define PORT 12115
+#define PORT 12117
 using namespace std;
 
 int main(int argc, char** argv) { 
@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
         return -1; 
     }
 
+    // sending username/password rpc
     send(sock , buffer , strlen(buffer) , 0 );
 
     // TODO: please fix! should not always print!
@@ -67,6 +68,7 @@ int main(int argc, char** argv) {
 
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
+    printf("%s\n\n", buffer);
 
     // sleep timer
     cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
