@@ -10,11 +10,19 @@
 using namespace std;
 
 int main(int argc, char** argv) { 
+    /* prompt for login
+    // char argv1, argv2;
+    // char[40] argv2;
+    cout << "Welcome to the Dunder Mifflin client portal." << endl;
+    cout << "Please enter username ('mike'): ";
+    cin >> argv1;
+    argv1 = "mike";
+    cout << "Please enter password ('123'): ";
+    cin >> argv2;
+    argv2 = "123";
+    cout << "\nYou've typed " << argv1 << " and " << argv2 << endl;
+    */
 
-    if (argc != 3) {
-        cout << "WARNING: please enter username and password into CLI, separated by a space." << endl;
-        cout << "Recommended: user=mike, p/w=123" << endl;
-    }
     srand (time(NULL));    
     const int SLEEP_TIME = rand() % 10 + 1;  // Sleep for 1 to 10 seconds
 
@@ -23,9 +31,11 @@ int main(int argc, char** argv) {
     char buffer[1024] = {0}; 
     strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
     strcat(buffer, "user=");
-    strcat(buffer, argv[1]);
+    // strcat(buffer, argv1);
+    strcat(buffer, "mike");
     strcat(buffer, ";password=");
-    strcat(buffer, argv[2]);
+    // strcat(buffer, argv2);
+    strcat(buffer, "123");
     strcat(buffer, ";");
     puts(buffer);  // another way to print to screen
 
