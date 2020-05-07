@@ -8,7 +8,7 @@
 #include <string.h> 
 #include <iostream>
 // next line from MM
-#include "assert.h"
+// #include "assert.h"
 #define PORT 12104
 using namespace std;
 
@@ -26,7 +26,7 @@ public:
 		// find out where the "=" sign is, and take everything to the left of the equal for the key
 		// go one beyond the = sign, and take everything else
 		pch1 = strchr(pszBuff, '=');
-		assert(pch1);
+		// assert(pch1);
 		int keyLen = (int)(pch1 - pszBuff);
 		strncpy(m_szKey, pszBuff, keyLen);
 		m_szKey[keyLen] = 0;
@@ -67,7 +67,7 @@ public:
 
 	Interpreter(char *szUnformattedString)
 	{
-		assert(strlen(szUnformattedString));            // debugging code, makes sure that there's a string maybe?
+		// assert(strlen(szUnformattedString));            // debugging code, makes sure that there's a string maybe?
 		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
 		m_pch = rawString;                          // copies again, into a character array
 	}
@@ -82,7 +82,7 @@ public:
 	}
 
     void newRPC(char *szUnformattedString) {
-        assert(strlen(szUnformattedString));         // debugging code, makes sure that there's a string maybe?
+        // assert(strlen(szUnformattedString));         // debugging code, makes sure that there's a string maybe?
 		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
 		m_pch = rawString;
     }
@@ -95,7 +95,7 @@ public:
 		char szTemp[32768];                       
 
 		pch1 = strchr(m_pch, ';');                // returns a pointer to the first instance of ;
-		assert(pch1 != NULL);                     // debugging: assert that pch1 doesn't point to null
+		// assert(pch1 != NULL);                     // debugging: assert that pch1 doesn't point to null
 		int subStringSize = (int)(pch1 - m_pch);  // creates a new string starting from pch1
 		strncpy(szTemp, m_pch, subStringSize);    // copies the string from m_pch to szTemp, subStringSize characters
 		szTemp[subStringSize] = 0;                // the final character is now 0; ???
@@ -107,6 +107,18 @@ public:
 	}
 
 };
+
+
+// TODO: somebody to write desc
+// TODO: somebody to write desc
+// TODO: somebody to write desc
+int connect(char *username, char *password) {
+    bool loginSuccess = true;
+    if (loginSuccess)
+        return 0;
+    else
+        return -1;
+}
 
 
 int main(int argc, char const *argv[]) 
@@ -185,13 +197,17 @@ int main(int argc, char const *argv[])
         char *rpcKey;
 	    char *rpcValue;
 
+        // connect
         read(new_socket, buffer, 1024);
 
         interpreter->newRPC(buffer);                    // give the interpreter the message  
         interpreter->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-
-        rpcKey = rpcKeyValue.getKey();
-        rpcValue = rpcKeyValue.getValue();
+        
+// TODO
+// int statusCode = connect(rpcKeyValue.getKey(), rpcKeyValue.getValue());
+// cout << statusCode << endl;
+rpcKey = rpcKeyValue.getKey();
+rpcValue = rpcKeyValue.getValue();
 
         // revisit this for refactoring
         // rpcKey = "rpc";
