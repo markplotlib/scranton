@@ -9,7 +9,7 @@
 #include <iostream>
 // next line from MM
 // #include "assert.h"
-#define PORT 12104
+#define PORT 12115
 using namespace std;
 
 // key/value storage structure
@@ -130,6 +130,13 @@ int connect(char *username, char *password) {
         return -2;
 }
 
+// D
+int disconnect(int socket_num, char *buff){
+    char disconnectMsg[1024] = {0};
+    send(socket_num, disconnectMsg, strlen(buff) , 0 ); 
+    // close active socket
+    return close(socket_num);
+}
 
 int main(int argc, char const *argv[]) 
 { 
@@ -259,13 +266,9 @@ int main(int argc, char const *argv[])
                 // take in an RPC
                 read(new_socket, buffer, 1024);
 
-
-
                 if (*buffer == *DISCONNECT_RPC) {
-                    send(new_socket , DISCONNECT_MSG , strlen(buffer) , 0 ); 
-                    disconnectFlag = true;
-                    // close active socket
-                    close(new_socket);
+                    if (disconnect(new_socket, buffer) == 0)  // disconnection is successful
+                        disconnectFlag = true;
                 } else {
                     // message sent back to client.
                     send(new_socket , buffer , strlen(buffer) , 0 ); 
@@ -274,11 +277,8 @@ int main(int argc, char const *argv[])
                 memset(buffer, 0, sizeof(buffer));
             }
 
-
             disconnectFlag = false;
         }   // end of always on loop
-
-
 
     return 0; 
 } 
