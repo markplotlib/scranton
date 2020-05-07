@@ -67,7 +67,7 @@ public:
 
 	Interpreter(char *szUnformattedString)
 	{
-		// assert(strlen(szUnformattedString));            // debugging code, makes sure that there's a string maybe?
+		// assert(strlen(szUnformattedString));     // debugging code, makes sure that there's a string maybe?
 		strcpy(rawString, szUnformattedString);     // copies the code, to prevent it from editing the original
 		m_pch = rawString;                          // copies again, into a character array
 	}
@@ -109,15 +109,25 @@ public:
 };
 
 
-// TODO: somebody to write desc
-// TODO: somebody to write desc
-// TODO: somebody to write desc
+
+// return 0 = password/username passed.
+// return -1 = incorrect password
+// return -2 = incorrect username
 int connect(char *username, char *password) {
-    bool loginSuccess = true;
-    if (loginSuccess)
-        return 0;
-    else
-        return -1;
+    // TODO: replace the following hardcoded username/password with
+    // a datavault class, or something better.
+    const char *CORRECT_UN = "mike";
+    const char *CORRECT_PW = "123";
+
+    cout << username << password << endl;
+
+    if (strcmp(username, CORRECT_UN) == 0) {
+        if (strcmp(password, CORRECT_PW) == 0)
+            return 0;
+        else
+            return -1;
+    } else
+        return -2;
 }
 
 
@@ -134,7 +144,11 @@ int main(int argc, char const *argv[])
     // char HELLO[1024] = "Hello from server"; 
     char DISCONNECT_RPC[1024] = "disconnect"; 
     char DISCONNECT_MSG[1024] = {0}; 
-    
+    Interpreter *interpreter = new Interpreter();   // previous: (char *)testMSG
+    KeyValue rpcKeyValue;
+
+
+
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
     { 
@@ -182,7 +196,6 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
-
         // TODO: put initial login RPC logic here
         /*
         takes the incoming login information.
@@ -190,77 +203,54 @@ int main(int argc, char const *argv[])
         Interpreter ....
         */
 
-        // setup
-        Interpreter *interpreter = new Interpreter();   // previous: (char *)testMSG
-        KeyValue rpcKeyValue;
+        read(new_socket, buffer, 1024);
+
+        // Login is separate from generic RPC interpretation in order to
+        // prevent RPCs from accessing other commands.
         
         char *rpcKey;
 	    char *rpcValue;
 
-        // connect
-        read(new_socket, buffer, 1024);
-
         interpreter->newRPC(buffer);                    // give the interpreter the message  
         interpreter->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-        
-// TODO
-// int statusCode = connect(rpcKeyValue.getKey(), rpcKeyValue.getValue());
-// cout << statusCode << endl;
-rpcKey = rpcKeyValue.getKey();
-rpcValue = rpcKeyValue.getValue();
+
+        rpcKey = rpcKeyValue.getKey();
+        rpcValue = rpcKeyValue.getValue();
 
         // revisit this for refactoring
         // rpcKey = "rpc";
         // rpcValue = "connect";
-
-        // TODO: ensure that statusCode is returned (int), on client side, -1
-        const char *CORRECT_UN = "mike";
-        const char *CORRECT_PW = "123";
+        // TODO: turn this into a proper password vault
 
         if (strcmp(rpcKey, "rpc") == 0) {
             if (strcmp(rpcValue, "connect") == 0) {
-
                 // Get the next two arguments (user and password);
                 KeyValue userKeyValue;
                 KeyValue passKeyValue;
-
-                //char *pszUserKey;       // should match "user"
-                char *pszUserValue;     // should match *CORRECT_UN
-                //char *pszPassKey;       // should match "password"
-                char *pszPassValue;     // should match *CORRECT_PW
+                // char *pszUserKey;       // should match "user"
+                // char *pszUserValue;     // should match *CORRECT_UN
+                // char *pszPassKey;       // should match "password"
+                // char *pszPassValue;     // should match *CORRECT_PW
                 // int status;
 
                 interpreter->getNextKeyValue(userKeyValue);
                 // pszUserKey = userKeyValue.getKey();
-                pszUserValue = userKeyValue.getValue();
+                // pszUserValue = userKeyValue.getValue();
 
                 interpreter->getNextKeyValue(passKeyValue);
                 // pszPassKey = passKeyValue.getKey();
-                pszPassValue = passKeyValue.getValue();
+                // pszPassValue = passKeyValue.getValue();
 
-                if (strcmp(pszUserValue, CORRECT_UN) == 0) {
-                    cout << "Validated: username=" << pszUserValue << ". ";
-                    if (strcmp(pszPassValue, CORRECT_PW) == 0)
-                        cout << "Successful login." << endl;
-                    else
-                        cout << "Unsuccessful login: bad password entered." << endl;
-                } else
-                    cout << "Unsuccessful login: user does not exist." << endl;
-
-                cout << "\n\n\n";
-// step 0: (now) code that works
-// step 1: (milestone 1) connect is a function
-// step 2: (milestone 2) func in a class
-
-                // step 1: 
-                // status = Connect(pszUserValue, pszPassValue);
+                int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());
+                cout << "Statuscode: " << statusCode << endl;
+            } else {
+                // send disconnect
             }
         } else {
             // send disconnect
         }
 
-        // if login credentials match, send either connect conf, or disconnect.
-// TODO: SEND A BINARY VALUE
+        // TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
         while (!disconnectFlag) {
