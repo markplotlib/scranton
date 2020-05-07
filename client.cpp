@@ -10,6 +10,7 @@
 using namespace std;
 
 int main(int argc, char** argv) { 
+
     if (argc != 3) {
         cout << "WARNING: please enter username and password into CLI, separated by a space." << endl;
         cout << "Recommended: user=mike, p/w=123" << endl;
@@ -31,7 +32,7 @@ int main(int argc, char** argv) {
     //const char *CONNECT_RPC = "rpc=connect;user=mike;password=123;";
     //const char *PWD_FAILURE_RPC = "rpc=connect;user=mike;password=WRONG_PW;";     
     //const char *USSR_FAILURE_RPC = "rpc=connect;user=miky;password=123;";     
-    const char *DISCONNECT_RPC = "disconnect"; 
+    const char *DISCONNECT_RPC = "disconnected"; 
     // char DISCONNECT_MSG[1024] = {0}; 
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
@@ -68,7 +69,17 @@ int main(int argc, char** argv) {
 
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
-    printf("%s\n\n", buffer);
+    // cout << "THis is the thing" << buffer << endl;
+    if (strcmp(buffer, DISCONNECT_RPC) == 0) {
+        return 0;
+    } else {
+        /*
+        cout << "============" << endl;
+        cout << "buffer:" <<  buffer << endl;
+        cout << "============" << endl;
+        cout << "DISCONNECT_RPC: " << DISCONNECT_RPC << endl;
+        */
+    }
 
     // sleep timer
     cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
@@ -78,11 +89,9 @@ int main(int argc, char** argv) {
 
     // server is in listening loop
     send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
-    printf("Disconnect message sent");    
     // disconnect message sent
 
     read(sock, buffer, 1024);
-    printf("%s\n\n", buffer);
 
     return 0; 
 } 

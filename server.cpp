@@ -12,6 +12,8 @@
 #define PORT 12117
 using namespace std;
 
+
+
 // key/value storage structure
 class KeyValue
 {
@@ -128,9 +130,10 @@ int connect(char *username, char *password) {
 }
 
 // D
+// int disconnect(int socket_num, char *buff){
 int disconnect(int socket_num, char *buff){
-    char disconnectMsg[1024] = {0};
-    send(socket_num, disconnectMsg, strlen(buff) , 0 ); 
+    // char disconnectMsg[1024] = {0};
+    send(socket_num, buff, strlen(buff) , 0 ); 
     // close active socket
     return close(socket_num);
 }
@@ -144,10 +147,10 @@ int main(int argc, char const *argv[])
     int opt = 1; 
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    char DISCONNECT_RPC[1024] = "disconnect"; 
+    char DISCONNECT_RPC[1024] = "disconnected"; 
     stringParser *parser = new stringParser();   // previous: (char *)testMSG
     KeyValue rpcKeyValue;
-
+    int disconnectStatus;
 
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -235,16 +238,24 @@ int main(int argc, char const *argv[])
                 statusCode -1 = username does not exist
                 statusCode -2 = password incorrect
                 */
-                int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());
+                int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());                
                 cout << "Statuscode: " << statusCode << endl;
-                disconnectFlag = (statusCode < 0);
+
+                // erroneous login status code disconnects client
+                if (statusCode < 0) {
+                    disconnectFlag = true;
+                    disconnectStatus = disconnect(new_socket, DISCONNECT_RPC);
+                    cout << "Disconnected; incorrect credentials." << endl;
+                    cout << "Disconnect status: " << disconnectStatus << endl;
+                }
+                
             } else {
                 // TODO disconnect parser in client
             }
         } else {
             // TODO disconnect parser in client
         }
-
+        
         // TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
