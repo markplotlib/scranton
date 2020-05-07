@@ -6,7 +6,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#define PORT 12117
+#define PORT 12104
 using namespace std;
 
 int main(int argc, char** argv) { 
@@ -39,9 +39,6 @@ int main(int argc, char** argv) {
     strcat(buffer, ";");
     puts(buffer);  // another way to print to screen
 
-    //const char *CONNECT_RPC = "rpc=connect;user=mike;password=123;";
-    //const char *PWD_FAILURE_RPC = "rpc=connect;user=mike;password=WRONG_PW;";     
-    //const char *USSR_FAILURE_RPC = "rpc=connect;user=miky;password=123;";     
     const char *DISCONNECT_RPC = "disconnected"; 
     // char DISCONNECT_MSG[1024] = {0}; 
     
@@ -79,7 +76,7 @@ int main(int argc, char** argv) {
 
     // read incoming message
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
-    // cout << "THis is the thing" << buffer << endl;
+    // cout << "debug statement: show buffer" << buffer << endl;
     if (strcmp(buffer, DISCONNECT_RPC) == 0) {
         return 0;
     } else {
@@ -99,6 +96,7 @@ int main(int argc, char** argv) {
 
     // server is in listening loop
     send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
+    printf("Disconnect message sent\n");    
     // disconnect message sent
 
     read(sock, buffer, 1024);

@@ -9,7 +9,7 @@
 #include <iostream>
 // next line from MM
 // #include "assert.h"
-#define PORT 12117
+#define PORT 12104
 using namespace std;
 
 
@@ -109,9 +109,10 @@ public:
 };
 
 
-// return 0 = password/username passed.
-// return -2 = incorrect password
-// return -1 = username does not exist
+// Connects the client socket to the server socket
+// return 0 if password/username passed.
+// return -2 if incorrect password
+// return -1 if username does not exist
 int connect(char *username, char *password) {
     // TODO: replace the following hardcoded username/password with
     // a datavault class, or something better.
@@ -128,6 +129,8 @@ int connect(char *username, char *password) {
 }
 
 // Sends a message to client, and then closes the socket assigned to current client.
+// return 0 if successful 
+// return -1 if failed
 int disconnect(int socket_num, char *buff){
     // char disconnectMsg[1024] = {0};
     send(socket_num, buff, strlen(buff) , 0 ); 
