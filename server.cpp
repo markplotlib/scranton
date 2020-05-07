@@ -47,10 +47,9 @@ public:
 
 
 // This class will take a string that is passed to it in this format:
-
 // input to constructor:
 // <variable1>=<value1>;<variable2>=<value2>;
-//You will then call the method  getNextKeyValue until getNextKeyValue returns NULL.
+// You will then call the method  getNextKeyValue until getNextKeyValue returns NULL.
 // getNextKeyValue will return a KeyValue object. Inside of that KeyValue object will contain the variable and the value
 // You will then call getKey or getValue to get the contents of those fields.
 // The example in main() will show how to call this function.
@@ -105,7 +104,6 @@ public:
 		if (m_pKeyValue)
 			delete (m_pKeyValue);
 		keyVal.setKeyValue(szTemp);               // sends szTemp to keyValue
-
 	}
 
 };
@@ -129,8 +127,7 @@ int connect(char *username, char *password) {
         return -1;
 }
 
-// D
-// int disconnect(int socket_num, char *buff){
+// Sends a message to client, and then closes the socket assigned to current client.
 int disconnect(int socket_num, char *buff){
     // char disconnectMsg[1024] = {0};
     send(socket_num, buff, strlen(buff) , 0 ); 
@@ -140,11 +137,9 @@ int disconnect(int socket_num, char *buff){
 
 int main(int argc, char const *argv[]) 
 { 
-
     int server_fd, new_socket;
-    // int valread;
     struct sockaddr_in address;
-    int opt = 1; 
+    int opt = 1;
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "disconnected"; 
@@ -198,13 +193,6 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
-        // TODO: put initial login RPC logic here
-        /*
-        takes the incoming login information.
-        Passes it to the parser
-        stringParser ....
-        */
-
         read(new_socket, buffer, 1024);
 
         // Login is separate from generic RPC interpretation in order to
@@ -219,11 +207,11 @@ int main(int argc, char const *argv[])
         rpcKey = rpcKeyValue.getKey();
         rpcValue = rpcKeyValue.getValue();
 
-        // revisit this for refactoring
-        // rpcKey = "rpc";
-        // rpcValue = "connect";
-        // TODO: turn this into a proper password vault
 
+        /*
+            This is the stub of login/credential logic.
+            It acts as a gateway BEFORE all other RPC parsing.
+        */
         if (strcmp(rpcKey, "rpc") == 0) {
             if (strcmp(rpcValue, "connect") == 0) {
                 // Get the next two arguments (user and password);
@@ -233,7 +221,7 @@ int main(int argc, char const *argv[])
                 parser->getNextKeyValue(passKeyValue);
 
                 /* 
-                calls the login function
+                "connect" calls the login function
                 statusCode 0 = credentials confirmed
                 statusCode -1 = username does not exist
                 statusCode -2 = password incorrect
@@ -250,33 +238,35 @@ int main(int argc, char const *argv[])
                 }
                 
             } else {
-                // TODO disconnect parser in client
+                // Error message.
             }
         } else {
-            // TODO disconnect parser in client
+            // Error message.
         }
         
-        // TODO: SEND A BINARY VALUE
+// TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
-        while (!disconnectFlag) {
 
-            // valread = (would equal size of message)
-            // take in an RPC
+        /*
+        This is the stub for the main RPC switch statement
+        */
+        while (!disconnectFlag) {
             read(new_socket, buffer, 1024);
 
             if (*buffer == *DISCONNECT_RPC) {
-                if (disconnect(new_socket, buffer) == 0)  // disconnection is successful
+                // IF disconnection is successful
+                if (disconnect(new_socket, buffer) == 0) 
                     disconnectFlag = true;
             } else {
-                // message sent back to client.
+                // TODO: ELSE the buffered message is sent back to client (placeholder)
                 send(new_socket , buffer , strlen(buffer) , 0 ); 
             }
-            // TODO might not be necessary
             memset(buffer, 0, sizeof(buffer));
         }
 
-    }   // end of always on loop
+    }
 
+    // YOU SHALL NOT PASS. Always on server should never reach this point.
     return 0; 
 } 
