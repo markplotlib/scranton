@@ -6,7 +6,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#define PORT 12104
+#define PORT 8080
 using namespace std;
 
 int main(int argc, char** argv) { 
