@@ -152,7 +152,7 @@ int main(int argc, char const *argv[])
     char DISCONNECT_RPC[1024] = "disconnected"; 
     // Added for string parser separation 
     StringParser stringParser; 
-    StringParser *parser = &stringParser; 
+    StringParser *parser = new StringParser; 
     // Old code before separation 
     //stringParser *parser = new stringParser();   // previous: (char *)testMSG
     KeyValue rpcKeyValue;
@@ -184,7 +184,7 @@ int main(int argc, char const *argv[])
         perror("bind failed"); 
         exit(EXIT_FAILURE); 
     } 
-
+            
     // this loop is the server remaining active
 
     while (true) {
@@ -209,13 +209,14 @@ int main(int argc, char const *argv[])
 
         // Login is separate from generic RPC interpretation in order to
         // prevent RPCs from accessing other commands.
-        
+     
         char *rpcKey;
 	    char *rpcValue;
 
+        
         parser->newRPC(buffer);                    // give the parser the message  
         parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-
+        
         rpcKey = rpcKeyValue.getKey();
         rpcValue = rpcKeyValue.getValue();
 

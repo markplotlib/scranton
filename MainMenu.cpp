@@ -31,11 +31,9 @@ public:
                disconnectFlag = true;
             }
          } else {
-            // TODO: ELSE the buffered message is sent back to client (placeholder)
             send(new_socket , buffer, strlen(buffer) , 0 );
             memset(buffer, 0, sizeof(buffer));
          }
-         // memset(buffer, 0, sizeof(buffer));
       }
       std::cout << "Exit loop in MainMenu" << std::endl;
    }
