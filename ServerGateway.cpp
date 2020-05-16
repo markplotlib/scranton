@@ -7,7 +7,6 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <iostream>
-
 #include "MainMenu.cpp"
 // next line from MM
 // #include "assert.h"
@@ -179,12 +178,13 @@ int main(int argc, char const *argv[])
     } 
 
     // this loop is the server remaining active
-    bool disconnectFlag;
-    while (true) {
-        disconnectFlag = false;
 
+    while (true) {
+        // Debug:
+        cout << "Beginning of Server Listen loop" << endl;
+        
         // Establish a new connection.
-        if (listen(server_fd, 3) < 0) { 
+        if (listen(server_fd, 3) < 0) {
             cout << endl << "Listen error" << endl;
             perror("listen");
             exit(EXIT_FAILURE); 
@@ -235,7 +235,6 @@ int main(int argc, char const *argv[])
 
                 // erroneous login status code disconnects client
                 if (statusCode < 0) {
-                    disconnectFlag = true;
                     disconnectStatus = disconnect(new_socket, DISCONNECT_RPC);
                     cout << "Disconnected; incorrect credentials." << endl;
                     cout << "Disconnect status: " << disconnectStatus << endl;
@@ -248,14 +247,14 @@ int main(int argc, char const *argv[])
             // Error message.
         }
         
-// TODO: SEND A BINARY VALUE
+        // TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
         MainMenu mainMenu;
-        cout << mainMenu.loop() << endl;
+        mainMenu.loop(new_socket);
         /*
         This is the stub for the main RPC switch statement
-        */
+
         while (!disconnectFlag) {
             read(new_socket, buffer, 1024);
 
@@ -269,7 +268,8 @@ int main(int argc, char const *argv[])
             }
             memset(buffer, 0, sizeof(buffer));
         }
-
+        */
+        cout << "at the end of ServerListenLoop" << endl;
     }
 
     // YOU SHALL NOT PASS. Always on server should never reach this point.
