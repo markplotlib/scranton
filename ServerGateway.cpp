@@ -8,12 +8,15 @@
 #include <string.h> 
 #include <iostream>
 #include "MainMenu.cpp"
+#include "StringParser.cpp"
 // next line from MM
 // #include "assert.h"
 #define PORT 8080
 using namespace std;
 
 
+// Separated into StringParser & KeyValue, kept code commented in case of failure 
+/*
 // key/value storage structure
 class KeyValue
 {
@@ -108,6 +111,7 @@ public:
 
 };
 
+*/
 
 // Connects the client socket to the server socket
 // return 0 if password/username passed.
@@ -146,7 +150,11 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "disconnected"; 
-    stringParser *parser = new stringParser();   // previous: (char *)testMSG
+    // Added for string parser separation 
+    StringParser stringParser; 
+    StringParser *parser = &stringParser; 
+    // Old code before separation 
+    //stringParser *parser = new stringParser();   // previous: (char *)testMSG
     KeyValue rpcKeyValue;
     int disconnectStatus;
 
