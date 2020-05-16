@@ -12,7 +12,7 @@ all: server client
 
 # type "make server" into terminal to only compile server
 server: ServerGateway.cpp
-	$(CC) $(CFLAGS) ServerGateway.cpp -o serverGateway
+	$(CC) $(CFLAGS) ServerGateway.cpp MainMenu.cpp -o serverGateway
 # same goes for "make client"
 client: Client.cpp
 	$(CC) $(CFLAGS) Client.cpp -o client

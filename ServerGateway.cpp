@@ -7,6 +7,8 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <iostream>
+
+#include "MainMenu.cpp"
 // next line from MM
 // #include "assert.h"
 #define PORT 8080
@@ -249,7 +251,8 @@ int main(int argc, char const *argv[])
 // TODO: SEND A BINARY VALUE
         send(new_socket , buffer , strlen(buffer) , 0 );
 
-
+        MainMenu mainMenu;
+        cout << mainMenu.loop() << endl;
         /*
         This is the stub for the main RPC switch statement
         */
