@@ -9,43 +9,43 @@
 
 class MainMenu {
 private:
-   char buffer[1024] = {0};
-   char DISCONNECT_RPC[1024] = "disconnected";
+   char buffer[1024] = {0};                        // buffer for socket listening
+   char DISCONNECT_RPC[1024] = "disconnected";     // used with disconnect RPC, delete if not in use
+   int socket;                                     // socket to listen from
 
 public:
-   MainMenu() {
-      // debug:
+   MainMenu(int socket) {
+      this->socket = socket;
       // std::cout << "MainMenu constructor" << std::endl;
    }
 
-   void loop(int new_socket) {
-      bool disconnectFlag = false;
-      
-      while (!disconnectFlag) {
-         read(new_socket, buffer, 1024);
-         std::cout << "Buffer reads: " << buffer << "in main menu." << std::endl;
+   // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
+   void loop() {
+      while (true) {
+         memset(buffer, 0, sizeof(buffer));
+         read(socket, buffer, 1024);
+         
+         // std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
          if (*buffer == *DISCONNECT_RPC) {
-            // IF disconnection is successful
-            if (disconnect(new_socket, buffer) == 0) {
-               memset(buffer, 0, sizeof(buffer));
-               disconnectFlag = true;
-            }
+            disconnectMM(socket, DISCONNECT_RPC);
+            // std::cout << "Exiting..." << std::endl;
+            pthread_exit(NULL);
+            std::cout << "pthread_exit ERROR" << std::endl;
          } else {
-            send(new_socket , buffer, strlen(buffer) , 0 );
+            send(socket , buffer, strlen(buffer) , 0 );
             memset(buffer, 0, sizeof(buffer));
          }
       }
-      std::cout << "Exit loop in MainMenu" << std::endl;
    }
 
    // Sends a message to client, and then closes the socket assigned to current client.
-   // return 0 if successful 
-   // return -1 if failed
-   int disconnect(int socket_num, char *buff){
+   // return 0 if successful, -1 if failed
+   int disconnectMM(int socket_num, char *buff) {
       // char disconnectMsg[1024] = {0};
       send(socket_num, buff, strlen(buff) , 0 );
       // close active socket
-      std::cout << "Hello from Main Menu disconnect" << std::endl;
       return close(socket_num);
    }
+
+   ~MainMenu() { std::cout << "Out of scope?" << std::endl;}
 };

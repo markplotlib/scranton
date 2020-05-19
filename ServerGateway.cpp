@@ -14,6 +14,15 @@
 #define PORT 8080
 using namespace std;
 
+// prepares a way for a thread to be sent to a dynamically created menu.
+void *threadToMenu(void *arg) {
+    int *socketPtr = (int *) arg;
+    MainMenu *mainMenuPtr;
+    mainMenuPtr = new MainMenu(*socketPtr);
+    mainMenuPtr->loop();
+    return NULL;
+}
+
 // Connects the client socket to the server socket
 // return 0 if password/username passed.
 // return -2 if incorrect password
@@ -32,6 +41,7 @@ int connect(char *username, char *password) {
     } else
         return -1;
 }
+
 
 // Sends a message to client, and then closes the socket assigned to current client.
 // return 0 if successful 
@@ -86,11 +96,13 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
             
-    // this loop is the server remaining active
 
+    // TODO Upgrade this when threads are dynamically created
+    pthread_t singleThread;
+
+    // this loop is the server remaining active
     while (true) {
-        // Debug:
-        cout << "Beginning of Server Listen loop" << endl;
+        cout << "Waiting for connection... " << endl << "... ... ... ..." << endl;
         
         // Establish a new connection.
         if (listen(server_fd, 3) < 0) {
@@ -134,14 +146,8 @@ int main(int argc, char const *argv[])
                 parser->getNextKeyValue(userKeyValue);
                 parser->getNextKeyValue(passKeyValue);
 
-                /* 
-                "connect" calls the login function
-                statusCode 0 = credentials confirmed
-                statusCode -1 = username does not exist
-                statusCode -2 = password incorrect
-                */
+                // statusCode 0 = credentials confirmed; -1 = username does not exist; -2 = password incorrect
                 int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());                
-                cout << "Statuscode: " << statusCode << endl;
 
                 // erroneous login status code disconnects client
                 if (statusCode < 0) {
@@ -156,16 +162,16 @@ int main(int argc, char const *argv[])
         } else {
             // Error message.
         }
-        
-        // TODO: SEND A BINARY VALUE
+        // Should send authentification confirmation signal.
         send(new_socket , buffer , strlen(buffer) , 0 );
 
-        MainMenu mainMenu;
-        mainMenu.loop(new_socket);
+        // In a function create dynamic mainmenu, and populate it with a single thread
+        pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
 
-        cout << "at the end of ServerListenLoop" << endl;
+        cout << "Thread created, returning to listening state" << endl;
     }
 
-    // YOU SHALL NOT PASS. Always on server should never reach this point.
+
+
     return 0; 
-} 
+}
