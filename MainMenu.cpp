@@ -21,7 +21,10 @@ public:
 
    // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
    void loop() {
-      while (true) {
+
+      bool connected = true;
+
+      while (connected) {
          memset(buffer, 0, sizeof(buffer));
          read(socket, buffer, 1024);
          
@@ -29,8 +32,7 @@ public:
          if (*buffer == *DISCONNECT_RPC) {
             disconnectMM(socket, DISCONNECT_RPC);
             // std::cout << "Exiting..." << std::endl;
-            pthread_exit(NULL);
-            std::cout << "pthread_exit ERROR" << std::endl;
+            connected = false;
          } else {
             send(socket , buffer, strlen(buffer) , 0 );
             memset(buffer, 0, sizeof(buffer));
@@ -47,5 +49,4 @@ public:
       return close(socket_num);
    }
 
-   ~MainMenu() { std::cout << "Out of scope?" << std::endl;}
 };
