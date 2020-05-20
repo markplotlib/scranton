@@ -14,12 +14,15 @@
 #define PORT 8080
 using namespace std;
 
+//TODO check this for mutex lock
 // prepares a way for a thread to be sent to a dynamically created menu.
 void *threadToMenu(void *arg) {
     int *socketPtr = (int *) arg;
     MainMenu *mainMenuPtr;
     mainMenuPtr = new MainMenu(*socketPtr);
     mainMenuPtr->loop();
+    delete mainMenuPtr;
+    pthread_exit(NULL);
     return NULL;
 }
 
@@ -162,6 +165,7 @@ int main(int argc, char const *argv[])
         } else {
             // Error message.
         }
+
         // Should send authentification confirmation signal.
         send(new_socket , buffer , strlen(buffer) , 0 );
 
@@ -170,7 +174,6 @@ int main(int argc, char const *argv[])
 
         cout << "Thread created, returning to listening state" << endl;
     }
-
 
 
     return 0; 
