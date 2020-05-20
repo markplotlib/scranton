@@ -152,6 +152,7 @@ int main(int argc, char const *argv[])
                 // erroneous login status code disconnects client
                 if (statusCode < 0) {
                     disconnectStatus = disconnect(new_socket, DISCONNECT_RPC);
+                    //TODO: Status code is -1 and 0 sometimes. Prints wrong, needs fixing. 
                     cout << "Disconnected; incorrect credentials." << endl;
                     cout << "Disconnect status: " << disconnectStatus << endl;
                 }
