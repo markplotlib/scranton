@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
     strcat(buffer, ";");
     puts(buffer);  // another way to print to screen
 */
-    const char *DISCONNECT_RPC = "disconnected";
+    const char *DISCONNECT_RPC = "disconnected"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // char DISCONNECT_MSG[1024] = {0}; 
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
         //cout << DISCONNECT_RPC << endl;
         //cout << buffer; 
     // cout << "debug statement: show buffer" << buffer << endl;
-    if (strcmp(buffer, DISCONNECT_RPC) == 0) {
+    if (strcmp(buffer, DISCONNECT_RPC) == 0) { // thisfix: if (strcmp(rpcKey, "rpc") == 0 && strcmp(rpcValue, "disconnect") == 0) {}
          // server is in listening loop
         //cout << DISCONNECT_RPC << endl;
         //cout << buffer; 
@@ -209,3 +209,8 @@ do {
     return 0; 
 } 
 
+// thisfix:
+void logout(char* buffer) {
+    strcpy(buffer, "rpc=disconnect;");  // take note: this is strcpy, not strcat! (easy to overlook)
+    puts(buffer);  // another way to print to screen
+}

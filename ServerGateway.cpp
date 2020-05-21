@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     int opt = 1;
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    char DISCONNECT_RPC[1024] = "disconnected"; 
+    char DISCONNECT_RPC[1024] = "disconnected"; // fix: char DISCONNECT_RPC[1024] = "disconnect";  NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // Added for string parser separation 
     StringParser stringParser;
     StringParser *parser = new StringParser; 
