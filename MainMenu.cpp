@@ -6,11 +6,10 @@
 #include <string.h> 
 #include <iostream>
 
-
 class MainMenu {
 private:
    char buffer[1024] = {0};                        // buffer for socket listening
-   char DISCONNECT_RPC[1024] = "disconnected";     // used with disconnect RPC, delete if not in use
+   char DISCONNECT_RPC[1024] = "rpc=disconnect;";
    int socket;                                     // socket to listen from
 
 public:
@@ -18,6 +17,17 @@ public:
       this->socket = socket;
       // std::cout << "MainMenu constructor" << std::endl;
    }
+
+/*
+        char *rpcKey;
+	     char *rpcValue;
+
+        parser->newRPC(buffer);                    // give the parser the message  
+        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
+        
+        rpcKey = rpcKeyValue.getKey();
+        rpcValue = rpcKeyValue.getValue();
+*/
 
    // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
    void loop() {
@@ -29,20 +39,20 @@ public:
          read(socket, buffer, 1024);
          
          // std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
-         if (*buffer == *DISCONNECT_RPC) {
-            disconnectMM(socket, DISCONNECT_RPC);
-            // std::cout << "Exiting..." << std::endl;
+
+         // check for disconnect rpc call.
+         if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
+            disconnectMainMenu(socket, DISCONNECT_RPC);
             connected = false;
-         } else {
+         } else { 
             send(socket , buffer, strlen(buffer) , 0 );
-            memset(buffer, 0, sizeof(buffer));
-         }
+         }               
       }
    }
 
    // Sends a message to client, and then closes the socket assigned to current client.
    // return 0 if successful, -1 if failed
-   int disconnectMM(int socket_num, char *buff) {
+   int disconnectMainMenu(int socket_num, char *buff) {
       // char disconnectMsg[1024] = {0};
       send(socket_num, buff, strlen(buff) , 0 );
       // close active socket

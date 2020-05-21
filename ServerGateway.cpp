@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     int opt = 1;
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    char DISCONNECT_RPC[1024] = "disconnected"; // fix: char DISCONNECT_RPC[1024] = "disconnect";  NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
+    char DISCONNECT_RPC[1024] = "rpc=disconnect;"; // fix: char DISCONNECT_RPC[1024] = "disconnect";  NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // Added for string parser separation 
     StringParser stringParser;
     StringParser *parser = new StringParser; 
@@ -152,7 +152,7 @@ int main(int argc, char const *argv[])
                 // statusCode 0 = credentials confirmed; -1 = username does not exist; -2 = password incorrect
                 int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());                
 
-                // erroneous login status code disconnects client
+                // erroneous login status code disconnects client -- thisfix -- to be clear, this is NOT a disconnect RPC -- this is initiated by the SERVER, NOT the client
                 if (statusCode < 0) {
                     disconnectStatus = disconnect(new_socket, DISCONNECT_RPC);
                     //TODO: Status code is -1 and 0 sometimes. Prints wrong, needs fixing. 

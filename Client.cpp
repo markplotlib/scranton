@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
     strcat(buffer, ";");
     puts(buffer);  // another way to print to screen
 */
-    const char *DISCONNECT_RPC = "disconnected"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
+    const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // char DISCONNECT_MSG[1024] = {0}; 
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
