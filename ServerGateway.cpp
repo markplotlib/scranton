@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "rpc=disconnect;"; // fix: char DISCONNECT_RPC[1024] = "disconnect";  NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // Added for string parser separation 
-    StringParser stringParser;
+    //StringParser stringParser;
     StringParser *parser = new StringParser; 
     // Old code before separation 
     //stringParser *parser = new stringParser();   // previous: (char *)testMSG
@@ -121,15 +121,16 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
+        // Authenticate
         read(new_socket, buffer, 1024);
 
-        // Login is separate from generic RPC interpretation in order to
-        // prevent RPCs from accessing other commands.
-     
+        parser->newRPC(buffer);                    // give the parser the message  
+        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
+
+//DELETE
         char *rpcKey;
 	    char *rpcValue;
 
-        
         parser->newRPC(buffer);                    // give the parser the message  
         parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
         
@@ -141,6 +142,9 @@ int main(int argc, char const *argv[])
             This is the stub of login/credential logic.
             It acts as a gateway BEFORE all other RPC parsing.
         */
+        /* A password is sent into this, and out of it comes a response: password is good or bad.*/
+        //authenticate(rpcKeyValue.getKey(), rpcKeyValue.getValue());
+
         if (strcmp(rpcKey, "rpc") == 0) {
             if (strcmp(rpcValue, "connect") == 0) {
                 // Get the next two arguments (user and password);
