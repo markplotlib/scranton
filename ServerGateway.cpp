@@ -27,12 +27,11 @@ void *threadToMenu(void *arg) {
 }
 
 // Connects the client socket to the server socket
+// TODO candidate
 // return 0 if password/username passed.
 // return -2 if incorrect password
 // return -1 if username does not exist
-int connect(char *username, char *password) {
-    // TODO: replace the following hardcoded username/password with
-    // a datavault class, or something better.
+int passwordVaultStub(char *username, char *password) {
     const char *CORRECT_UN = "mike";
     const char *CORRECT_PW = "123";
 
@@ -43,6 +42,30 @@ int connect(char *username, char *password) {
             return -2;
     } else
         return -1;
+}
+
+int authenticate(char *buffer, StringParser &parser) {
+    KeyValue authMessenger;
+    KeyValue usernameMessenger;
+    KeyValue passwordMessenger;
+    parser.newRPC(buffer);
+    parser.getNextKeyValue(authMessenger);
+    parser.getNextKeyValue(usernameMessenger);
+    parser.getNextKeyValue(passwordMessenger);
+
+    if ((strcmp(authMessenger.getKey(), "rpc") != 0) || 
+        (strcmp(authMessenger.getValue(), "connect") != 0))
+        {
+            return -3;
+        }
+
+    char *username = usernameMessenger.getValue();
+    char *password = passwordMessenger.getValue();
+
+    // returns a -1 for bad username, -2 for bad password, 0 if passed.
+    int retValue = passwordVaultStub(username, password);
+    cout << retValue << endl;
+    return retValue;
 }
 
 
@@ -63,14 +86,11 @@ int main(int argc, char const *argv[])
     int opt = 1;
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
-    char DISCONNECT_RPC[1024] = "rpc=disconnect;"; // fix: char DISCONNECT_RPC[1024] = "disconnect";  NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
-    // Added for string parser separation 
-    //StringParser stringParser;
+    char DISCONNECT_RPC[1024] = "rpc=disconnect;"; 
+    
+
     StringParser *parser = new StringParser; 
-    // Old code before separation 
-    //stringParser *parser = new stringParser();   // previous: (char *)testMSG
     KeyValue rpcKeyValue;
-    int disconnectStatus;
 
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -105,7 +125,7 @@ int main(int argc, char const *argv[])
 
     // this loop is the server remaining active
     while (true) {
-        cout << "Waiting for connection... " << endl << "... ... ... ..." << endl;
+        cout << "Waiting for connection" << endl << "... ... ... ..." << endl;
         
         // Establish a new connection.
         if (listen(server_fd, 3) < 0) {
@@ -121,58 +141,19 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
-        // Authenticate
+        // Username and password RPC should be sent in here.
         read(new_socket, buffer, 1024);
 
-        parser->newRPC(buffer);                    // give the parser the message  
-        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-
-//DELETE
-        char *rpcKey;
-	    char *rpcValue;
-
-        parser->newRPC(buffer);                    // give the parser the message  
-        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-        
-        rpcKey = rpcKeyValue.getKey();
-        rpcValue = rpcKeyValue.getValue();
-
-
-        /*
-            This is the stub of login/credential logic.
-            It acts as a gateway BEFORE all other RPC parsing.
-        */
         /* A password is sent into this, and out of it comes a response: password is good or bad.*/
-        //authenticate(rpcKeyValue.getKey(), rpcKeyValue.getValue());
+        int connectReturn = 0;
+        connectReturn = authenticate(buffer, *parser);
+        cout << "Login result: " << connectReturn << endl;
 
-        if (strcmp(rpcKey, "rpc") == 0) {
-            if (strcmp(rpcValue, "connect") == 0) {
-                // Get the next two arguments (user and password);
-                KeyValue userKeyValue;
-                KeyValue passKeyValue;
-                parser->getNextKeyValue(userKeyValue);
-                parser->getNextKeyValue(passKeyValue);
-
-                // statusCode 0 = credentials confirmed; -1 = username does not exist; -2 = password incorrect
-                int statusCode = connect(userKeyValue.getValue(), passKeyValue.getValue());                
-
-                // erroneous login status code disconnects client -- thisfix -- to be clear, this is NOT a disconnect RPC -- this is initiated by the SERVER, NOT the client
-                if (statusCode < 0) {
-                    disconnectStatus = disconnect(new_socket, DISCONNECT_RPC);
-                    //TODO: Status code is -1 and 0 sometimes. Prints wrong, needs fixing. 
-                    cout << "Disconnected; incorrect credentials." << endl;
-                    cout << "Disconnect status: " << disconnectStatus << endl;
-                }
-                
-            } else {
-                // Error message.
-            }
+        if (connectReturn < 0) {
+            connectReturn = disconnect(new_socket, DISCONNECT_RPC);
         } else {
-            // Error message.
+            send(new_socket , buffer , strlen(buffer) , 0 );
         }
-
-        // Should send authentification confirmation signal.
-        send(new_socket , buffer , strlen(buffer) , 0 );
 
         // In a function create dynamic mainmenu, and populate it with a single thread
         pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
