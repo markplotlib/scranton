@@ -8,7 +8,8 @@
 #include <string.h> 
 #include <iostream>
 #include "MainMenu.cpp"
-#include "StringParser.cpp"
+#include "StringParser.h"
+
 // next line from MM
 // #include "assert.h"
 #define PORT 8080
