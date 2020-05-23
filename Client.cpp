@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 
     //TODO: Do we remove sleep completely?
     //srand (time(NULL));    
-    const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
+// const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
 
 /*
     int sock = 0;
@@ -151,10 +151,10 @@ int main(int argc, char** argv) {
         //cout << buffer; 
         cout << "\nWrong credentials, disconnecting\n"; 
         // TODO: Remove sleep time if necessary
-        cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-        cout.flush();
-        sleep(SLEEP_TIME);
-        cout << endl;
+// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
+// cout.flush();
+// sleep(SLEEP_TIME);
+// cout << endl;
 
 
         return 0;
@@ -192,10 +192,10 @@ do {
 
 //TODO: Remove sleep timer?
 // sleep timer 
-    cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-    cout.flush();
-    sleep(SLEEP_TIME);
-    cout << endl;
+// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
+// cout.flush();
+// sleep(SLEEP_TIME);
+// cout << endl;
 
 // Disconnects 
 
