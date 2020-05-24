@@ -24,7 +24,7 @@ void *threadToMenu(void *arg) {
     mainMenuPtr->loop();
     delete mainMenuPtr;
     pthread_exit(NULL);
-    return NULL;
+    // don't need to return null in a void method
 }
 
 // Connects the client socket to the server socket

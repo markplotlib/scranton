@@ -23,7 +23,17 @@ void displayUserMenu() {
     cout << "1 - Disconnect\n";
     cout << "2 - Game Menu\n";
     // TODO: add game menu/ more options 
-    cout << "User Selection: ";
+    cout << "\nUser Selection: ";
+}
+
+void displayGameMenu() {
+    cout << "\nGame Menu Options\n";
+    cout << "\nSelect from the following options\n";
+    cout << "1 - Extreme Heads or Tails\n";
+    cout << "2 - Bridge of Death\n";
+    cout << "3 - Back to Main Menu\n";
+    // TODO: add games/ more options 
+    cout << "\nUser Selection: ";
 }
 
 // add the user arguments to the buffer 
@@ -55,31 +65,8 @@ int main(int argc, char** argv) {
     char buffer[1024] = {0}; 
     char argv1[40];
     char argv2[40]; 
-    //char argv1, argv2;
-    // char[40] argv2;
 
     getUserCredentials(argv1, argv2);
-/*
-    cout << "\nWelcome to the Dunder Mifflin client portal.\n" << endl;
-    cout << "\nPlease enter username ('mike'): ";
-    cin >> argv1;
-    //argv1 = "mike";
-    cout << "Please enter password ('123'): ";
-    cin >> argv2;
-    //argv2 = "123";
-    cout << "\nYou've typed " << argv1 << " and " << argv2 << endl;
-
-    // add the user arguments to the buffer
-    strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
-    strcat(buffer, "user=");
-    strcat(buffer, argv1);
-    //strcat(buffer, "mike");
-    strcat(buffer, ";password=");
-    strcat(buffer, argv2);
-    //strcat(buffer, "123");
-    strcat(buffer, ";");
-    puts(buffer);  // another way to print to screen
-*/
 
     // user login 
     login(buffer, argv1, argv2); 
@@ -87,22 +74,6 @@ int main(int argc, char** argv) {
     //TODO: Do we remove sleep completely?
     //srand (time(NULL));    
     const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
-
-/*
-    int sock = 0;
-    struct sockaddr_in serv_addr; 
-    char buffer[1024] = {0}; 
-
-    strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
-    strcat(buffer, "user=");
-    // strcat(buffer, argv1);
-    strcat(buffer, "mike");
-    strcat(buffer, ";password=");
-    // strcat(buffer, argv2);
-    strcat(buffer, "123");
-    strcat(buffer, ";");
-    puts(buffer);  // another way to print to screen
-*/
     const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // char DISCONNECT_MSG[1024] = {0}; 
     
@@ -183,7 +154,26 @@ do {
                 break; 
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
-                // TODO: Make game menu, open here 
+                // Game Menu Displayed Here 
+                    do{
+                    displayGameMenu(); 
+                    choice = getUserChoice(); 
+                    switch(choice){
+                        case 1:
+                            cout << "\nYou have chosen Extreme Heads or Tails\n";
+                           // send(sock, SELECT_RPC, strlen(SELECT_RPC), 0); 
+                           // read(sock, buffer, 1024);
+                            break;
+                        case 2:
+                            cout << "\nYou have chosen to cross the Bridge of Death\n";
+                           // send(sock, SELECT_RPC, strlen(SELECT_RPC), 0); 
+                            //read(sock, buffer, 1024); 
+                            break; 
+                        case 3: 
+                            cout << "\nSending you back to Main Menu\n";
+                            break;
+                    }
+                } while(choice != 3); 
                 break;
             default:
                 break; 
