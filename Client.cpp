@@ -73,7 +73,23 @@ int main(int argc, char** argv) {
 
     //TODO: Do we remove sleep completely?
     //srand (time(NULL));    
-    const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
+// const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
+
+/*
+    int sock = 0;
+    struct sockaddr_in serv_addr; 
+    char buffer[1024] = {0}; 
+
+    strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
+    strcat(buffer, "user=");
+    // strcat(buffer, argv1);
+    strcat(buffer, "mike");
+    strcat(buffer, ";password=");
+    // strcat(buffer, argv2);
+    strcat(buffer, "123");
+    strcat(buffer, ";");
+    puts(buffer);  // another way to print to screen
+*/
     const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // char DISCONNECT_MSG[1024] = {0}; 
     
@@ -122,10 +138,10 @@ int main(int argc, char** argv) {
         //cout << buffer; 
         cout << "\nWrong credentials, disconnecting\n"; 
         // TODO: Remove sleep time if necessary
-        cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-        cout.flush();
-        sleep(SLEEP_TIME);
-        cout << endl;
+// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
+// cout.flush();
+// sleep(SLEEP_TIME);
+// cout << endl;
 
 
         return 0;
@@ -182,10 +198,10 @@ do {
 
 //TODO: Remove sleep timer?
 // sleep timer 
-    cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-    cout.flush();
-    sleep(SLEEP_TIME);
-    cout << endl;
+// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
+// cout.flush();
+// sleep(SLEEP_TIME);
+// cout << endl;
 
 // Disconnects 
 
