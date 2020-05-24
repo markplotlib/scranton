@@ -1,3 +1,6 @@
+#ifndef STRING_PARSER_H
+#define STRING_PARSER_H
+
 #include "KeyValue.h"
 
 class StringParser {
@@ -25,3 +28,5 @@ private:
     KeyValue *m_pKeyValue{};
     char *m_pch{};                                   // This is another copy of it
 };
+
+#endif

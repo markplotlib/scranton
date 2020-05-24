@@ -4,6 +4,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h>
 #include <string.h> 
+#include "StringParser.h" 
 #include <iostream>
 
 class MainMenu {
@@ -11,6 +12,7 @@ private:
    char buffer[1024] = {0};                        // buffer for socket listening
    char DISCONNECT_RPC[1024] = "rpc=disconnect;";
    int socket;                                     // socket to listen from
+   StringParser interpreter;
 
 public:
    MainMenu(int socket) {

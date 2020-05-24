@@ -1,4 +1,7 @@
 
+#ifndef KEY_VALUE_H
+#define KEY_VALUE_H
+
 // key/value storage structure
 class KeyValue {
     
@@ -16,3 +19,4 @@ private:
     char m_szValue[2048]{};
 };
 
+#endif

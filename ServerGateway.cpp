@@ -147,7 +147,9 @@ int main(int argc, char const *argv[])
 
         /* A password is sent into this, and out of it comes a response: password is good or bad.*/
         int connectReturn = 0;
+// pthread_mutex_lock();
         connectReturn = authenticate(buffer, *parser);
+// pthread_mutex_unlock();
         cout << "Login result: " << connectReturn << endl;
 
         if (connectReturn < 0) {
