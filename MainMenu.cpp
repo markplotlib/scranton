@@ -9,56 +9,45 @@
 
 class MainMenu {
 private:
-   char buffer[1024] = {0};                        // buffer for socket listening
-   char DISCONNECT_RPC[1024] = "rpc=disconnect;";
-   int socket;                                     // socket to listen from
-   StringParser interpreter;
+    char buffer[1024] = {0};                                // buffer for socket listening
+    char DISCONNECT_RPC[1024] = "rpc=disconnect;";
+    int socket;                                                 // socket to listen from
+    StringParser interpreter;
 
 public:
-   MainMenu(int socket) {
-      this->socket = socket;
-      // std::cout << "MainMenu constructor" << std::endl;
-   }
+    MainMenu(int socket) {
+        this->socket = socket;
+        // std::cout << "MainMenu constructor" << std::endl;
+    }
 
-/*
-        char *rpcKey;
-	     char *rpcValue;
+    // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
+    void loop() {
 
-        parser->newRPC(buffer);                    // give the parser the message  
-        parser->getNextKeyValue(rpcKeyValue);      // assign Key/Value data structure the first pair
-        
-        rpcKey = rpcKeyValue.getKey();
-        rpcValue = rpcKeyValue.getValue();
-*/
+        bool connected = true;
 
-   // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
-   void loop() {
+        while (connected) {
+            memset(buffer, 0, sizeof(buffer));
+            read(socket, buffer, 1024);
+            
+            // std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
 
-      bool connected = true;
+            // check for disconnect rpc call.
+            if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
+                disconnectMainMenu(socket, DISCONNECT_RPC);
+                connected = false;
+            } else { 
+                send(socket , buffer, strlen(buffer) , 0 );
+            }                    
+        }
+    }
 
-      while (connected) {
-         memset(buffer, 0, sizeof(buffer));
-         read(socket, buffer, 1024);
-         
-         // std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
-
-         // check for disconnect rpc call.
-         if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
-            disconnectMainMenu(socket, DISCONNECT_RPC);
-            connected = false;
-         } else { 
-            send(socket , buffer, strlen(buffer) , 0 );
-         }               
-      }
-   }
-
-   // Sends a message to client, and then closes the socket assigned to current client.
-   // return 0 if successful, -1 if failed
-   int disconnectMainMenu(int socket_num, char *buff) {
-      // char disconnectMsg[1024] = {0};
-      send(socket_num, buff, strlen(buff) , 0 );
-      // close active socket
-      return close(socket_num);
-   }
+    // Sends a message to client, and then closes the socket assigned to current client.
+    // return 0 if successful, -1 if failed
+    int disconnectMainMenu(int socket_num, char *buff) {
+        // char disconnectMsg[1024] = {0};
+        send(socket_num, buff, strlen(buff) , 0 );
+        // close active socket
+        return close(socket_num);
+    }
 
 };
