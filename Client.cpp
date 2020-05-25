@@ -6,7 +6,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#define PORT 8080
+#define PORT 9000
 using namespace std;
 
 // get usrer choice for menu switch
@@ -54,6 +54,21 @@ void getUserCredentials(char* username, char* password){
     cout << "Please enter password ('123'): ";
     cin >> password;
     cout << "\nYou've typed " << username << " and " << password << endl;
+}
+
+void selectGame(char* buffer, int gameNumber){
+    // rpc format     "rpc=selectgame;game=1;"
+  
+    // add select rpc info to the buffer 
+    strcpy(buffer, "rpc=selectgame;");
+    strcat(buffer, "game=");
+    if(gameNumber == 1){
+    strcat(buffer, "1");
+    } 
+    else if(gameNumber == 2){
+       strcat(buffer, "2"); 
+    } 
+    // does the send need to be here?
 }
 
 
@@ -177,13 +192,25 @@ do {
                     switch(choice){
                         case 1:
                             cout << "\nYou have chosen Extreme Heads or Tails\n";
-                           // send(sock, SELECT_RPC, strlen(SELECT_RPC), 0); 
-                           // read(sock, buffer, 1024);
+                              // clear the buffer just in case 
+                            memset(buffer, 0, sizeof(buffer));
+                            selectGame(buffer, 1); 
+                            // sending game selection in buffer 
+                            cout << "Buffer is : " << buffer << endl; 
+                            send(sock , buffer , strlen(buffer) , 0 );
+                            // read message
+                            read(sock, buffer, 1024);
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
-                           // send(sock, SELECT_RPC, strlen(SELECT_RPC), 0); 
-                            //read(sock, buffer, 1024); 
+                            // clear the buffer just in case 
+                            memset(buffer, 0, sizeof(buffer));
+                            // TODO: Game 2 is not implemented yet 
+                            selectGame(buffer, 2); 
+                            cout << "Buffer is : " << buffer << endl; 
+                            send(sock , buffer , strlen(buffer) , 0 );
+                            // read message
+                            read(sock, buffer, 1024);
                             break; 
                         case 3: 
                             cout << "\nSending you back to Main Menu\n";

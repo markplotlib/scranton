@@ -12,7 +12,7 @@
 
 // next line from MM
 // #include "assert.h"
-#define PORT 8080
+#define PORT 9000
 using namespace std;
 
 //TODO check this for mutex lock
@@ -24,6 +24,7 @@ void *threadToMenu(void *arg) {
     mainMenuPtr->loop();
     delete mainMenuPtr;
     pthread_exit(NULL);
+    return(NULL); 
     // don't need to return null in a void method
 }
 

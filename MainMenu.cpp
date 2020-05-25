@@ -7,10 +7,14 @@
 #include "StringParser.h" 
 #include <iostream>
 
+
+
 class MainMenu {
 private:
    char buffer[1024] = {0};                        // buffer for socket listening
    char DISCONNECT_RPC[1024] = "rpc=disconnect;";
+   char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
+   char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
    int socket;                                     // socket to listen from
    StringParser interpreter;
 
@@ -19,7 +23,7 @@ public:
       this->socket = socket;
       // std::cout << "MainMenu constructor" << std::endl;
    }
-
+   
 /*
         char *rpcKey;
 	     char *rpcValue;
@@ -39,11 +43,18 @@ public:
       while (connected) {
          memset(buffer, 0, sizeof(buffer));
          read(socket, buffer, 1024);
-         
-         // std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
+          std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
+
+         // check for select game rpc 
+         if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
+            //TODO: RUN GAME 1 HERE 
+         }
+         else if (strcmp(buffer , SELECTGAME2_RPC) == 0) {
+            //TODO: RUN GAME 2 HERE 
+         }
 
          // check for disconnect rpc call.
-         if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
+         else if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
             disconnectMainMenu(socket, DISCONNECT_RPC);
             connected = false;
          } else { 
@@ -61,4 +72,5 @@ public:
       return close(socket_num);
    }
 
+ 
 };
