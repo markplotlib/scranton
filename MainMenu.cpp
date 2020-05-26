@@ -30,7 +30,7 @@ public:
         while (connected) {
             memset(buffer, 0, sizeof(buffer));
             read(socket, buffer, 1024);
-             std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
+            std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
 
             // check for select game rpc 
             if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
