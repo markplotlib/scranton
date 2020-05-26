@@ -6,18 +6,11 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
+#include "HeadsTails.cpp"
 #define PORT 12104
 using namespace std;
 
-                #include "HeadsTails.cpp"
-                void temporaryHeadsTailsGame() {
-
-                    HeadsTails game = HeadsTails();
-
-                    cout << "You've won " << game.getNumWins() << " out of " << game.getNumRounds() << " rounds" << endl;
-                    cout << "Well, this was lots of fun. Goodbye." << endl;
-
-                }
+void playHeadsTailsGame();
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -73,11 +66,13 @@ void selectGame(char* buffer, int gameNumber){
     strcpy(buffer, "rpc=selectgame;");
     strcat(buffer, "game=");
 // TODO: cast gameNumber as string or char
+// char c = (char) gameNumber;
+// strcat(buffer, c);
     if(gameNumber == 1){
-    strcat(buffer, "1");
+        strcat(buffer, "1");
     } 
     else if(gameNumber == 2){
-       strcat(buffer, "2"); 
+        strcat(buffer, "2"); 
     } 
     // does the send need to be here?
     // Mark: No it does not. login function has no send.
@@ -210,10 +205,11 @@ do {
                             selectGame(buffer, 1); 
                             // sending game selection in buffer 
                             cout << "Buffer is : " << buffer << endl; 
-temporaryHeadsTailsGame();
                             send(sock , buffer , strlen(buffer) , 0 );
+playHeadsTailsGame();
                             // read message
                             read(sock, buffer, 1024);
+cout << "PRINTING: buffer received by Client: " << buffer << endl;
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
@@ -260,4 +256,11 @@ temporaryHeadsTailsGame();
 void logout(char* buffer) {
     strcpy(buffer, "rpc=disconnect;");  // take note: this is strcpy, not strcat! (easy to overlook)
     puts(buffer);  // another way to print to screen
+}
+
+// initiates Heads or Tails game, from HeadsTails.cpp
+void playHeadsTailsGame() {
+    HeadsTails game = HeadsTails();
+    cout << "You've won " << game.getNumWins() << " out of " << game.getNumRounds() << " rounds" << endl;
+    cout << "Well, this was lots of fun. Goodbye." << endl;
 }

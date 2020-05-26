@@ -2,3 +2,5 @@ archive/
 client
 serverGateway
 5042-team.code-workspace
+.vscode/
+game.o
