@@ -8,7 +8,7 @@ CFLAGS= -std=c++11 -Wall -Werror -pedantic -ggdb
 # syntax:
 # [name]:[target]
 # [tab][command]
-all: server client
+all: server client mainmenu 
 
 # type "make server" into terminal to only compile server
 server: ServerGateway.cpp
@@ -16,6 +16,9 @@ server: ServerGateway.cpp
 # same goes for "make client"
 client: Client.cpp
 	$(CC) $(CFLAGS) Client.cpp -o client
+
+mainmenu: ServerGateway.cpp
+	$(CC) $(CFLAGS) ServerGateway.cpp MainMenu.cpp -o serverGateway -lpthread
 
 # type "make clean" into the terminal here
 # to only remove all .o file
