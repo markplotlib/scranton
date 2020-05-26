@@ -10,7 +10,6 @@
 #define PORT 12104
 using namespace std;
 
-void playHeadsTailsGame();
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -206,7 +205,6 @@ do {
                             // sending game selection in buffer 
                             cout << "Buffer is : " << buffer << endl; 
                             send(sock , buffer , strlen(buffer) , 0 );
-playHeadsTailsGame();
                             // read message
                             read(sock, buffer, 1024);
 cout << "PRINTING: buffer received by Client: " << buffer << endl;
@@ -258,9 +256,3 @@ void logout(char* buffer) {
     puts(buffer);  // another way to print to screen
 }
 
-// initiates Heads or Tails game, from HeadsTails.cpp
-void playHeadsTailsGame() {
-    HeadsTails game = HeadsTails();
-    cout << "You've won " << game.getNumWins() << " out of " << game.getNumRounds() << " rounds" << endl;
-    cout << "Well, this was lots of fun. Goodbye." << endl;
-}
