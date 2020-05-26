@@ -6,6 +6,8 @@
 #include <string.h> 
 #include "StringParser.h" 
 #include <iostream>
+#include "HeadsTails.cpp"
+using namespace std;
 
 class MainMenu {
 private:
@@ -21,6 +23,20 @@ public:
         this->socket = socket;
         // std::cout << "MainMenu constructor" << std::endl;
     }
+
+    void launchHeadsTailsGame() {
+        HeadsTails game = HeadsTails();
+        printf("printf -- launchHeadsTailsGame FROM MainMenu (aka GameServer).\n");
+        memset(buffer, 0, sizeof(buffer));
+        strcpy(buffer, "<<<<<<<<< DOES ANYONE READ THIS??? >>>>>>>>> BUFFER from MainMenu (aka GameServer).\n");
+        // strcat(buffer, "launchHeadsTailsGame FROM MainMenu (aka GameServer).\n");
+        send(socket, buffer, strlen(buffer), 0);
+        game.addNum();
+        // printf(game.getDog());
+// cout << "You've won " << game.getNumWins() << " out of " << game.getNumRounds() << " rounds" << endl;
+// cout << "Well, this was lots of fun. Goodbye." << endl;
+    }
+
     
     // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
     void loop() {
@@ -30,11 +46,12 @@ public:
         while (connected) {
             memset(buffer, 0, sizeof(buffer));
             read(socket, buffer, 1024);
-             std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
+            std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
 
             // check for select game rpc 
             if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
-                //TODO: RUN GAME 1 HERE 
+                std::cout << "TEST TEST in main menu." << std::endl;
+                launchHeadsTailsGame();
             }
             else if (strcmp(buffer , SELECTGAME2_RPC) == 0) {
                 //TODO: RUN GAME 2 HERE 

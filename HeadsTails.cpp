@@ -4,10 +4,17 @@ using namespace std;
 
 class HeadsTails {
 private:
+    string dog = "dog";
     int wins = 0;
     int rounds = 0;
 
 public:
+    string getDog() { return dog; }
+
+    void addNum() {
+        wins++;
+    }
+
     HeadsTails() {
         char in = '_';  // default
         while (in != 'x') {
