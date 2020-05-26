@@ -6,10 +6,10 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#include "HeadsTails.cpp"
 #define PORT 12104
 using namespace std;
 
+void engageHeadsTails(int, char *);
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -198,16 +198,7 @@ do {
                     choice = getUserChoice(); 
                     switch(choice){
                         case 1:
-                            cout << "\nYou have chosen Extreme Heads or Tails\n";
-                              // clear the buffer just in case 
-                            memset(buffer, 0, sizeof(buffer));
-                            selectGame(buffer, 1); 
-                            // sending game selection in buffer 
-                            cout << "Buffer is : " << buffer << endl; 
-                            send(sock , buffer , strlen(buffer) , 0 );
-                            // read message
-                            read(sock, buffer, 1024);
-cout << "PRINTING: buffer received by Client: " << buffer << endl;
+                            engageHeadsTails(sock, buffer);
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
@@ -256,3 +247,19 @@ void logout(char* buffer) {
     puts(buffer);  // another way to print to screen
 }
 
+void engageHeadsTails(int sockNum, char *buff) {
+    cout << "\nYou have chosen Extreme Heads or Tails\n";
+    // clear the buffer just in case 
+    // memset(buff, 0, sizeof(buff));
+    selectGame(buff, 1);
+    // sending game selection in buffer 
+    cout << "Buffer is : " << buff << endl; 
+    send(sockNum, buff , strlen(buff) , 0 );
+    // read message
+    read(sockNum, buff, 1024);
+    cout << "PRINTING: buffer received by Client: " << buff << endl;
+}
+
+// error: argument to ‘sizeof’ 
+// in ‘void* memset(void*, int, size_t)’ call 
+// is the same expression as the destination; did you mean to provide an explicit length?
