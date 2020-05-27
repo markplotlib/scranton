@@ -9,7 +9,7 @@
 #define PORT 12104
 using namespace std;
 
-void engageHeadsTails(int, char *);
+void launchHeadsTails(int, char *);
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -202,7 +202,7 @@ cout << "#### about to break out of case 1" << endl;
                     choice = getUserChoice(); 
                     switch(choice){
                         case 1:
-                            engageHeadsTails(sock, buffer);
+                            launchHeadsTails(sock, buffer);
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
@@ -258,15 +258,12 @@ void logout(char* buffer) {
     puts(buffer);  // another way to print to screen
 }
 
-void engageHeadsTails(int sockNum, char *buff) {
-    cout << "\nYou have chosen Extreme Heads or Tails\n";
-    char guess = 'h';
-    string prompt = "Guess the coin flip:  ";
-    while (guess == 'h' || guess == 't')
-    {
-        cout << prompt << "h)eads  t)ails: ";
-        cin >> guess;
-
+void launchHeadsTails(int sockNum, char *buff) {
+    // client-side display and prompt
+    cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
+    char guess;
+    cin >> guess;    
+    do {
 cout << "HA! TWO-FACED HEADS COIN!" << endl;
 string coin = "heads";
         cout << "The coin shows ___" << coin << "___. ";
@@ -276,14 +273,15 @@ string coin = "heads";
         } else
             cout << "Sorry :( ";
 
-        prompt = "\nPlay again? Enter any other key to exit.\n";
-    } 
+        cout << "\nPlay again?  h)eads  t)ails.  Enter any other key to exit.\n";
+        cin >> guess;
+    } while (guess == 'h' || guess == 't');
 
     // // clear the buffer just in case 
-    // // memset(buff, 0, sizeof(buff));
+    // memset(buff, 0, 1024);
     // selectGame(buff, 1);
     // // sending game selection in buffer 
-    // cout << "####inside bottom of Client.engageHeadsTails(). \nbuff is : " << buff << endl; 
+    // cout << "####inside bottom of Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
     // send(sockNum, buff , strlen(buff) , 0 );
     // // read message
     // read(sockNum, buff, 1024);
