@@ -9,7 +9,8 @@
 #define PORT 12104
 using namespace std;
 
-void launchHeadsTails(int, char *);
+// void launchHeadsTails(int, char*); deadcode
+void launchHeadsTails(int);
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -94,28 +95,8 @@ int main(int argc, char** argv) {
     // user login 
     login(buffer, argv1, argv2); 
 
-    //TODO: Do we remove sleep completely?
-    //srand (time(NULL));    
-// const int SLEEP_TIME = 2;  //rand() % 10 + 1;  // Sleep for 1 to 10 seconds
-
-/*
-    int sock = 0;
-    struct sockaddr_in serv_addr; 
-    char buffer[1024] = {0}; 
-
-    strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
-    strcat(buffer, "user=");
-    // strcat(buffer, argv1);
-    strcat(buffer, "mike");
-    strcat(buffer, ";password=");
-    // strcat(buffer, argv2);
-    strcat(buffer, "123");
-    strcat(buffer, ";");
-    puts(buffer);  // another way to print to screen
-*/
     const char *SERVER_STATS_RPC = "rpc=returnStats;";
     const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
-    // char DISCONNECT_MSG[1024] = {0}; 
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
@@ -144,55 +125,29 @@ int main(int argc, char** argv) {
     // sending username/password rpc
     send(sock , buffer , strlen(buffer) , 0 );
 
-    // TODO: please fix! should not always print!
-    // int statusCode = 0; // 0 = no error
-    // if (statusCode == 0)
-    // 	printf("\nWelcome %s", argv[1]);
-
     // read incoming message
     memset(buffer, 0, sizeof(buffer));
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
 
-        //cout << DISCONNECT_RPC << endl;
-        //cout << buffer; 
-    // cout << "debug statement: show buffer" << buffer << endl;
     if (strcmp(buffer, DISCONNECT_RPC) == 0) { // thisfix: if (strcmp(rpcKey, "rpc") == 0 && strcmp(rpcValue, "disconnect") == 0) {}
          // server is in listening loop
-        //cout << DISCONNECT_RPC << endl;
-        //cout << buffer; 
         cout << "\nWrong credentials, disconnecting\n"; 
-        // TODO: Remove sleep time if necessary
-// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-// cout.flush();
-// sleep(SLEEP_TIME);
-// cout << endl;
-
 
         return 0;
-    } else {
-        /*
-        cout << "============" << endl;
-        cout << "buffer:" <<  buffer << endl;
-        cout << "============" << endl;
-        cout << "DISCONNECT_RPC: " << DISCONNECT_RPC << endl;
-        */
     }
-
     
-// Client start menu loop 
-do { 
-    // clear screen goes here
-    displayUserMenu(); 
-    choice = getUserChoice(); 
-    switch(choice) {
+    // Client start menu loop 
+    do { 
+        // clear screen goes here
+        displayUserMenu(); 
+        choice = getUserChoice(); 
+        switch(choice) {
             case 1: 
                 cout << "\nDisconnecting from the Server\n"; 
                 // Send choice to server to disconnect
                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                 printf("Disconnect message sent\n");    
-cout << "#### choice = " << choice << endl;
                 read(sock, buffer, 1024);
-cout << "#### about to break out of case 1" << endl;
                 break;
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
@@ -202,7 +157,8 @@ cout << "#### about to break out of case 1" << endl;
                     choice = getUserChoice(); 
                     switch(choice){
                         case 1:
-                            launchHeadsTails(sock, buffer);
+                            // launchHeadsTails(sock, buffer); deadcode
+                            launchHeadsTails(sock);
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
@@ -229,41 +185,25 @@ cout << "#### about to break out of case 1" << endl;
                 memset(buffer, 0, sizeof(buffer));
             default:
                 break; 
-    }
-} while(choice != 1);
-cout << "#### MMEEOW exiting \'Client start menu loop\'" << endl;
+        }
+    } while(choice != 1);
 
-//TODO: Remove sleep timer?
-// sleep timer 
-// cout << "Auto-disconnect in " << SLEEP_TIME << " seconds";
-// cout.flush();
-// sleep(SLEEP_TIME);
-// cout << endl;
-
-// Disconnects 
-
-    // server is in listening loop
-/*
-    send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
-    printf("Disconnect message sent\n");    
-
-    read(sock, buffer, 1024);
-*/
     return 0; 
 } 
 
-// thisfix:
-void logout(char* buffer) {
-    strcpy(buffer, "rpc=disconnect;");  // take note: this is strcpy, not strcat! (easy to overlook)
-    puts(buffer);  // another way to print to screen
-}
 
-void launchHeadsTails(int sockNum, char *buff) {
+void launchHeadsTails(int sockNum) {
     // client-side display and prompt
+    char buff[1024] = {0};
     cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
     char guess;
-    cin >> guess;    
+    cin >> guess;
     do {
+        strcpy(buff, "rpc=flipcoin;");
+        strcat(buff, "guess=");
+        // strcat(buff, guess);
+        strcat(buff, ";");
+    cout << "####inside Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
 cout << "HA! TWO-FACED HEADS COIN!" << endl;
 string coin = "heads";
         cout << "The coin shows ___" << coin << "___. ";
@@ -287,7 +227,3 @@ string coin = "heads";
     // read(sockNum, buff, 1024);
     // cout << "####PRINTING: buffer received by Client: " << buff << endl;
 }
-
-// error: argument to ‘sizeof’ 
-// in ‘void* memset(void*, int, size_t)’ call 
-// is the same expression as the destination; did you mean to provide an explicit length?
