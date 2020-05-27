@@ -6,6 +6,7 @@
 #include <string.h> 
 #include "StringParser.h" 
 #include <iostream>
+#include "ServerStats.h"
 
 class MainMenu {
 private:
@@ -13,12 +14,15 @@ private:
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
     char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
+    char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
     StringParser interpreter;
+    ServerStats serverStats;
 
 public:
-    MainMenu(int socket) {
+    MainMenu(int socket, ServerStats &serverStats) {
         this->socket = socket;
+        this->serverStats = serverStats;
         // std::cout << "MainMenu constructor" << std::endl;
     }
     
@@ -33,8 +37,12 @@ public:
             std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
 
             // check for select game rpc 
-            if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
-                //TODO: RUN GAME 1 HERE 
+            if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) {
+                memset(buffer, 0, sizeof(buffer));
+                int numClients = serverStats.getNumActiveClients();
+                sprintf(buffer,"%d", numClients);
+                std::cout << "ServerStats RPC accessed" << std::endl;
+                send(socket, buffer, strlen(buffer), 0 );
             }
             else if (strcmp(buffer , SELECTGAME2_RPC) == 0) {
                 //TODO: RUN GAME 2 HERE 

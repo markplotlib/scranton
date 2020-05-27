@@ -9,20 +9,25 @@
 #include <iostream>
 #include "MainMenu.cpp"
 #include "StringParser.h"
+#include "ServerStats.h"
 
 // next line from MM
 // #include "assert.h"
 #define PORT 12104
 using namespace std;
 
+ServerStats serverStats;
+
 //TODO check this for mutex lock
 // prepares a way for a thread to be sent to a dynamically created menu.
 void *threadToMenu(void *arg) {
+    serverStats.incrementNumActiveClients();
     int *socketPtr = (int *) arg;
     MainMenu *mainMenuPtr;
-    mainMenuPtr = new MainMenu(*socketPtr);
+    mainMenuPtr = new MainMenu(*socketPtr, serverStats);
     mainMenuPtr->loop();
     delete mainMenuPtr;
+    serverStats.decrementNumActiveClients();
     pthread_exit(NULL);
     // don't need to return null in a void method
 }
@@ -80,6 +85,7 @@ int disconnect(int socket_num, char *buff){
     return close(socket_num);
 }
 
+
 int main(int argc, char const *argv[]) 
 { 
     int server_fd, new_socket;
@@ -88,7 +94,6 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address); 
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "rpc=disconnect;"; 
-    
 
     StringParser *parser = new StringParser; 
     KeyValue rpcKeyValue;
