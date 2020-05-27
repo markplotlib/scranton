@@ -222,14 +222,12 @@ do {
                 } while(choice != 3); 
                 break;
             case 3: 
-                cout << "You have selected 3" << endl;
-                send(sock , SERVER_STATS_RPC , strlen(buffer) , 0 );
-                cout << "you have sent three" << endl;
+                send(sock , SERVER_STATS_RPC, strlen(SERVER_STATS_RPC) , 0 );
                 memset(buffer, 0, sizeof(buffer));
                 read(sock, buffer, 1024);
-                cout << "you have read 4" << endl;
-                cout << "There are currently " << buffer << " active users." << endl;
-                memset(buffer, 0, sizeof(buffer));
+                cout << "============================\n" <<
+                        "Server has " << buffer << " clients connected.\n" <<
+                        "============================" << endl;
                 break;
             default:
                 break; 

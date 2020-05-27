@@ -81,7 +81,6 @@ public:
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) {
                 memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
-                std::cout << "ServerStats RPC accessed, buffer =" << buffer << std::endl;
                 send(socket, buffer, strlen(buffer), 0 );
             }
             // check for disconnect rpc call.
