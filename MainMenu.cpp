@@ -34,7 +34,6 @@ public:
 
     void flipCoin() {
         memset(buffer, 0, sizeof(buffer));
-        strcpy(buffer, "Menu options: h) Guess 'heads'. t) Guess 'tails'. x) Exit.\nPlease enter an option: ");
         std::cout << "#### in MainMenu.flipCoin(), around line 35.\nBuffer reads \'" << buffer << "\', ." << std::endl;
         send(socket , buffer, strlen(buffer) , 0 );  // sends to 
         char guess;
