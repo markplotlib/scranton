@@ -190,8 +190,10 @@ do {
                 // Send choice to server to disconnect
                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                 printf("Disconnect message sent\n");    
+cout << "#### choice = " << choice << endl;
                 read(sock, buffer, 1024);
-                break; 
+cout << "#### about to break out of case 1" << endl;
+                break;
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
                 // Game Menu Displayed Here 
@@ -208,7 +210,7 @@ do {
                             memset(buffer, 0, sizeof(buffer));
                             // TODO: Game 2 is not implemented yet 
                             selectGame(buffer, 2); 
-                            cout << "Buffer is : " << buffer << endl; 
+                            cout << "####Buffer is : " << buffer << endl; 
                             send(sock , buffer , strlen(buffer) , 0 );
                             // read message
                             read(sock, buffer, 1024);
@@ -229,6 +231,7 @@ do {
                 break; 
     }
 } while(choice != 1);
+cout << "#### MMEEOW exiting \'Client start menu loop\'" << endl;
 
 //TODO: Remove sleep timer?
 // sleep timer 
@@ -257,15 +260,34 @@ void logout(char* buffer) {
 
 void engageHeadsTails(int sockNum, char *buff) {
     cout << "\nYou have chosen Extreme Heads or Tails\n";
-    // clear the buffer just in case 
-    // memset(buff, 0, sizeof(buff));
-    selectGame(buff, 1);
-    // sending game selection in buffer 
-    cout << "Buffer is : " << buff << endl; 
-    send(sockNum, buff , strlen(buff) , 0 );
-    // read message
-    read(sockNum, buff, 1024);
-    cout << "PRINTING: buffer received by Client: " << buff << endl;
+    char guess = 'h';
+    string prompt = "Guess the coin flip:  ";
+    while (guess == 'h' || guess == 't')
+    {
+        cout << prompt << "h)eads  t)ails: ";
+        cin >> guess;
+
+cout << "HA! TWO-FACED HEADS COIN!" << endl;
+string coin = "heads";
+        cout << "The coin shows ___" << coin << "___. ";
+        if (guess == coin[0]) {
+            // htWins++;
+            cout << "You've won :) ";
+        } else
+            cout << "Sorry :( ";
+
+        prompt = "\nPlay again? Enter any other key to exit.\n";
+    } 
+
+    // // clear the buffer just in case 
+    // // memset(buff, 0, sizeof(buff));
+    // selectGame(buff, 1);
+    // // sending game selection in buffer 
+    // cout << "####inside bottom of Client.engageHeadsTails(). \nbuff is : " << buff << endl; 
+    // send(sockNum, buff , strlen(buff) , 0 );
+    // // read message
+    // read(sockNum, buff, 1024);
+    // cout << "####PRINTING: buffer received by Client: " << buff << endl;
 }
 
 // error: argument to ‘sizeof’ 

@@ -27,25 +27,24 @@ public:
         // std::cout << "MainMenu constructor" << std::endl;
     }
 
-    void launchHeadsTailsGame() {
-        char in = '_';  // default
-        while (in != 'x') {
-            cout << "Menu options: h) Guess 'heads'. t) Guess 'tails'. x) Exit." << endl;
-            cout << "Please enter an option: ";
-            cin >> in;
-            if (in == 'h' || in == 't') {
-                srand (time(NULL));
-                string coin = rand() % 2 == 0 ? "heads" : "tails";
-                cout << "The coin shows ___" << coin << "___. ";
-                if (in == coin[0]) {
-                    // htWins++;
-                    cout << "You've won :)\nPlay again?" << endl;
-                    // cout << "Well, whoop dee doo. You got it right.\nPlay again?" << endl;
-                } else
-                    cout << "Sorry :(\nPlay again?" << endl;
-                    // cout << "You must practice, and concentrate. A winner keeps the eyes on the prize.\nPlay again?" << endl;
-                htRounds++;
-            }
+    void flipCoin() {
+        memset(buffer, 0, sizeof(buffer));
+        strcpy(buffer, "Menu options: h) Guess 'heads'. t) Guess 'tails'. x) Exit.\nPlease enter an option: ");
+        std::cout << "#### in MainMenu.flipCoin(), around line 35.\nBuffer reads \'" << buffer << "\', ." << std::endl;
+        send(socket , buffer, strlen(buffer) , 0 );  // sends to 
+        char guess;
+        cin >> guess;
+        if (guess == 'h' || guess == 't') {
+            srand (time(NULL));
+            string coin = rand() % 2 == 0 ? "heads" : "tails";
+            cout << "The coin shows ___" << coin << "___. ";
+
+            if (guess == coin[0]) {
+                // htWins++;
+                cout << "You've won :)\nPlay again?" << endl;
+            } else
+                cout << "Sorry :(\nPlay again?" << endl;
+            htRounds++;
         }
         // cout << "You've won " << htGetNumWins() << " out of " << htGetNumRounds() << " rounds" << endl;
         cout << "You've played " << htGetNumRounds() << " rounds" << endl;
@@ -63,12 +62,12 @@ public:
         while (connected) {
             memset(buffer, 0, sizeof(buffer));
             read(socket, buffer, 1024);
-            std::cout << "Buffer reads \'" << buffer << "\', in main menu." << std::endl;
+            std::cout << "#### in MainMenu.loop(), around line 70.\nBuffer reads \'" << buffer << "\', ." << std::endl;
 
             // check for select game rpc 
             if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
                 // initiates Heads or Tails game
-                launchHeadsTailsGame();
+                flipCoin();
                 // disconnect
                 disconnectMainMenu(socket, DISCONNECT_RPC);
                 connected = false;
