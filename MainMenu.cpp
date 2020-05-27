@@ -67,7 +67,7 @@ public:
         while (connected) {
             memset(buffer, 0, sizeof(buffer));
             read(socket, buffer, 1024);
-            std::cout << "#### in MainMenu.loop(), around line 70.\nBuffer reads \'" << buffer << "\', ." << std::endl;
+            std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
             // check for select game rpc 
             if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
@@ -80,9 +80,8 @@ public:
             
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) {
                 memset(buffer, 0, sizeof(buffer));
-                int numClients = serverStats.getNumActiveClients();
-                sprintf(buffer,"%d", numClients);
-                std::cout << "ServerStats RPC accessed" << std::endl;
+                sprintf(buffer,"%d", serverStats.getNumActiveClients());
+                std::cout << "ServerStats RPC accessed, buffer =" << buffer << std::endl;
                 send(socket, buffer, strlen(buffer), 0 );
             }
             // check for disconnect rpc call.

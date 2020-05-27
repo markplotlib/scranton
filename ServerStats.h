@@ -7,12 +7,12 @@ private:
     volatile int numActiveClients;
 
 public:
-    ServerStats() { numActiveClients = 0; }
+    ServerStats();
     // ~ServerStats() { delete numActiveClients; }
         // ^-- I will not need this, unless it's instantiated dynamically (on the heap).
-    int getNumActiveClients() { return numActiveClients;}
-    void incrementNumActiveClients() { numActiveClients++; }
-    void decrementNumActiveClients() { numActiveClients--; }
+    int getNumActiveClients();
+    void incrementNumActiveClients();
+    void decrementNumActiveClients();
 };
 
 #endif

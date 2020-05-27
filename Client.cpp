@@ -190,9 +190,9 @@ do {
                 // Send choice to server to disconnect
                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                 printf("Disconnect message sent\n");    
-cout << "#### choice = " << choice << endl;
+                cout << "#### choice = " << choice << endl;
                 read(sock, buffer, 1024);
-cout << "#### about to break out of case 1" << endl;
+                cout << "#### about to break out of case 1" << endl;
                 break;
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
