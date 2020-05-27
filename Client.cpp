@@ -13,14 +13,16 @@ using namespace std;
 void launchHeadsTails(int);
 
 // get user choice for menu switch
-int getUserChoice() {
+int getUserChoice() 
+{
     int userChoice; 
     cin >> userChoice; 
     return userChoice; 
 }
 
 // display menu options to the user 
-void displayUserMenu() {
+void displayUserMenu() 
+{
     cout << "\nMenu Options\n";
     cout << "\nSelect from the following options\n";
     cout << "1 - Disconnect\n";
@@ -30,7 +32,8 @@ void displayUserMenu() {
     cout << "\nUser Selection: ";
 }
 
-void displayGameMenu() {
+void displayGameMenu() 
+{
     cout << "\nGame Menu Options\n";
     cout << "\nSelect from the following options\n";
     cout << "1 - Extreme Heads or Tails\n";
@@ -41,7 +44,8 @@ void displayGameMenu() {
 }
 
 // add the user arguments to the buffer 
-void login(char* buffer, char* username, char* password){
+void login(char* buffer, char* username, char* password)
+{
     strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
     strcat(buffer, "user=");
     strcat(buffer, username);
@@ -52,7 +56,8 @@ void login(char* buffer, char* username, char* password){
 }
 
 // get credentials from the user 
-void getUserCredentials(char* username, char* password){
+void getUserCredentials(char* username, char* password)
+{
     cout << "\nPlease enter username ('mike'): ";
     cin >> username;
     cout << "Please enter password ('123'): ";
@@ -60,7 +65,8 @@ void getUserCredentials(char* username, char* password){
     cout << "\nYou've typed " << username << " and " << password << endl;
 }
 
-void selectGame(char* buffer, int gameNumber){
+void selectGame(char* buffer, int gameNumber)
+{
     // rpc format     "rpc=selectgame;game=1;"
   
     // add select rpc info to the buffer 
@@ -69,10 +75,12 @@ void selectGame(char* buffer, int gameNumber){
 // TODO: cast gameNumber as string or char
 // char c = (char) gameNumber;
 // strcat(buffer, c);
-    if(gameNumber == 1){
+    if(gameNumber == 1)
+    {
         strcat(buffer, "1");
     } 
-    else if(gameNumber == 2){
+    else if(gameNumber == 2)
+    {
         strcat(buffer, "2"); 
     } 
     // does the send need to be here?
@@ -80,8 +88,8 @@ void selectGame(char* buffer, int gameNumber){
 }
 
 
-int main(int argc, char** argv) { 
-
+int main(int argc, char** argv)
+{
     // to store user choice 
     int choice = 0; 
     int sock = 0;
@@ -129,19 +137,21 @@ int main(int argc, char** argv) {
     memset(buffer, 0, sizeof(buffer));
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
 
-    if (strcmp(buffer, DISCONNECT_RPC) == 0) { // thisfix: if (strcmp(rpcKey, "rpc") == 0 && strcmp(rpcValue, "disconnect") == 0) {}
-         // server is in listening loop
+    if (strcmp(buffer, DISCONNECT_RPC) == 0)
+    {
+        // server is in listening loop
         cout << "\nWrong credentials, disconnecting\n"; 
-
         return 0;
     }
     
     // Client start menu loop 
-    do { 
+    do 
+    { 
         // clear screen goes here
         displayUserMenu(); 
         choice = getUserChoice(); 
-        switch(choice) {
+        switch(choice)
+        {
             case 1: 
                 cout << "\nDisconnecting from the Server\n"; 
                 // Send choice to server to disconnect
@@ -152,14 +162,17 @@ int main(int argc, char** argv) {
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
                 // Game Menu Displayed Here 
-                    do{
+                do
+                {
                     displayGameMenu(); 
                     choice = getUserChoice(); 
-                    switch(choice){
+                    switch(choice)
+                    {
                         case 1:
                             // launchHeadsTails(sock, buffer); deadcode
                             launchHeadsTails(sock);
                             break;
+            
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
                             // clear the buffer just in case 
@@ -171,12 +184,16 @@ int main(int argc, char** argv) {
                             // read message
                             read(sock, buffer, 1024);
                             break; 
+            
                         case 3: 
                             cout << "\nSending you back to Main Menu\n";
                             break;
                     }
-                } while(choice != 3); 
+            
+                } while (choice != 3); 
+                
                 break;
+            
             case 3: 
                 send(sock , SERVER_STATS_RPC, strlen(SERVER_STATS_RPC) , 0 );
                 memset(buffer, 0, sizeof(buffer));
@@ -185,16 +202,19 @@ int main(int argc, char** argv) {
                         "Server has " << buffer << " clients connected.\n" <<
                         "============================" << endl;
                 break;
+
             default:
                 break; 
         }
-    } while(choice != 1);
+
+    } while (choice != 1);
 
     return 0; 
 } 
 
 
-void launchHeadsTails(int sockNum) {
+void launchHeadsTails(int sockNum)
+{
     // client-side display and prompt
     char buff[1024] = {0};
     cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
