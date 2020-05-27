@@ -24,6 +24,7 @@ void displayUserMenu() {
     cout << "\nSelect from the following options\n";
     cout << "1 - Disconnect\n";
     cout << "2 - Game Menu\n";
+    cout << "3 - Server stats\n";
     // TODO: add game menu/ more options 
     cout << "\nUser Selection: ";
 }
@@ -112,6 +113,7 @@ int main(int argc, char** argv) {
     strcat(buffer, ";");
     puts(buffer);  // another way to print to screen
 */
+    const char *SERVER_STATS_RPC = "rpc=returnStats;";
     const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
     // char DISCONNECT_MSG[1024] = {0}; 
     
@@ -217,6 +219,12 @@ do {
                     }
                 } while(choice != 3); 
                 break;
+            case 3: 
+                // send(sock , SERVER_STATS_RPC , strlen(buffer) , 0 );
+                memset(buffer, 0, sizeof(buffer));
+                // read(soc, buffer, 1024);
+                cout << "There are currently " << SERVER_STATS_RPC << " active users." << endl;
+                memset(buffer, 0, sizeof(buffer));
             default:
                 break; 
     }
