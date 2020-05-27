@@ -6,11 +6,10 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-#include "HeadsTails.cpp"
 #define PORT 12104
 using namespace std;
 
-void playHeadsTailsGame();
+void launchHeadsTails(int, char *);
 
 // get user choice for menu switch
 int getUserChoice() {
@@ -191,8 +190,10 @@ do {
                 // Send choice to server to disconnect
                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                 printf("Disconnect message sent\n");    
+cout << "#### choice = " << choice << endl;
                 read(sock, buffer, 1024);
-                break; 
+cout << "#### about to break out of case 1" << endl;
+                break;
             case 2: 
                 cout << "\nOpening Game Menu\n"; 
                 // Game Menu Displayed Here 
@@ -201,17 +202,7 @@ do {
                     choice = getUserChoice(); 
                     switch(choice){
                         case 1:
-                            cout << "\nYou have chosen Extreme Heads or Tails\n";
-                              // clear the buffer just in case 
-                            memset(buffer, 0, sizeof(buffer));
-                            selectGame(buffer, 1); 
-                            // sending game selection in buffer 
-                            cout << "Buffer is : " << buffer << endl; 
-                            send(sock , buffer , strlen(buffer) , 0 );
-                            playHeadsTailsGame();
-                            // read message
-                            read(sock, buffer, 1024);
-                            cout << "PRINTING: buffer received by Client: " << buffer << endl;
+                            launchHeadsTails(sock, buffer);
                             break;
                         case 2:
                             cout << "\nYou have chosen to cross the Bridge of Death\n";
@@ -219,7 +210,7 @@ do {
                             memset(buffer, 0, sizeof(buffer));
                             // TODO: Game 2 is not implemented yet 
                             selectGame(buffer, 2); 
-                            cout << "Buffer is : " << buffer << endl; 
+                            cout << "####Buffer is : " << buffer << endl; 
                             send(sock , buffer , strlen(buffer) , 0 );
                             // read message
                             read(sock, buffer, 1024);
@@ -244,6 +235,7 @@ do {
                 break; 
     }
 } while(choice != 1);
+cout << "#### MMEEOW exiting \'Client start menu loop\'" << endl;
 
 //TODO: Remove sleep timer?
 // sleep timer 
@@ -270,9 +262,36 @@ void logout(char* buffer) {
     puts(buffer);  // another way to print to screen
 }
 
-// initiates Heads or Tails game, from HeadsTails.cpp
-void playHeadsTailsGame() {
-    HeadsTails game = HeadsTails();
-    cout << "You've won " << game.getNumWins() << " out of " << game.getNumRounds() << " rounds" << endl;
-    cout << "Well, this was lots of fun. Goodbye." << endl;
+void launchHeadsTails(int sockNum, char *buff) {
+    // client-side display and prompt
+    cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
+    char guess;
+    cin >> guess;    
+    do {
+cout << "HA! TWO-FACED HEADS COIN!" << endl;
+string coin = "heads";
+        cout << "The coin shows ___" << coin << "___. ";
+        if (guess == coin[0]) {
+            // htWins++;
+            cout << "You've won :) ";
+        } else
+            cout << "Sorry :( ";
+
+        cout << "\nPlay again?  h)eads  t)ails.  Enter any other key to exit.\n";
+        cin >> guess;
+    } while (guess == 'h' || guess == 't');
+
+    // // clear the buffer just in case 
+    // memset(buff, 0, 1024);
+    // selectGame(buff, 1);
+    // // sending game selection in buffer 
+    // cout << "####inside bottom of Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
+    // send(sockNum, buff , strlen(buff) , 0 );
+    // // read message
+    // read(sockNum, buff, 1024);
+    // cout << "####PRINTING: buffer received by Client: " << buff << endl;
 }
+
+// error: argument to ‘sizeof’ 
+// in ‘void* memset(void*, int, size_t)’ call 
+// is the same expression as the destination; did you mean to provide an explicit length?
