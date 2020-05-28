@@ -14,10 +14,10 @@ class MainMenu {
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
-    // char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
-    // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
-    char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1";
-    char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2";
+    // char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
+    // char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
+    char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
+    char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
     // int htWins = 0;
@@ -68,7 +68,8 @@ public:
             read(socket, buffer, 1024);
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
-            // check for select game rpc 
+            // check for select game rpc
+// if (strcmp(buffer , FLIPCOIN_RPC) == 0 ) {
             if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
                 // initiates Heads or Tails game
                 flipCoin();

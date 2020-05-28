@@ -218,18 +218,19 @@ void launchHeadsTails(int sockNum)
     // client-side display and prompt
     char buff[1024] = {0};
     cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
-    char guess;
+    char guess[2]; // must be an array ending in the null terminator -McKee
     cin >> guess;
+    guess[1] = 0;  // 0 is the null terminator
     do {
         strcpy(buff, "rpc=flipcoin;");
         strcat(buff, "guess=");
-        // strcat(buff, guess);
+        strcat(buff, guess);
         strcat(buff, ";");
     cout << "####inside Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
 cout << "HA! TWO-FACED HEADS COIN!" << endl;
 string coin = "heads";
         cout << "The coin shows ___" << coin << "___. ";
-        if (guess == coin[0]) {
+        if (guess[0] == coin[0]) {
             // htWins++;
             cout << "You've won :) ";
         } else
@@ -237,7 +238,7 @@ string coin = "heads";
 
         cout << "\nPlay again?  h)eads  t)ails.  Enter any other key to exit.\n";
         cin >> guess;
-    } while (guess == 'h' || guess == 't');
+    } while (guess[0] == 'h' || guess[0] == 't');
 
     // // clear the buffer just in case 
     // memset(buff, 0, 1024);
