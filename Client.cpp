@@ -225,23 +225,22 @@ void launchHeadsTails(int sockNum)
     guess[1] = 0;  // 0 is the null terminator
     do
     {
-        // clear the buffer just in case 
-        memset(buff, 0, 1024);
-
         // build the flipcoin rpc
         strcpy(buff, "rpc=flipcoin;");
         strcat(buff, "guess=");
         strcat(buff, guess);
         strcat(buff, ";");
 
-        // cout << "####inside bottom of Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
+        // cout << "####inside bottom of Client.launchHeadsTails(), before sending. \nbuff is : " << buff << endl; 
 
         // sending game selection in buffer
         send(sockNum, buff , strlen(buff) , 0 );
         
+        // clear the buffer before overwriting it with incoming buffer
+        memset(buff, 0, 1024);
         // read message
         read(sockNum, buff, 1024);
-        // cout << "####PRINTING: buffer received by Client: " << buff << endl;
+        cout << "####PRINTING: inside bottom of Client.launchHeadsTails(), ~line 244, after reading. buffer received by Client: " << buff << endl;
 
         // TEMP CODE. TODO: parse this out.
         string coin = "HARDCODED_heads";
