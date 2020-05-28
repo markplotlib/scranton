@@ -6,6 +6,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
+#include "ClientGame2.cpp"
 #define PORT 12104
 using namespace std;
 
@@ -81,7 +82,7 @@ void selectGame(char* buffer, int gameNumber)
     } 
     else if(gameNumber == 2)
     {
-        strcat(buffer, "2"); 
+        strcat(buffer, "2");
     } 
     // does the send need to be here?
     // Mark: No it does not. login function has no send.
@@ -181,8 +182,11 @@ int main(int argc, char** argv)
                             selectGame(buffer, 2); 
                             cout << "####Buffer is : " << buffer << endl; 
                             send(sock , buffer , strlen(buffer) , 0 );
-                            // read message
                             read(sock, buffer, 1024);
+                            ClientGame2 *clientGame2Ptr;
+                            clientGame2Ptr = new ClientGame2(sock);
+                            clientGame2Ptr->gameMenu();
+
                             break; 
             
                         case 3: 

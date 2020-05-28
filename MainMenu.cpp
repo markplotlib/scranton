@@ -4,9 +4,10 @@
 #include <stdlib.h> 
 #include <netinet/in.h>
 #include <string.h> 
-#include "StringParser.h" 
 #include <iostream>
+#include "StringParser.h" 
 #include "ServerStats.h"
+#include "GameClass2.h"
 
 using namespace std; // TEMP. TODO, remove this!!
 
@@ -16,6 +17,7 @@ private:
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
     // char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
     // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
+    char SAMPLE_RPC[1024] = "opengame";
     char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
@@ -62,10 +64,14 @@ public:
     void loop() {
 
         bool connected = true;
+        int readStatus;
 
         while (connected) {
             memset(buffer, 0, sizeof(buffer));
-            read(socket, buffer, 1024);
+            readStatus = read(socket, buffer, 1024);
+            if (readStatus == 0) {
+                connected = false;
+            }
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
             // check for select game rpc 
@@ -77,11 +83,20 @@ public:
                 connected = false;
             }
             
+            if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) {
+                GameClass2 *gameClass2Ptr = nullptr;
+                gameClass2Ptr = new GameClass2(socket, serverStats);
+                gameClass2Ptr->gameMenu();
+                delete gameClass2Ptr;
+            }
+
+
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) {
                 memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
                 send(socket, buffer, strlen(buffer), 0 );
             }
+
             // check for disconnect rpc call.
             else if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
                 disconnectMainMenu(socket, DISCONNECT_RPC);
