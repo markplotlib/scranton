@@ -215,38 +215,40 @@ int main(int argc, char** argv)
 
 void launchHeadsTails(int sockNum)
 {
+// char pause; // THIS IS TEMPORARY TEMPORARY TEMPORARY TEMPORARY LINE
+
     // client-side display and prompt
     char buff[1024] = {0};
     cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
     char guess[2]; // must be an array ending in the null terminator -McKee
     cin >> guess;
     guess[1] = 0;  // 0 is the null terminator
-    do {
+    do
+    {
+        // clear the buffer just in case 
+        memset(buff, 0, 1024);
+
+        // build the flipcoin rpc
         strcpy(buff, "rpc=flipcoin;");
         strcat(buff, "guess=");
         strcat(buff, guess);
         strcat(buff, ";");
-    cout << "####inside Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
-cout << "HA! TWO-FACED HEADS COIN!" << endl;
-string coin = "heads";
-        cout << "The coin shows ___" << coin << "___. ";
-        if (guess[0] == coin[0]) {
-            // htWins++;
-            cout << "You've won :) ";
-        } else
-            cout << "Sorry :( ";
 
+        // cout << "####inside bottom of Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
+
+        // sending game selection in buffer
+        send(sockNum, buff , strlen(buff) , 0 );
+        
+        // read message
+        read(sockNum, buff, 1024);
+        // cout << "####PRINTING: buffer received by Client: " << buff << endl;
+
+        // TEMP CODE. TODO: parse this out.
+        string coin = "HARDCODED_heads";
+
+        cout << "The coin shows ___" << coin << "___. ";
         cout << "\nPlay again?  h)eads  t)ails.  Enter any other key to exit.\n";
         cin >> guess;
+        
     } while (guess[0] == 'h' || guess[0] == 't');
-
-    // // clear the buffer just in case 
-    // memset(buff, 0, 1024);
-    // selectGame(buff, 1);
-    // // sending game selection in buffer 
-    // cout << "####inside bottom of Client.launchHeadsTails(). \nbuff is : " << buff << endl; 
-    // send(sockNum, buff , strlen(buff) , 0 );
-    // // read message
-    // read(sockNum, buff, 1024);
-    // cout << "####PRINTING: buffer received by Client: " << buff << endl;
 }

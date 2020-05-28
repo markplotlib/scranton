@@ -7,17 +7,18 @@
 #include "StringParser.h" 
 #include <iostream>
 #include "ServerStats.h"
-
-using namespace std; // TEMP. TODO, remove this!!
+using namespace std;
 
 class MainMenu {
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
-    // char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
-    // char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
-    char SELECTGAME1_RPC[1024] = "rpc=selectgame;game=1;";
-    char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
+
+    // temporary
+    char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
+    char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
+
+    // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
     // int htWins = 0;
@@ -32,34 +33,48 @@ public:
         // std::cout << "MainMenu constructor" << std::endl;
     }
 
-    void flipCoin() {
-        memset(buffer, 0, sizeof(buffer));
-        std::cout << "#### in MainMenu.flipCoin(), around line 35.\nBuffer reads \'" << buffer << "\', ." << std::endl;
-        send(socket , buffer, strlen(buffer) , 0 );  // sends to 
-        char guess;
-        cin >> guess;
-        if (guess == 'h' || guess == 't') {
-            srand (time(NULL));
-            string coin = rand() % 2 == 0 ? "heads" : "tails";
-            cout << "The coin shows ___" << coin << "___. ";
 
-            if (guess == coin[0]) {
-                // htWins++;
-                cout << "You've won :)\nPlay again?" << endl;
-            } else
-                cout << "Sorry :(\nPlay again?" << endl;
-            htRounds++;
+    void buildOutcomeBuffer(char* buff, char guess, string face)
+    {
+        htRounds++;
+        memset(buff, 0, 1024);
+        if (guess == face[0])
+        {
+            // htWins++;
+            strcpy(buff, "You've won :)\n");
         }
-        // cout << "You've won " << htGetNumWins() << " out of " << htGetNumRounds() << " rounds" << endl;
-        cout << "You've played " << htGetNumRounds() << " rounds" << endl;
-        cout << "Well, this was lots of fun. Goodbye." << endl;
+        else
+        {
+            strcpy(buff, "Sorry :(\n");    
+        }
     }
 
+
+    string flipCoin() 
+    {
+        srand (time(NULL));
+        string face = rand() % 2 == 0 ? "heads" : "tails";
+        return face;
+    }
+
+    // TODO: activate this
     // int htGetNumWins() { return htWins; }
+    // TODO: activate this
+
     int htGetNumRounds() { return htRounds; }
-    
+
+
+    /*
+        MAIN MENU LOOP
+    */
     // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
     void loop() {
+
+        // TEMP CODE TEMP CODE TEMP CODE TODO
+        char temphardcode = 'h'; // temphardcode temporary temporarytemporarytemporary!
+        // TODO -- have the parser parse it out.
+        string winningFace;
+        // TEMP CODE TEMP CODE TEMP CODE TODO
 
         bool connected = true;
 
@@ -68,26 +83,37 @@ public:
             read(socket, buffer, 1024);
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
-            // check for select game rpc
-// if (strcmp(buffer , FLIPCOIN_RPC) == 0 ) {
-            if (strcmp(buffer , SELECTGAME1_RPC) == 0 ) {
+            // Does client's rpc indicate desire to play game?
+            // TODO: instead of the complex if clause, it will be simplified via parser
+            if ( (strcmp(buffer , FLIPGUESS_H_RPC) == 0 ) || (strcmp(buffer , FLIPGUESS_T_RPC) == 0 ) )
+            {
                 // initiates Heads or Tails game
-                flipCoin();
-                // disconnect
-                disconnectMainMenu(socket, DISCONNECT_RPC);
-                connected = false;
-            }
+                winningFace = flipCoin();
+                buildOutcomeBuffer(buffer, temphardcode, winningFace); // temphardcode temporary temporarytemporarytemporary!
+
+                // std::cout << "####inside MM. line ~100.\nbuffer is : " << buffer << std::endl; 
+
+                // sending game selection in buffer
+                send(socket, buffer , strlen(buffer) , 0 );
+            }            
             
-            else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) {
+            // server stats selection made by client
+            else if (strcmp(buffer, SERVER_STATS_RPC) == 0 )
+            {
                 memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
                 send(socket, buffer, strlen(buffer), 0 );
             }
-            // check for disconnect rpc call.
-            else if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
+            
+            // disconnect rpc call made by client
+            else if (strcmp(buffer , DISCONNECT_RPC) == 0 )
+            {
                 disconnectMainMenu(socket, DISCONNECT_RPC);
                 connected = false;
-            } else { 
+            }
+
+            else
+            { 
                 send(socket , buffer, strlen(buffer) , 0 );
             }                    
         }
