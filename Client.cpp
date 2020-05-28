@@ -219,11 +219,11 @@ void launchHeadsTails(int sockNum)
 
     // client-side display and prompt
     char buff[1024] = {0};
-    cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails: ";
+    cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails.  Enter any other key to exit: ";
     char guess[2]; // must be an array ending in the null terminator -McKee
     cin >> guess;
     guess[1] = 0;  // 0 is the null terminator
-    do
+    while (guess[0] == 'h' || guess[0] == 't')
     {
         // build the flipcoin rpc
         strcpy(buff, "rpc=flipcoin;");
@@ -245,9 +245,12 @@ void launchHeadsTails(int sockNum)
         // TEMP CODE. TODO: parse this out.
         string coin = "HARDCODED_heads";
 
-        cout << "The coin shows ___" << coin << "___. ";
-        cout << "\nPlay again?  h)eads  t)ails.  Enter any other key to exit.\n";
+        cout << "The coin shows ___" << coin << "___. " << endl;
+        cout << "Play again?  h)eads  t)ails.  Enter any other key to exit: ";
         cin >> guess;
-        
-    } while (guess[0] == 'h' || guess[0] == 't');
+    }
+
+    cout << "That was extreme!!!" << endl;
+    cout << "    // TODO: show game stats here: wins and rounds played" << endl;
+    // TODO: show game stats here: wins and rounds played
 }
