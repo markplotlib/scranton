@@ -14,7 +14,7 @@ private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
 
-    // temporary
+    //  temporary -- TODO: parse this out.
     char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
     char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
 
@@ -36,16 +36,22 @@ public:
 
     void buildOutcomeBuffer(char* buff, char guess, string face)
     {
+        char f[2]; // must be an array ending in the null terminator -McKee
+        f[0] = face[0];
+        f[1] = 0; // 0 is the null terminator
         htRounds++;
-        memset(buff, 0, 1024);
-        if (guess == face[0])
+        strcpy(buff, "face=");
+        strcat(buff, f);
+        if (guess == f[0])
         {
+            // win
             // htWins++;
-            strcpy(buff, "You've won :)\n");
+            strcat(buff, ";outcome=w;");
         }
         else
         {
-            strcpy(buff, "Sorry :(\n");    
+            // loss
+            strcat(buff, ";outcome=l;");
         }
     }
 
@@ -87,9 +93,14 @@ public:
             // TODO: instead of the complex if clause, it will be simplified via parser
             if ( (strcmp(buffer , FLIPGUESS_H_RPC) == 0 ) || (strcmp(buffer , FLIPGUESS_T_RPC) == 0 ) )
             {
+                std::cout << "####inside MM. before line ~100.\nbuffer is : " << buffer << std::endl; 
+                memset(buffer, 0, sizeof(buffer));
+
                 // initiates Heads or Tails game
                 winningFace = flipCoin();
+                std::cout << "####inside MM. before buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
                 buildOutcomeBuffer(buffer, temphardcode, winningFace); // temphardcode temporary temporarytemporarytemporary!
+                std::cout << "####inside MM.  after buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
 
                 // std::cout << "####inside MM. line ~100.\nbuffer is : " << buffer << std::endl; 
 
