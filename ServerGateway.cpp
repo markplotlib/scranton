@@ -88,6 +88,7 @@ int disconnect(int socket_num, char *buff){
 
 int main(int argc, char const *argv[]) 
 { 
+    const int MAX_CLIENTS = 5;
     int server_fd, new_socket;
     struct sockaddr_in address;
     int opt = 1;
@@ -138,35 +139,38 @@ int main(int argc, char const *argv[])
             cout << endl << "Listen error" << endl;
             perror("listen");
             exit(EXIT_FAILURE); 
-        } 
-        // new_socket is where we'll be communicating to the client
-        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
-                            (socklen_t*)&addrlen))<0) { 
-            cout << endl << "accept error" << endl;
-            perror("accept");
-            exit(EXIT_FAILURE); 
         }
 
-        // Username and password RPC should be sent in here.
-        read(new_socket, buffer, 1024);
-
-        /* A password is sent into this, and out of it comes a response: password is good or bad.*/
-        int connectReturn = 0;
-// pthread_mutex_lock();
-        connectReturn = authenticate(buffer, *parser);
-// pthread_mutex_unlock();
-        cout << "Login result: " << connectReturn << endl;
-
-        if (connectReturn < 0) {
-            connectReturn = disconnect(new_socket, DISCONNECT_RPC);
+        if (serverStats.getNumActiveClients() >= MAX_CLIENTS) {
+            disconnect(new_socket, DISCONNECT_RPC);
         } else {
-            send(new_socket , buffer , strlen(buffer) , 0 );
+            // new_socket is where we'll be communicating to the client
+            if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
+                                (socklen_t*)&addrlen))<0) { 
+                cout << endl << "accept error" << endl;
+                perror("accept");
+                exit(EXIT_FAILURE); 
+            }
+
+            // Username and password RPC should be sent in here.
+            read(new_socket, buffer, 1024);
+
+            /* A password is sent into this, and out of it comes a response: password is good or bad.*/
+            int connectReturn = 0;
+            connectReturn = authenticate(buffer, *parser);
+            cout << "Login result: " << connectReturn << endl;
+
+            if (connectReturn < 0) {
+                connectReturn = disconnect(new_socket, DISCONNECT_RPC);
+            } else {
+                send(new_socket , buffer , strlen(buffer) , 0 );
+            }
+
+            // In a function create dynamic mainmenu, and populate it with a single thread
+            pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
+
+            cout << "Thread created, returning to listening state" << endl;
         }
-
-        // In a function create dynamic mainmenu, and populate it with a single thread
-        pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
-
-        cout << "Thread created, returning to listening state" << endl;
     }
 
 
