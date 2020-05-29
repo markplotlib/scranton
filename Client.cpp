@@ -38,7 +38,7 @@ void displayGameMenu()
     cout << "\nGame Menu Options\n";
     cout << "\nSelect from the following options\n";
     cout << "1 - Extreme Heads or Tails\n";
-    cout << "2 - Bridge of Death\n";
+    cout << "2 - GAME2\n";
     cout << "3 - Back to Main Menu\n";
     // TODO: add games/ more options 
     cout << "\nUser Selection: ";
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
         return 0;
     }
     
-    // Client start menu loop 
+    // Client start menu loop
     do 
     { 
         // clear screen goes here
@@ -169,13 +169,14 @@ int main(int argc, char** argv)
                     choice = getUserChoice(); 
                     switch(choice)
                     {
-                        case 1:
+                        case 1: {
                             // launchHeadsTails(sock, buffer); deadcode
                             launchHeadsTails(sock);
                             break;
+                            }
             
-                        case 2:
-                            cout << "\nYou have chosen to cross the Bridge of Death\n";
+                        case 2: {
+                            cout << "\nYou have chosen the Legendary Game... II!\n";
                             // clear the buffer just in case 
                             memset(buffer, 0, sizeof(buffer));
                             // TODO: Game 2 is not implemented yet 
@@ -185,15 +186,26 @@ int main(int argc, char** argv)
                             read(sock, buffer, 1024);
                             ClientGame2 *clientGame2Ptr;
                             clientGame2Ptr = new ClientGame2(sock);
-                            clientGame2Ptr->gameMenu();
+                            int game2RetVal = clientGame2Ptr->gameMenu();
+                        
+                            if (game2RetVal == 1) 
+                            {
+                                cout << "\nDisconnecting from the Server\n"; 
+                                // Send choice to server to disconnect
+                                send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
+                                printf("Disconnect message sent\n");    
+                                read(sock, buffer, 1024);
+                                return 0;
+                            }
 
                             break; 
-            
-                        case 3: 
+                        }
+                        case 3: {
                             cout << "\nSending you back to Main Menu\n";
                             break;
+                            }
                     }
-            
+
                 } while (choice != 3); 
                 
                 break;

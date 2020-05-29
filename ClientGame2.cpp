@@ -37,36 +37,32 @@ public:
    int gameMenu() {
       char buffer[1024] = {0};
       int choice = 0;
-      const char *DISCONNECT_RPC = "rpc=disconnect;";
 
       do
       { 
-         // clear screen goes here
+         cout << "Buffer in CG2 = " << buffer << endl;
          displayGameMenu(); 
          choice = getUserChoice(); 
          switch(choice)
          {
-            case 1: 
-               cout << "\nDisconnecting from the Server\n"; 
-               // Send choice to server to disconnect
-               send(socket , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
-               printf("Disconnect message sent\n");  
-               read(socket, buffer, 1024);
-               // TODO
+            case 1: {
                return 1;
                break;
-            case 2: 
+            }
+            case 2: {
                cout << "\nExiting menu\n";
                return 2;
-               break; 
-            case 3: 
-
                break;
-
+            } 
+            case 3: {
+               // you know, whatever.
+               break;
+            }
             default:
                   break; 
-         }
-      } while (choice != 1 && choice != 2);
+            }
+         } while (true);
+
    return 0;
    }
    

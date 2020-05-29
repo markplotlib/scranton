@@ -27,7 +27,7 @@ void GameClass2::gameMenu() {
             }
 
             // debug code:
-            std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
+            std::cout << "Buffer reads \'" << buffer << "\', in Game2." << std::endl;
 
             // whatever you want
             if (strcmp(buffer , RPC_1) == 0 ) {

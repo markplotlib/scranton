@@ -15,7 +15,7 @@ class MainMenu {
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
-
+    char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     //  temporary -- TODO: parse this out.
     char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
     char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
