@@ -89,64 +89,9 @@ void selectGame(char* buffer, int gameNumber)
     // Mark: No it does not. login function has no send.
 }
 
-
-int main(int argc, char** argv)
-{
-    // to store user choice 
-    int choice = 0; 
-    int sock = 0;
-    struct sockaddr_in serv_addr; 
-    char buffer[1024] = {0}; 
-    char argv1[40];
-    char argv2[40]; 
-
-    getUserCredentials(argv1, argv2);
-
-    // user login 
-    login(buffer, argv1, argv2); 
-
-    const char *SERVER_STATS_RPC = "rpc=returnStats;";
-    const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
-    
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
-    { 
-        printf("\n Socket creation error \n"); 
-        return -1; 
-    } 
-
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
-    
-    // Convert IPv4 and IPv6 addresses from text to binary form 
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
-    { 
-        printf("\nInvalid address/ Address not supported \n"); 
-        return -1; 
-    } 
-
-    // connects the socket (referred to by the file descriptor sockfd)
-    // to the address specified by addr. (Server’s address and port is specified in addr).
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
-    { 
-        printf("\nConnection Failed \n"); 
-        return -1; 
-    }
-
-    // sending username/password rpc
-    send(sock , buffer , strlen(buffer) , 0 );
-
-    // read incoming message
-    memset(buffer, 0, sizeof(buffer));
-    read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
-
-    if (strcmp(buffer, DISCONNECT_RPC) == 0)
-    {
-        // server is in listening loop
-        cout << "\nWrong credentials, disconnecting\n"; 
-        return 0;
-    }
-    
-    // Client start menu loop
+void userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STATS_RPC, const char *DISCONNECT_RPC){
+ // Client start menu loop
+  
     do 
     { 
         // clear screen goes here
@@ -179,7 +124,7 @@ int main(int argc, char** argv)
                         case 2: {
                             cout << "\nYou have chosen the Legendary Game... II!\n";
                             // clear the buffer just in case 
-                            memset(buffer, 0, sizeof(buffer));
+                            memset(buffer, 0, 1024);
                             // TODO: Game 2 is not implemented yet 
                             selectGame(buffer, 2); 
                             cout << "####Buffer is : " << buffer << endl; 
@@ -198,7 +143,7 @@ int main(int argc, char** argv)
                                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                                 printf("Disconnect message sent\n");    
                                 read(sock, buffer, 1024);
-                                return 0;
+                                //return 0;       removed because of void method 
                             }
 
                             break; 
@@ -215,7 +160,7 @@ int main(int argc, char** argv)
             
             case 3: 
                 send(sock , SERVER_STATS_RPC, strlen(SERVER_STATS_RPC) , 0 );
-                memset(buffer, 0, sizeof(buffer));
+                memset(buffer, 0, 1024);
                 read(sock, buffer, 1024);
                 cout << "============================\n" <<
                         "Server has " << buffer << " clients connected.\n" <<
@@ -227,10 +172,7 @@ int main(int argc, char** argv)
         }
 
     } while (choice != 1);
-
-    return 0; 
-} 
-
+}
 
 void launchHeadsTails(int sockNum)
 {
@@ -273,3 +215,68 @@ void launchHeadsTails(int sockNum)
     cout << "    // TODO: show game stats here: wins and rounds played" << endl;
     // TODO: show game stats here: wins and rounds played
 }
+
+int main(int argc, char** argv)
+{
+    // to store user choice 
+    int choice = 0;
+    int sock = 0;
+    struct sockaddr_in serv_addr; 
+    char buffer[1024] = {0}; 
+    char argv1[40];
+    char argv2[40]; 
+
+    getUserCredentials(argv1, argv2);
+
+    // user login 
+    login(buffer, argv1, argv2); 
+
+    const char *SERVER_STATS_RPC = "rpc=returnStats;";
+    const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
+    
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+    { 
+        printf("\n Socket creation error \n"); 
+        return -1; 
+    } 
+
+    serv_addr.sin_family = AF_INET; 
+    serv_addr.sin_port = htons(PORT); 
+    
+    // Convert IPv4 and IPv6 addresses from text to binary form 
+    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
+    { 
+        printf("\nInvalid address/ Address not supported \n"); 
+        return -1; 
+    } 
+
+    // connects the socket (referred to by the file descriptor sockfd)
+    // to the address specified by addr. (Server’s address and port is specified in addr).
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    { 
+        printf("\nConnection Failed \n"); 
+        return -1; 
+    }
+
+    // sending username/password rpc
+    send(sock , buffer , strlen(buffer) , 0 );
+    // resetting the buffer
+    memset(buffer, 0, 1024);
+    // reading 
+    read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
+
+    if (strcmp(buffer, DISCONNECT_RPC) == 0)
+    {
+        // server is in listening loop
+        cout << "\nWrong credentials, disconnecting\n"; 
+        return 0;
+    }
+    
+    // user enters do while menu loop 
+    userMenuLoop(sock, choice, buffer, SERVER_STATS_RPC, DISCONNECT_RPC);
+   
+    return 0; 
+} 
+
+
+
