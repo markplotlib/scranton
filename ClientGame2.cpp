@@ -15,6 +15,8 @@ public:
       this->socket = socket;
    }
 
+   ~ClientGame2() {}
+
    int getUserChoice() 
    {
       int userChoice; 

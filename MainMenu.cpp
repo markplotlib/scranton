@@ -116,9 +116,11 @@ public:
             
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
+                cout << "constructor about to be called" << endl;
                 GameClass2 *gameClass2Ptr = nullptr;
                 gameClass2Ptr = new GameClass2(socket, serverStats);
                 gameClass2Ptr->gameMenu();
+                cout << "destructor about to be called" << endl;
                 delete gameClass2Ptr;
             }
 

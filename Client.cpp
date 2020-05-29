@@ -187,7 +187,7 @@ int main(int argc, char** argv)
                             ClientGame2 *clientGame2Ptr;
                             clientGame2Ptr = new ClientGame2(sock);
                             int game2RetVal = clientGame2Ptr->gameMenu();
-                        
+                            delete clientGame2Ptr;
                             if (game2RetVal == 1) 
                             {
                                 cout << "\nDisconnecting from the Server\n"; 

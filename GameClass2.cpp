@@ -8,11 +8,14 @@
 #include "GameClass2.h"
 
 GameClass2::GameClass2(int socket, ServerStats &serverStats) {
-   this->socket = socket;
-   this->serverStats = serverStats;
+    std::cout << "Game Class 2 constructor" << std::endl;
+    this->socket = socket;
+    this->serverStats = serverStats;
 }
 
-GameClass2::~GameClass2() {}
+GameClass2::~GameClass2() { 
+    std::cout << "Game Class 2 destructor" << std::endl;
+    }
 
 void GameClass2::gameMenu() {
 
