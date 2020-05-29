@@ -39,7 +39,7 @@ public:
    int gameMenu() {
       char buffer[1024] = {0};
       int choice = 0;
-
+      cout << "Entered game" << endl;
       do
       { 
          cout << "Buffer in CG2 = " << buffer << endl;

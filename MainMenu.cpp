@@ -116,12 +116,21 @@ public:
             
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
+                // placeholder
+                send(socket, buffer , strlen(buffer) , 0 );
+                memset(buffer, 0, sizeof(buffer));
                 cout << "constructor about to be called" << endl;
                 GameClass2 *gameClass2Ptr = nullptr;
                 gameClass2Ptr = new GameClass2(socket, serverStats);
-                gameClass2Ptr->gameMenu();
+                int gameRetVal = gameClass2Ptr->gameMenu();
                 cout << "destructor about to be called" << endl;
                 delete gameClass2Ptr;
+                if (gameRetVal == 1) {
+                    disconnectMainMenu(socket, DISCONNECT_RPC);
+                    connected = false;
+                } else {
+                    send(socket , buffer, strlen(buffer) , 0 );
+                }
             }
 
 

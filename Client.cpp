@@ -84,6 +84,7 @@ void selectGame(char* buffer, int gameNumber)
     {
         strcat(buffer, "2");
     } 
+    strcat(buffer, ";");
     // does the send need to be here?
     // Mark: No it does not. login function has no send.
 }
@@ -186,7 +187,9 @@ int main(int argc, char** argv)
                             read(sock, buffer, 1024);
                             ClientGame2 *clientGame2Ptr;
                             clientGame2Ptr = new ClientGame2(sock);
+                            cout << "Entering game" << endl;
                             int game2RetVal = clientGame2Ptr->gameMenu();
+                            cout << "Exited game" << endl;
                             delete clientGame2Ptr;
                             if (game2RetVal == 1) 
                             {

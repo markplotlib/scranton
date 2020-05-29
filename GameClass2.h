@@ -22,7 +22,7 @@ public:
 
     ~GameClass2();
 
-   void gameMenu();
+   int gameMenu();
 
     // Sends a message to client, and then closes the socket assigned to current client.
     // return 0 if successful, -1 if failed

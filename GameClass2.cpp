@@ -8,16 +8,16 @@
 #include "GameClass2.h"
 
 GameClass2::GameClass2(int socket, ServerStats &serverStats) {
-    std::cout << "Game Class 2 constructor" << std::endl;
+    std::cout << "GC2 ctor" << std::endl;
     this->socket = socket;
     this->serverStats = serverStats;
 }
 
 GameClass2::~GameClass2() { 
-    std::cout << "Game Class 2 destructor" << std::endl;
+    std::cout << "GC2 dtor" << std::endl;
     }
 
-void GameClass2::gameMenu() {
+int GameClass2::gameMenu() {
 
         bool connected = true;
         int readStatus;
@@ -44,22 +44,14 @@ void GameClass2::gameMenu() {
 
             // check for disconnect rpc call.
             else if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
-                disconnectGame2(socket, DISCONNECT_RPC);
-                connected = false;
+                return 1;
             } 
             
             // else you need to return something
             else { 
-                send(socket , buffer, strlen(buffer) , 0 );
+                return 0;
             }                    
         }
+        
+        return 0;
     }
-
-   // Sends a message to client, and then closes the socket assigned to current client.
-   // return 0 if successful, -1 if failed
-   int GameClass2::disconnectGame2(int socket_num, char *buff) {
-      // char disconnectMsg[1024] = {0};
-      send(socket_num, buff, strlen(buff) , 0 );
-      // close active socket
-      return close(socket_num);
-   }
