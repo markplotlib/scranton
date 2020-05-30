@@ -205,11 +205,10 @@ int main(int argc, char const *argv[])
             if (connectReturn < 0) {
                 connectReturn = disconnect(new_socket, DISCONNECT_RPC);
             } else {
+                // In a function create dynamic mainmenu, and populate it with a single thread
+                pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
                 send(new_socket , buffer , strlen(buffer) , 0 );
             }
-
-            // In a function create dynamic mainmenu, and populate it with a single thread
-            pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
 
             cout << "Thread created, returning to listening state" << endl;
         }
