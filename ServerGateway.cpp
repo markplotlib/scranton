@@ -62,13 +62,13 @@ int authenticate(char *buffer, StringParser &parser) {
     if ((strcmp(authMessenger.getKey(), "rpc") != 0) || 
         (strcmp(authMessenger.getValue(), "connect") != 0))
         {
-            return -3;
+            return -3;  // represents bad rpc
         }
 
     char *username = usernameMessenger.getValue();
     char *password = passwordMessenger.getValue();
 
-    // returns a -1 for bad username, -2 for bad password, 0 if passed.
+    // returns a -1 for bad username, -2 for bad password, -3 for bad RPC, 0 if passed.
     int retValue = passwordVaultStub(username, password);
     cout << retValue << endl;
     return retValue;
@@ -184,6 +184,7 @@ int main(int argc, char const *argv[])
         }
 
         if (serverStats.getNumActiveClients() >= MAX_CLIENTS) {
+            read(new_socket, buffer, 1024);
             disconnect(new_socket, DISCONNECT_RPC);
         } else {
             // new_socket is where we'll be communicating to the client
@@ -198,7 +199,7 @@ int main(int argc, char const *argv[])
             read(new_socket, buffer, 1024);
 
             /* A password is sent into this, and out of it comes a response: password is good or bad.*/
-            int connectReturn = 0;
+            int connectReturn = -4; // -4 represents a disconnect (due to too many clients, for example)
             connectReturn = authenticate(buffer, *parser);
             cout << "Login result: " << connectReturn << endl;
 
