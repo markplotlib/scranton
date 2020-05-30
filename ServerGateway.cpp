@@ -86,45 +86,87 @@ int disconnect(int socket_num, char *buff){
 }
 
 
+int startServer(struct sockaddr_in m_address)
+{
+    int m_port = PORT;
+    int opt = 1;
+    int m_server_fd;
+
+    // Creating socket file descriptor 
+    if ((m_server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // helps manipulate socket options referred by the file descriptor sockfd. 
+    // helps in reuse of address and port. Prevents error such as: “address already in use”.
+    if (setsockopt(m_server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+        &opt, sizeof(opt)))
+    {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+    m_address.sin_family = AF_INET;
+    m_address.sin_addr.s_addr = INADDR_ANY;
+
+    m_address.sin_port = (uint16_t) htons((uint16_t) m_port);
+
+    // bind socket to address and port number 
+    if (bind(m_server_fd, (struct sockaddr *)&m_address,
+        sizeof(m_address)) < 0)
+    {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
+
+    return m_server_fd;
+}
+
 int main(int argc, char const *argv[]) 
 { 
     const int MAX_CLIENTS = 5;
     int server_fd, new_socket;
-    struct sockaddr_in address;
-    int opt = 1;
-    int addrlen = sizeof(address); 
+    struct sockaddr_in m_address;
+    // int opt = 1;
+    int addrlen = sizeof(m_address); 
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "rpc=disconnect;"; 
 
     StringParser *parser = new StringParser; 
     KeyValue rpcKeyValue;
 
-    // Creating socket file descriptor 
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
-    { 
-        perror("socket failed"); 
-        exit(EXIT_FAILURE); 
-    } 
-    
-    // Forcefully attaching socket to the port
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
-                                             &opt, sizeof(opt))) 
-    { 
-        perror("setsockopt"); 
-        exit(EXIT_FAILURE); 
-    }
 
-    address.sin_family = AF_INET; 
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons( PORT );       // htons = host to network short. Accounts for computer-side short storage peculiarities.
+    cout << "server_fd = startServer() = " << startServer(m_address) << endl;
+    server_fd = startServer(m_address);
     
-    // Forcefully attaching socket to the port
-    if (bind(server_fd, (struct sockaddr *)&address, 
-                                sizeof(address))<0) 
-    { 
-        perror("bind failed"); 
-        exit(EXIT_FAILURE); 
-    } 
+    // // Creating socket file descriptor 
+    // if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
+    // { 
+    //     perror("socket failed"); 
+    //     exit(EXIT_FAILURE); 
+    // } 
+    
+    // // helps manipulate socket options referred by the file descriptor sockfd. 
+    // // helps in reuse of address and port. Prevents error such as: “address already in use”.
+    // if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+    //                                          &opt, sizeof(opt))) 
+    // { 
+    //     perror("setsockopt"); 
+    //     exit(EXIT_FAILURE); 
+    // }
+
+    // address.sin_family = AF_INET; 
+    // address.sin_addr.s_addr = INADDR_ANY;
+    // address.sin_port = htons( PORT );       // htons = host to network short. Accounts for computer-side short storage peculiarities.
+    
+    // // bind socket to address and port number 
+    // if (bind(server_fd, (struct sockaddr *)&address, 
+    //                             sizeof(address))<0) 
+    // { 
+    //     perror("bind failed"); 
+    //     exit(EXIT_FAILURE); 
+    // } 
             
 
     // TODO Upgrade this when threads are dynamically created
@@ -145,7 +187,7 @@ int main(int argc, char const *argv[])
             disconnect(new_socket, DISCONNECT_RPC);
         } else {
             // new_socket is where we'll be communicating to the client
-            if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
+            if ((new_socket = accept(server_fd, (struct sockaddr *)&m_address, 
                                 (socklen_t*)&addrlen))<0) { 
                 cout << endl << "accept error" << endl;
                 perror("accept");
