@@ -89,7 +89,7 @@ void selectGame(char* buffer, int gameNumber)
     // Mark: No it does not. login function has no send.
 }
 
-void userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STATS_RPC, const char *DISCONNECT_RPC){
+int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STATS_RPC, const char *DISCONNECT_RPC){
  // Client start menu loop
   
     do 
@@ -143,7 +143,7 @@ void userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_ST
                                 send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
                                 printf("Disconnect message sent\n");    
                                 read(sock, buffer, 1024);
-                                //return 0;       removed because of void method 
+                                return 0;      
                             }
 
                             break; 
@@ -172,6 +172,7 @@ void userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_ST
         }
 
     } while (choice != 1);
+    return 0; 
 }
 
 void launchHeadsTails(int sockNum)
