@@ -26,13 +26,10 @@ private:
     // int htWins = 0;
     int htRounds = 0;
     StringParser interpreter;
-    ServerStats serverStats;
 
 public:
-    MainMenu(int socket, ServerStats &serverStats) {
+    MainMenu(int socket) {
         this->socket = socket;
-        this->serverStats = serverStats;
-        // std::cout << "MainMenu constructor" << std::endl;
     }
 
 
@@ -76,7 +73,7 @@ public:
         MAIN MENU LOOP
     */
     // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
-    void loop() {
+    void loop(ServerStats &serverStats) {
 
         // TEMP CODE TEMP CODE TEMP CODE TODO
         char temphardcode = 'h'; // temphardcode temporary temporarytemporarytemporary!
@@ -136,6 +133,7 @@ public:
 
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
+                
                 memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
                 send(socket, buffer, strlen(buffer), 0 );
