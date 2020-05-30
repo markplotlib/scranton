@@ -136,39 +136,9 @@ int main(int argc, char const *argv[])
     StringParser *parser = new StringParser; 
     KeyValue rpcKeyValue;
 
-
-    cout << "server_fd = startServer() = " << startServer(m_address) << endl;
+    // server creates socket file descriptor, sets socket options, and binds socket
     server_fd = startServer(m_address);
     
-    // // Creating socket file descriptor 
-    // if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
-    // { 
-    //     perror("socket failed"); 
-    //     exit(EXIT_FAILURE); 
-    // } 
-    
-    // // helps manipulate socket options referred by the file descriptor sockfd. 
-    // // helps in reuse of address and port. Prevents error such as: “address already in use”.
-    // if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
-    //                                          &opt, sizeof(opt))) 
-    // { 
-    //     perror("setsockopt"); 
-    //     exit(EXIT_FAILURE); 
-    // }
-
-    // address.sin_family = AF_INET; 
-    // address.sin_addr.s_addr = INADDR_ANY;
-    // address.sin_port = htons( PORT );       // htons = host to network short. Accounts for computer-side short storage peculiarities.
-    
-    // // bind socket to address and port number 
-    // if (bind(server_fd, (struct sockaddr *)&address, 
-    //                             sizeof(address))<0) 
-    // { 
-    //     perror("bind failed"); 
-    //     exit(EXIT_FAILURE); 
-    // } 
-            
-
     // TODO Upgrade this when threads are dynamically created
     pthread_t singleThread;
 
