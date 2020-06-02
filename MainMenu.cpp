@@ -41,7 +41,7 @@ public:
         htRounds++;
         strcpy(buff, "face=");
         strcat(buff, f);
-        if (guess == f[0])
+        if (guess == f[0])  // did guess match the flipCoin face?
         {
             // win
             // htWins++;
@@ -76,7 +76,7 @@ public:
     void loop(ServerStats &serverStats) {
 
         // TEMP CODE TEMP CODE TEMP CODE TODO
-        char temphardcode = 'h'; // temphardcode temporary temporarytemporarytemporary!
+        char temphardcodeGuess = 'h'; // temphardcodeGuess temporary temporarytemporarytemporary!
         // TODO -- have the parser parse it out.
         string winningFace;
         // TEMP CODE TEMP CODE TEMP CODE TODO
@@ -93,8 +93,8 @@ public:
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
             // Does client's rpc indicate desire to play game?
-            // TODO: instead of the complex if clause, it will be simplified via parser
             if ( (strcmp(buffer , FLIPGUESS_H_RPC) == 0 ) || (strcmp(buffer , FLIPGUESS_T_RPC) == 0 ) )
+// if (interpreter)
             {
                 std::cout << "####inside MM. before line ~100.\nbuffer is : " << buffer << std::endl; 
                 memset(buffer, 0, sizeof(buffer));
@@ -102,7 +102,9 @@ public:
                 // initiates Heads or Tails game
                 winningFace = flipCoin();
                 std::cout << "####inside MM. before buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
-                buildOutcomeBuffer(buffer, temphardcode, winningFace); // temphardcode temporary temporarytemporarytemporary!
+// temphardcodeGuess temporary temporarytemporarytemporary!
+                buildOutcomeBuffer(buffer, temphardcodeGuess, winningFace); 
+// temphardcodeGuess temporary temporarytemporarytemporary!
                 std::cout << "####inside MM.  after buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
 
                 // std::cout << "####inside MM. line ~100.\nbuffer is : " << buffer << std::endl; 

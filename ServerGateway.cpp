@@ -51,22 +51,22 @@ int passwordVaultStub(char *username, char *password) {
 }
 
 int authenticate(char *buffer, StringParser &parser) {
-    KeyValue authMessenger;
-    KeyValue usernameMessenger;
-    KeyValue passwordMessenger;
+    KeyValue rpcKV;     // "rpc=[exact_rpc]"
+    KeyValue usernameKV;
+    KeyValue passwordKV;
     parser.newRPC(buffer);
-    parser.getNextKeyValue(authMessenger);
-    parser.getNextKeyValue(usernameMessenger);
-    parser.getNextKeyValue(passwordMessenger);
+    parser.getNextKeyValue(rpcKV);
+    parser.getNextKeyValue(usernameKV);
+    parser.getNextKeyValue(passwordKV);
 
-    if ((strcmp(authMessenger.getKey(), "rpc") != 0) || 
-        (strcmp(authMessenger.getValue(), "connect") != 0))
+    if ((strcmp(rpcKV.getKey(), "rpc") != 0) || 
+        (strcmp(rpcKV.getValue(), "connect") != 0))
         {
             return -3;  // represents bad rpc
         }
 
-    char *username = usernameMessenger.getValue();
-    char *password = passwordMessenger.getValue();
+    char *username = usernameKV.getValue();
+    char *password = passwordKV.getValue();
 
     // returns a -1 for bad username, -2 for bad password, -3 for bad RPC, 0 if passed.
     int retValue = passwordVaultStub(username, password);
