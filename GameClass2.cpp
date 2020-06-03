@@ -32,9 +32,12 @@ int GameClass2::gameMenu() {
             // debug code:
             std::cout << "Buffer reads \'" << buffer << "\', in Game2." << std::endl;
 
-            // whatever you want
-            if (strcmp(buffer , RPC_1) == 0 ) {
-
+            // Exit menu
+            if (strcmp(buffer , EXIT_MENU) == 0 ) {
+                connected = false;
+                std::cout << "BUGFIX server about to send" << std::endl;
+                send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
+                std::cout << "BUGFIX server about to send" << std::endl;
             }
             
             // whatever you want

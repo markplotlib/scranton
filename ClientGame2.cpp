@@ -10,12 +10,18 @@ class ClientGame2 {
 private:
    int socket;
 
+   //RPC sends here:
+   const char *EXIT_MENU = "rpc=exitmenu;";
+
+
 public:
    ClientGame2(int socket) {
       this->socket = socket;
    }
 
-   ~ClientGame2() {}
+   ~ClientGame2() {
+      cout << "Gclient2 destructed" << endl;
+   }
 
    int getUserChoice() 
    {
@@ -37,6 +43,7 @@ public:
 
 
    int gameMenu() {
+
       char buffer[1024] = {0};
       int choice = 0;
       cout << "Entered game" << endl;
@@ -44,7 +51,7 @@ public:
       { 
          cout << "Buffer in CG2 = " << buffer << endl;
          displayGameMenu(); 
-         choice = getUserChoice(); 
+         choice = getUserChoice();
          switch(choice)
          {
             case 1: {
@@ -52,9 +59,12 @@ public:
                break;
             }
             case 2: {
+               send(socket , EXIT_MENU, strlen(EXIT_MENU) , 0);
                cout << "\nExiting menu\n";
+               // placeholder read
+               read(socket, buffer, 1024);
+               cout << "Has read" << endl;
                return 2;
-               break;
             } 
             case 3: {
                // you know, whatever.
