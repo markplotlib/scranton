@@ -7,7 +7,7 @@
 #include <string.h>
 #include <iostream>
 #include "ClientGame2.cpp"
-#define PORT 12104
+#define PORT 12115
 using namespace std;
 
 // void launchHeadsTails(int, char*); deadcode
@@ -205,9 +205,11 @@ void launchHeadsTails(int sockNum)
         cout << "####PRINTING: inside bottom of Client.launchHeadsTails(), ~line 244, after reading. buffer received by Client: " << buff << endl;
 
         // TEMP CODE. TODO: parse this out.
-        string coin = "HARDCODED_heads";
+        //string coin = "HARDCODED_heads";
+       
+        cout << "\n" << buff << endl; 
 
-        cout << "The coin shows ___" << coin << "___. " << endl;
+        //cout << "The coin shows ___" << coin << "___. " << endl;
         cout << "Play again?  h)eads  t)ails.  Enter any other key to exit: ";
         cin >> guess;
     }
