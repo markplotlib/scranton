@@ -60,7 +60,7 @@ public:
 
             // check: is rpc malformed?
             KeyValue rpcKV;     // "rpc=[exact_rpc]"
-            if ((strcmp(rpcKV.getKey(), "rpc") != 0)
+            if ((strcmp(rpcKV.getKey(), "rpc") != 0))
             {
                 // super safe error checking safety net
             }
