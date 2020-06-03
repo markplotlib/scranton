@@ -21,7 +21,6 @@ ServerStats serverStats;
 //TODO check this for mutex lock
 // prepares a way for a thread to be sent to a dynamically created menu.
 void *threadToMenu(void *arg) {
-    serverStats.incrementNumActiveClients();
     int *socketPtr = (int *) arg;
     MainMenu *mainMenuPtr;
     mainMenuPtr = new MainMenu(*socketPtr);
@@ -180,14 +179,18 @@ int main(int argc, char const *argv[])
             } else {
                 // client remains connected
                 // In a function create dynamic mainmenu, and populate it with a single thread
+                // FIXME: have this check for a return from pthread_create, in case a new pthread can't be created.
+                serverStats.incrementNumActiveClients();
                 pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
+
+
                 send(new_socket , buffer , strlen(buffer) , 0 );
             }
 
+            // makes 
             cout << "Thread created, returning to listening state" << endl;
         }
     }
-
 
     return 0; 
 }
