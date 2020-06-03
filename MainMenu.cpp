@@ -76,6 +76,7 @@ public:
                 send(socket, buffer , strlen(buffer) , 0 );
             }            
             
+            // start game 2 selection ------------------------------
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
                 // placeholder
@@ -94,7 +95,7 @@ public:
                     send(socket , buffer, strlen(buffer) , 0 );
                 }
             }
-
+            // end of game 2 selection ------------------------------
 
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
@@ -104,7 +105,7 @@ public:
                 send(socket, buffer, strlen(buffer), 0 );
             }
             
-            // disconnect rpc call made by client
+            // disconnect rpc call made by client VOLUNTARILY
             else if (strcmp(buffer , DISCONNECT_RPC) == 0 )
             {
                 disconnectMainMenu(socket, DISCONNECT_RPC);

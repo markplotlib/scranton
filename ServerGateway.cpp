@@ -153,6 +153,7 @@ int main(int argc, char const *argv[])
             exit(EXIT_FAILURE); 
         }
 
+        // if number of clients exceeds the maximum, then new incoming client will be disconnected.
         if (serverStats.getNumActiveClients() >= MAX_CLIENTS) {
             read(new_socket, buffer, 1024);
             disconnect(new_socket, DISCONNECT_RPC);
@@ -174,8 +175,10 @@ int main(int argc, char const *argv[])
             cout << "Login result: " << connectReturn << endl;
 
             if (connectReturn < 0) {
+                // client disconnected due to bad credentials
                 connectReturn = disconnect(new_socket, DISCONNECT_RPC);
             } else {
+                // client remains connected
                 // In a function create dynamic mainmenu, and populate it with a single thread
                 pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
                 send(new_socket , buffer , strlen(buffer) , 0 );
