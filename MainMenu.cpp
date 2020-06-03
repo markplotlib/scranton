@@ -55,6 +55,17 @@ public:
             }
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
+            // interpreter receives client message in buffer
+            interpreter.newRPC(buffer);
+
+            // check: is rpc malformed?
+            KeyValue rpcKV;     // "rpc=[exact_rpc]"
+            if ((strcmp(rpcKV.getKey(), "rpc") != 0)
+            {
+                // super safe error checking safety net
+            }
+            
+
             // Does client's rpc indicate desire to play game?
             if ( (strcmp(buffer , FLIPGUESS_H_RPC) == 0 ) || (strcmp(buffer , FLIPGUESS_T_RPC) == 0 ) )
 // if (interpreter)
