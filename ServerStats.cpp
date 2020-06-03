@@ -21,7 +21,10 @@ int ServerStats::getHeadsTailsHS() {
    return headsTailsHS;
 }
 
+int ServerStats::getLifetimeConnections() {
+   return lifetimeConnections;
+}
 
 int ServerStats::getNumActiveClients() { return numActiveClients; }
-void ServerStats::incrementNumActiveClients() { numActiveClients++; }
+void ServerStats::incrementNumActiveClients() { numActiveClients++; lifetimeConnections++; }
 void ServerStats::decrementNumActiveClients() { numActiveClients--; }

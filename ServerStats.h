@@ -7,6 +7,7 @@ class ServerStats {
 private: 
     volatile int numActiveClients;
     volatile int headsTailsHS;
+    volatile int lifetimeConnections;
     pthread_mutex_t highscoreLock;
 public:
     ServerStats();
@@ -17,6 +18,8 @@ public:
     // returns void instead of bool.
     void setHeadsTailsHS(int newScore);
 
+    int getLifetimeConnections();
+    
     int getHeadsTailsHS();
     void incrementNumActiveClients();
     void decrementNumActiveClients();
