@@ -7,6 +7,7 @@
 #include <string.h>
 #include <iostream>
 #include "ClientGame2.cpp"
+#include "HeadsTailsClient.cpp"
 #define PORT 12115
 using namespace std;
 
@@ -115,12 +116,42 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                     choice = getUserChoice(); 
                     switch(choice)
                     {
+                        /*
                         case 1: {
                             // launchHeadsTails(sock, buffer); deadcode
                             launchHeadsTails(sock);
                             break;
                             }
-            
+                        */
+
+                        case 1: {
+                            cout << "\nYou have chosen the Legendary Game... II!\n";
+                            // clear the buffer just in case 
+                            memset(buffer, 0, 1024);
+                            // TODO: Game 2 is not implemented yet 
+                            selectGame(buffer, 2); 
+                            cout << "####Buffer is : " << buffer << endl; 
+                            send(sock , buffer , strlen(buffer) , 0 );
+                            read(sock, buffer, 1024);
+                            ClientGame2 *clientGame2Ptr;
+                            clientGame2Ptr = new ClientGame2(sock);
+                            cout << "Entering game" << endl;
+                            int game2RetVal = clientGame2Ptr->gameMenu();
+                            cout << "Exited game" << endl;
+                            delete clientGame2Ptr;
+                            if (game2RetVal == 1) 
+                            {
+                                cout << "\nDisconnecting from the Server\n"; 
+                                // Send choice to server to disconnect
+                                send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
+                                printf("Disconnect message sent\n");    
+                                read(sock, buffer, 1024);
+                                return 0;      
+                            }
+
+                            break; 
+                        }
+
                         case 2: {
                             cout << "\nYou have chosen the Legendary Game... II!\n";
                             // clear the buffer just in case 
@@ -175,49 +206,6 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
     return 0; 
 }
 
-void launchHeadsTails(int sockNum)
-{
-// char pause; // THIS IS TEMPORARY TEMPORARY TEMPORARY TEMPORARY LINE
-
-    // client-side display and prompt
-    char buff[1024] = {0};
-    cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails.  Enter any other key to exit: ";
-    char guess[2]; // must be an array ending in the null terminator -McKee
-    cin >> guess;
-    guess[1] = 0;  // 0 is the null terminator
-    while (guess[0] == 'h' || guess[0] == 't')
-    {
-        // build the flipcoin rpc
-        strcpy(buff, "rpc=flipcoin;");
-        strcat(buff, "guess=");
-        strcat(buff, guess);
-        strcat(buff, ";");
-
-        // cout << "####inside bottom of Client.launchHeadsTails(), before sending. \nbuff is : " << buff << endl; 
-
-        // sending game selection in buffer
-        send(sockNum, buff , strlen(buff) , 0 );
-        
-        // clear the buffer before overwriting it with incoming buffer
-        memset(buff, 0, 1024);
-        // read message
-        read(sockNum, buff, 1024);
-        cout << "####PRINTING: inside bottom of Client.launchHeadsTails(), ~line 244, after reading. buffer received by Client: " << buff << endl;
-
-        // TEMP CODE. TODO: parse this out.
-        //string coin = "HARDCODED_heads";
-       
-        cout << "\n" << buff << endl; 
-
-        //cout << "The coin shows ___" << coin << "___. " << endl;
-        cout << "Play again?  h)eads  t)ails.  Enter any other key to exit: ";
-        cin >> guess;
-    }
-
-    cout << "That was extreme!!!" << endl;
-    cout << "    // TODO: show game stats here: wins and rounds played" << endl;
-    // TODO: show game stats here: wins and rounds played
-}
 
 int main(int argc, char** argv)
 {

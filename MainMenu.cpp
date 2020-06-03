@@ -8,6 +8,7 @@
 #include "StringParser.h" 
 #include "ServerStats.h"
 #include "GameClass2.h"
+#include "HeadsTails.h"
 using namespace std;
 
 class MainMenu
@@ -15,6 +16,7 @@ class MainMenu
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
+    char SELECT_HT_RPC[1024] = "rpc=selectgame;game=HT;";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     //  temporary -- TODO: parse this out.
     char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
@@ -162,6 +164,28 @@ public:
 
             interpretHeadsTails(); 
 
+            // start HTselection ------------------------------
+            if (strcmp(buffer , SELECT_HT_RPC) == 0 )
+            {
+                // placeholder
+                send(socket, buffer , strlen(buffer) , 0 );
+                memset(buffer, 0, sizeof(buffer));
+                cout << "constructor about to be called" << endl;
+                HeadsTails *HTPtr = nullptr;
+                HTPtr = new HeadsTails(socket, serverStats);
+                int gameRetVal = HTPtr->gameMenu();
+                cout << "destructor about to be called" << endl;
+                delete HTPtr;
+                if (gameRetVal == 1) {
+                    disconnectMainMenu(socket, DISCONNECT_RPC);
+                    connected = false;
+                } else {
+                    send(socket , buffer, strlen(buffer) , 0 );
+                }
+            }
+            // end of HT selection ------------------------------
+
+
             // start game 2 selection ------------------------------
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
@@ -169,11 +193,11 @@ public:
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
                 cout << "constructor about to be called" << endl;
-                GameClass2 *gameClass2Ptr = nullptr;
-                gameClass2Ptr = new GameClass2(socket, serverStats);
-                int gameRetVal = gameClass2Ptr->gameMenu();
+                GameClass2 *GameClass2Ptr = nullptr;
+                GameClass2Ptr = new GameClass2(socket, serverStats);
+                int gameRetVal = GameClass2Ptr->gameMenu();
                 cout << "destructor about to be called" << endl;
-                delete gameClass2Ptr;
+                delete GameClass2Ptr;
                 if (gameRetVal == 1) {
                     disconnectMainMenu(socket, DISCONNECT_RPC);
                     connected = false;
