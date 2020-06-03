@@ -23,7 +23,7 @@ private:
     // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
-    // int htWins = 0;
+    int htWins = 0;
     int htRounds = 0;
     StringParser interpreter;
 
@@ -33,6 +33,18 @@ public:
     MainMenu(int socket) {
         this->socket = socket;
     }
+
+
+    void updateScoreboard(string guess, string face)
+    {
+        if (guess == face)  // did guess match the flipCoin face?
+        {
+            // win
+            htWins++;  // TODO -- EASY
+        }
+        htRounds++;
+    }
+
 
     void interpretHeadsTails() {
 
@@ -64,6 +76,12 @@ public:
                 // initiates Heads or Tails game
                 string winningFace = flipCoin();
 
+                string userGuess = guessKV.getValue();
+
+                updateScoreboard(userGuess, winningFace);
+
+
+                /*
                 // if the guess value is equal to heads (h)
                 if (strcmp(guessKV.getValue(), "h") == 0){
                     // if guess is heads and equal to the winning face
@@ -119,7 +137,7 @@ public:
                    // continue; 
 
                 } 
-                
+                */
             }
 
         }
