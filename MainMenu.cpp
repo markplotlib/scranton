@@ -34,34 +34,7 @@ public:
         this->socket = socket;
     }
 
-
-    // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
-    void loopThread(ServerStats &serverStats) {
-
-
-        /*
-        // TEMP CODE TEMP CODE TEMP CODE TODO
-        char temphardcodeGuess = 'h'; // temphardcodeGuess temporary temporarytemporarytemporary!
-        // TODO -- have the parser parse it out.
-        string winningFace;
-        // TEMP CODE TEMP CODE TEMP CODE TODO
-        */
-
-
-        bool connected = true;
-        int readStatus;
-
-        while (connected) {
-            memset(buffer, 0, sizeof(buffer));
-
-            // Here is where we read the flipcoin guess for the client
-            readStatus = read(socket, buffer, 1024);
-
-            if (readStatus == 0) {
-                connected = false;
-            }
-            std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
-
+    void interpretHeadsTails() {
 
             KeyValue rpcKV;     // "rpc=[exact_rpc]" (flipCoin)
             KeyValue guessKV;   // guess= h/t
@@ -69,24 +42,18 @@ public:
             // interpreter receives client message in buffer
             interpreter.newRPC(buffer);
             interpreter.getNextKeyValue(rpcKV); // "rpc=[exact_rpc]" (flipCoin)
-            interpreter.getNextKeyValue(guessKV); // guess= h/t
-           
-            // check: is rpc malformed?
-            if ((strcmp(rpcKV.getKey(), "rpc") != 0))
-            {
-                // super safe error checking safety net
-                // if the rpc is not flipcoin, exit. 
-                if ((strcmp(rpcKV.getValue(), "flipCoin") != 0))
+            
+            //disconnect rpc will skip this check
+            if ((strcmp(rpcKV.getValue(), "flipCoin") == 0))
                 {
                 
-                // exit here, rpc is not flipcoin or it is malformed
-
+                interpreter.getNextKeyValue(guessKV); // guess= h/t
 
                 }
-            }
+
             // At this point, the rpc=flipCoin
             // Check to see if the next KV is guess 
-            else if ((strcmp(guessKV.getKey(), "guess") != 0)){
+            if ((strcmp(guessKV.getKey(), "guess") != 0)){
 
                 // exit here, malformed rpc (second KV does not = guess)
             }
@@ -105,24 +72,24 @@ public:
                         memset(buffer, 0, sizeof(buffer));
                         // add to buffer 
 
-                        std::cout << "\nThe wining flip is: " << winningFace << std::endl; 
+                        std::cout << "\nThe winning flip is: " << winningFace << std::endl; 
 
                         strcat(buffer, "\nGuess was Heads, flip resulted in Heads. You won!");
                         // send buffer to client 
                         send(socket, buffer , strlen(buffer) , 0 );
-                        continue; 
+                        //continue; 
                     }
                     // client has guessed heads but it is not the winning face.
                     // reset buffer
                     memset(buffer, 0, sizeof(buffer));
                     // add to buffer 
 
-                    std::cout << "\nThe wining flip is: " << winningFace << std::endl;
+                    std::cout << "\nThe winning flip is: " << winningFace << std::endl;
 
                     strcat(buffer, "\nGuess was Heads, flip resulted in Tails. You lose!");
                     // send buffer to client
                     send(socket, buffer , strlen(buffer) , 0 );
-                    continue; 
+                    //continue; 
                 }
                 // if the guess value is equal to tails (t)
                 else if (strcmp(guessKV.getValue(), "t") == 0){
@@ -132,62 +99,50 @@ public:
                         memset(buffer, 0, sizeof(buffer));
                         // add to buffer 
 
-                        std::cout << "\nThe wining flip is: " << winningFace << std::endl;
+                        std::cout << "\nThe winning flip is: " << winningFace << std::endl;
 
                         strcat(buffer, "\nGuess was Tails, flip resulted in Tails. You won!");
                         // send buffer to client 
                         send(socket, buffer , strlen(buffer) , 0 );
-                        continue; 
+                        //continue; 
                     }
                     // client has guessed tails but it is not the winning face.
                     // reset buffer
                     memset(buffer, 0, sizeof(buffer));
                     // add to buffer 
 
-                    std::cout << "\nThe wining flip is: " << winningFace << std::endl;
+                    std::cout << "\nThe winning flip is: " << winningFace << std::endl;
 
                     strcat(buffer, "\nGuess was Tails, flip resulted in Heads. You lose!");
                     // send buffer to client
                     send(socket, buffer , strlen(buffer) , 0 );
-                    continue; 
+                   // continue; 
 
-                } else {
-                    // The client has guessed something other than heads or tails
-                    // Don't think we need as client will exit if they answer something other than h or t 
-                }
+                } 
                 
             }
 
-            
-            
-        
-
-            
-            /*
-            // Does client's rpc indicate desire to play game?
-            if ( (strcmp(buffer , FLIPGUESS_H_RPC) == 0 ) || (strcmp(buffer , FLIPGUESS_T_RPC) == 0 ) )
-// if (interpreter)
-            {
-                std::cout << "####inside MM. before line ~100.\nbuffer is : " << buffer << std::endl; 
-                memset(buffer, 0, sizeof(buffer));
-
-                // initiates Heads or Tails game
-                winningFace = flipCoin();
-                std::cout << "####inside MM. before buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
-// temphardcodeGuess temporary temporarytemporarytemporary!
-                buildOutcomeBuffer(buffer, temphardcodeGuess, winningFace); 
-// temphardcodeGuess temporary temporarytemporarytemporary!
-                std::cout << "####inside MM.  after buildOutcomeBuffer.\nbuffer is : " << buffer << std::endl; 
-
-                // std::cout << "####inside MM. line ~100.\nbuffer is : " << buffer << std::endl; 
-
-                // sending game selection in buffer
-                send(socket, buffer , strlen(buffer) , 0 );
-            }            
-            */
+        }
 
 
+    // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
+    void loopThread(ServerStats &serverStats) {
 
+        bool connected = true;
+        int readStatus;
+
+        while (connected) {
+            memset(buffer, 0, sizeof(buffer));
+
+            // Here is where we read the flipcoin guess for the client
+            readStatus = read(socket, buffer, 1024);
+
+            if (readStatus == 0) {
+                connected = false;
+            }
+            std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
+
+            interpretHeadsTails(); 
 
             // start game 2 selection ------------------------------
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
