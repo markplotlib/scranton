@@ -8,10 +8,10 @@
 #include "StringParser.h" 
 #include "ServerStats.h"
 #include "GameClass2.h"
+using namespace std;
 
-using namespace std; // TEMP. TODO, remove this!!
-
-class MainMenu {
+class MainMenu
+{
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
@@ -27,53 +27,16 @@ private:
     int htRounds = 0;
     StringParser interpreter;
 
+
 public:
+
     MainMenu(int socket) {
         this->socket = socket;
     }
 
 
-    void buildOutcomeBuffer(char* buff, char guess, string face)
-    {
-        char f[2]; // must be an array ending in the null terminator -McKee
-        f[0] = face[0];
-        f[1] = 0; // 0 is the null terminator
-        htRounds++;
-        strcpy(buff, "face=");
-        strcat(buff, f);
-        if (guess == f[0])  // did guess match the flipCoin face?
-        {
-            // win
-            // htWins++;
-            strcat(buff, ";outcome=w;");
-        }
-        else
-        {
-            // loss
-            strcat(buff, ";outcome=l;");
-        }
-    }
-
-
-    string flipCoin() 
-    {
-        srand (time(NULL));
-        string face = rand() % 2 == 0 ? "heads" : "tails";
-        return face;
-    }
-
-    // TODO: activate this
-    // int htGetNumWins() { return htWins; }
-    // TODO: activate this
-
-    int htGetNumRounds() { return htRounds; }
-
-
-    /*
-        MAIN MENU LOOP
-    */
-    // loop takes a thread and reads/sends until it reads the disconnect RPC. At that point 
-    void loop(ServerStats &serverStats) {
+    // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
+    void loopThread(ServerStats &serverStats) {
 
         // TEMP CODE TEMP CODE TEMP CODE TODO
         char temphardcodeGuess = 'h'; // temphardcodeGuess temporary temporarytemporarytemporary!
@@ -155,6 +118,45 @@ public:
         }
     }
 
+
+
+    void buildOutcomeBuffer(char* buff, char guess, string face)
+    {
+        char f[2]; // must be an array ending in the null terminator -McKee
+        f[0] = face[0];
+        f[1] = 0; // 0 is the null terminator
+        htRounds++;
+        strcpy(buff, "face=");
+        strcat(buff, f);
+        if (guess == f[0])  // did guess match the flipCoin face?
+        {
+            // win
+            // htWins++;
+            strcat(buff, ";outcome=w;");
+        }
+        else
+        {
+            // loss
+            strcat(buff, ";outcome=l;");
+        }
+    }
+
+
+    string flipCoin() 
+    {
+        srand (time(NULL));
+        string face = rand() % 2 == 0 ? "heads" : "tails";
+        return face;
+    }
+
+    // TODO: activate this
+    // int htGetNumWins() { return htWins; }
+    // TODO: activate this
+
+    int htGetNumRounds() { return htRounds; }
+
+
+
     // Sends a message to client, and then closes the socket assigned to current client.
     // return 0 if successful, -1 if failed
     int disconnectMainMenu(int socket_num, char *buff) {
@@ -163,4 +165,5 @@ public:
         // close active socket
         return close(socket_num);
     }
+
 };

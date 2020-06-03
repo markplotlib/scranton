@@ -25,7 +25,7 @@ void *threadToMenu(void *arg) {
     int *socketPtr = (int *) arg;
     MainMenu *mainMenuPtr;
     mainMenuPtr = new MainMenu(*socketPtr);
-    mainMenuPtr->loop(serverStats);
+    mainMenuPtr->loopThread(serverStats);
     delete mainMenuPtr;
     serverStats.decrementNumActiveClients();
     pthread_exit(NULL);
