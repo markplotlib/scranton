@@ -6,7 +6,6 @@
 #include <iostream>
 #include "ThreadContext.h"
 
-
 ThreadContext::ThreadContext()
 {
     std::cout << "ThreadContext ctor" << std::endl;
@@ -22,6 +21,30 @@ void ThreadContext::incrementWins() { htWins++; }
 
 void ThreadContext::incrementRounds() { htRounds++; }
 
+void ThreadContext::incrementWinStreak(ServerStats &sStats) {
+    winStreak++; sStats.setHeadsTailsHS(winStreak);
+}
+
+void ThreadContext::resetWinStreak() { winStreak = 0; }
+
+void ThreadContext::recordLastGuess(ServerStats &sStats, int lg) { 
+    incrementRounds();
+    lastGuess = lg;
+    if (lg == 0) {
+        resetWinStreak();
+    }
+    else 
+    {
+        incrementWins();
+        incrementWinStreak(sStats);
+    }
+}
+
+
 int ThreadContext::getWins() { return htWins; }
 
 int ThreadContext::getRounds() { return htRounds; }
+
+int ThreadContext::getWinStreak() { return winStreak; }
+
+int ThreadContext::getLastGuess() { return lastGuess; }
