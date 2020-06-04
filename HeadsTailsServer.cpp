@@ -90,44 +90,27 @@ std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << 
         {
             connected = false;
 
-//char winsArr[2];
-cout << "context number: " << context.getWins() << endl;
-int number = context.getWins();
-//cout << "print winsArr" << winsArr << endl;
-// winsArr[1] = 0; // null termin8or
-//char roundsArr[2];
-//cout << "roundsArr = " << roundsArr << endl;
-cout << "context number: " << context.getRounds() << endl;
-int rounds = context.getRounds();
-// roundsArr[1] = 0;
-//cout << winsArr << endl;
-//cout << roundsArr << endl;
-char b[100];
-char c[10];
-sprintf(b, "%d", number);
-char w[7] = " Wins ";
-strcat(b, w);
-//cout << "Wins: " << b << endl; 
-sprintf(c, "%d", rounds);
-char r[8] = " Rounds";
-strcat(c, r);
-strcat(b, c);
-//cout << "Rounds: " << c << endl;
-send(socket, b, strlen(b) , 0);
+            //char winsArr[2];
+            cout << "context number: " << context.getWins() << endl;
+            int number = context.getWins();
+            cout << "context number: " << context.getRounds() << endl;
+            int rounds = context.getRounds();
 
+            //Add context nunbers to char arrays and add those together
+            char winBuffer[100];
+            char roundBuffer[10];
+            sprintf(winBuffer, "%d", number);
+            char winsArr[7] = " Wins ";
+            strcat(winBuffer, winsArr);
+            //cout << "Wins: " << b << endl; 
+            sprintf(roundBuffer, "%d", rounds);
+            char roundsArr[8] = " Rounds";
+            strcat(roundBuffer, roundsArr);
+            strcat(winBuffer, roundBuffer);
 
+            //Send the context char array to the client 
+            send(socket, winBuffer, strlen(winBuffer) , 0);
 
-            // limited to ~ 10 million rounds to preserve sanity of clients
-            //char scores[64] = {0};
-            //strcpy(scores, "wins: ");
-            //strcat(scores, winsArr);
-            //strcat(scores, "; rounds: ");
-            //strcat(scores, roundsArr);
-
-           // std::cout << "server about to send scores, line 95" << std::endl;
-            //send(socket, scores, strlen(scores) , 0);
-
-            // send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
         }
 
     }
