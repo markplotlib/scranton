@@ -11,8 +11,7 @@ private:
     pthread_mutex_t highscoreLock;
 public:
     ServerStats();
-    // ~ServerStats() { delete numActiveClients; }
-        // ^-- I will not need this, unless it's instantiated dynamically (on the heap).
+
     int getNumActiveClients();
 
     // returns void instead of bool.

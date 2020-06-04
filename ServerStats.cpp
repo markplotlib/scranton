@@ -4,8 +4,6 @@ using namespace std;
 
 
 ServerStats::ServerStats() { numActiveClients = 0; }
-// ~ServerStats() { delete numActiveClients; }
-// ^-- I will not need this, unless it's instantiated dynamically (on the heap).
 
 void ServerStats::setHeadsTailsHS(int newScore) {
    pthread_mutex_lock(&highscoreLock);

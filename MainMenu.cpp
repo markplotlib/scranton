@@ -71,18 +71,15 @@ public:
             // end of of game 1: Heads-Tails selection ------------------------------
 
 
-            // start of game slot 2 selection ------------------------------
+            // Start of game slot 2 selection ------------------------------
             // Application Programmer: your game can be interfaced here.
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
-                // placeholder
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
-                cout << "constructor about to be called" << endl;
                 GameClass2 *GameClass2Ptr = nullptr;
                 GameClass2Ptr = new GameClass2(socket, serverStats);
                 int gameRetVal = GameClass2Ptr->gameMenu();
-                cout << "destructor about to be called" << endl;
                 delete GameClass2Ptr;
                 if (gameRetVal == 1) {
                     disconnectMainMenu(socket, DISCONNECT_RPC);
@@ -93,6 +90,7 @@ public:
             }
             // end of of game slot 2 selection ------------------------------
 
+            // Returns server information
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
                 
