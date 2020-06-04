@@ -7,17 +7,17 @@
 #include <iostream>
 #include "HeadsTailsServer.h"
 
-HeadsTails::HeadsTails(int socket, ServerStats &serverStats) {
+HeadsTailsServer::HeadsTailsServer(int socket, ServerStats &serverStats) {
     std::cout << "HT ctor" << std::endl;
     this->socket = socket;
     this->serverStats = serverStats;
 }
 
-HeadsTails::~HeadsTails() { 
+HeadsTailsServer::~HeadsTailsServer() { 
     std::cout << "HT dtor" << std::endl;
 }
 
-string HeadsTails::flipCoin() 
+string HeadsTailsServer::flipCoin() 
 {
     srand (time(NULL));
     string face = rand() % 2 == 0 ? "h" : "t";
@@ -25,10 +25,10 @@ string HeadsTails::flipCoin()
 }
 
 
-int HeadsTails::htGetNumRounds() { return htRounds; }
+int HeadsTailsServer::htGetNumRounds() { return htRounds; }
 
 
-void HeadsTails::updateScoreboard(string guess, string face)
+void HeadsTailsServer::updateScoreboard(string guess, string face)
 {
     if (guess == face)  // did guess match the flipCoin face?
     {
@@ -39,7 +39,7 @@ void HeadsTails::updateScoreboard(string guess, string face)
 }
 
 
-int HeadsTails::gameMenu()
+int HeadsTailsServer::gameMenu()
 {
     bool connected = true;
     int readStatus;

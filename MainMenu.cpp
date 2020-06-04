@@ -56,8 +56,8 @@ public:
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
                 cout << "constructor about to be called" << endl;
-                HeadsTails *htSession = nullptr;
-                htSession = new HeadsTails(socket, serverStats);
+                HeadsTailsServer *htSession = nullptr;
+                htSession = new HeadsTailsServer(socket, serverStats);
                 int gameRetVal = htSession->gameMenu();
                 cout << "destructor about to be called" << endl;
                 delete htSession;

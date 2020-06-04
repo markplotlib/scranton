@@ -6,7 +6,7 @@
 #include "StringParser.h"
 using namespace std;
 
-class HeadsTails {
+class HeadsTailsServer {
 
 private:
 
@@ -25,11 +25,11 @@ private:
 
 public:
 
-    explicit HeadsTails(int socket, ServerStats &serverStats);
+    explicit HeadsTailsServer(int socket, ServerStats &serverStats);
 
-    HeadsTails();
+    HeadsTailsServer();
 
-    ~HeadsTails();
+    ~HeadsTailsServer();
 
     string flipCoin();
 
