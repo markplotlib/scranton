@@ -20,8 +20,6 @@ private:
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
     char SELECT_HT_RPC[1024] = "rpc=selectgame;game=1;";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
-
-    // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
 
@@ -35,10 +33,6 @@ public:
 
     // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
     void loopThread(ServerStats &serverStats, ThreadContext &context) {
-
-// cout << context.incrementWins() << endl;
-// cout << context.incrementRounds() << endl;
-
 
         bool connected = true;
         int readStatus;
@@ -55,10 +49,9 @@ public:
             }
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
-            // start HTselection ------------------------------
+            // start of game 1: Heads-Tails selection ------------------------------
             if (strcmp(buffer , SELECT_HT_RPC) == 0 )
             {
-                // placeholder
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
 
@@ -75,10 +68,11 @@ public:
                     connected = false;
                 }
             }
-            // end of HT selection ------------------------------
+            // end of of game 1: Heads-Tails selection ------------------------------
 
 
-            // start game 2 selection ------------------------------
+            // start of game slot 2 selection ------------------------------
+            // Application Programmer: your game can be interfaced here.
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
                 // placeholder
@@ -97,7 +91,7 @@ public:
                     send(socket , buffer, strlen(buffer) , 0 );
                 }
             }
-            // end of game 2 selection ------------------------------
+            // end of of game slot 2 selection ------------------------------
 
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
@@ -120,31 +114,6 @@ public:
             }                    
         }
     }
-
-/*
-
-    void buildOutcomeBuffer(char* buff, char guess, string face)
-    {
-        char f[2]; // must be an array ending in the null terminator -McKee
-        f[0] = face[0];
-        f[1] = 0; // 0 is the null terminator
-        htRounds++;
-        strcpy(buff, "face=");
-        strcat(buff, f);
-        if (guess == f[0])  // did guess match the flipCoin face?
-        {
-            // win
-            // htWins++;
-            strcat(buff, ";outcome=w;");
-        }
-        else
-        {
-            // loss
-            strcat(buff, ";outcome=l;");
-        }
-    }
-
-*/
 
 
     // Sends a message to client, and then closes the socket assigned to current client.
