@@ -116,9 +116,10 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             // Clear the buffer just in case 
                             memset(buffer, 0, 1024);
 
+                            selectGame(buffer, 1); 
                             // send game selection to ServerGateway
                             send(sock , buffer , strlen(buffer) , 0 );
-                            selectGame(buffer, 1); 
+
 
                             // receive buffer from MainMenu
                             read(sock, buffer, 1024);

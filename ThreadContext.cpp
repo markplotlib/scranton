@@ -28,8 +28,10 @@ void ThreadContext::incrementWinStreak(ServerStats &sStats) {
 void ThreadContext::resetWinStreak() { winStreak = 0; }
 
 void ThreadContext::recordLastGuess(ServerStats &sStats, int lg) { 
+    
     incrementRounds();
     lastGuess = lg;
+
     if (lg == 0) {
         resetWinStreak();
     }
@@ -37,7 +39,9 @@ void ThreadContext::recordLastGuess(ServerStats &sStats, int lg) {
     {
         incrementWins();
         incrementWinStreak(sStats);
+        sStats.setHeadsTailsHS(winStreak);
     }
+
 }
 
 
