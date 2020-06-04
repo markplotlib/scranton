@@ -44,9 +44,8 @@ int HeadsTails::gameMenu()
     bool connected = true;
     int readStatus;
     while (connected) {
-cout << "============================================" << endl;
-cout << "============================================" << endl;
-cout << "============================================" << endl;
+        cout << "====================== entering Heads Tails Server ======================" << endl;
+
 
         memset(buffer, 0, sizeof(buffer));
         readStatus = read(socket, buffer, 1024);
@@ -98,15 +97,7 @@ std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << 
             send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
             std::cout << "BUGFIX server about to send" << std::endl;
         }
-        
-        // whatever you want
-    // char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
-    // char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
-        
-        // else you need to return something
-        else { 
-            return 0;
-        }                    
+
     }
     
     return 0;
