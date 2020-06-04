@@ -4,7 +4,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <iostream>
-using namespace std;
+
 
 class HeadsTailsClient
 {
@@ -13,18 +13,19 @@ private:
     //RPC sends here:
     const char *EXIT_MENU = "rpc=exitmenu;";
 
+
 public:
+
     // Constructor 
     HeadsTailsClient(int socket)
     {
         this->socket = socket;
     }
 
+
     // Destructor
-    ~HeadsTailsClient()
-    {
-        cout << "Gclient2 destructed" << endl;
-    }
+    ~HeadsTailsClient() {}
+
 
     // Gets the choice from the user 
     int getUserChoice() 
@@ -33,6 +34,7 @@ public:
         cin >> userChoice; 
         return userChoice; 
     }
+
 
     // Display menu options to the user 
     void displayMenuWithinThisGame()
@@ -43,6 +45,7 @@ public:
         cout << "2 - exit this game\n";
         cout << "\nUser Selection: ";
     }
+
 
     // Displays the game menu and selections for the user 
     int gameMenu()
@@ -77,14 +80,15 @@ public:
         } while (true);
     return 0;
     }
-    
+
+
     // Runs the Extreme Heads or Tails game
     void playGame(int sockNum)
     {
         // Client-side display and prompt
         char buff[1024] = {0};
         cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails.  Enter any other key to exit: ";
-        char guess[2]; // must be an array ending in the null terminator -McKee
+        char guess[2]; // must be an array ending in the null terminator
         cin >> guess;
         guess[1] = 0;  // 0 is the null terminator
         while (guess[0] == 'h' || guess[0] == 't')
@@ -113,7 +117,7 @@ public:
                 cout << "You win! :)" << endl;
             }
             else
-            {
+            {   // player loses coin flip
                 cout << "Sorry :(" << endl;
             }
             cout << "Play again?  h)eads  t)ails.  Enter any other key to exit: ";
