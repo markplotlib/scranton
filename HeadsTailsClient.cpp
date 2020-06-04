@@ -49,14 +49,13 @@ public:
       cout << "Entered game" << endl;
       do
       { 
-         cout << "Buffer in CG2 = " << buffer << endl;
          displayMenuWithinThisGame(); 
          choice = getUserChoice();
          switch(choice)
          {
             case 1:
             {
-               launchHeadsTails(socket);
+               playGame(socket);
                break;
             }
             case 2:
@@ -65,7 +64,7 @@ public:
                cout << "\nExiting menu\n";
                // placeholder read
                read(socket, buffer, 1024);
-               cout << "Has read" << endl;
+               cout << "LINE 67 THE MAGIC:::::::" << buffer << endl;
                return 2;
                break;
             } 
@@ -78,7 +77,7 @@ public:
    }
    
 
-   void launchHeadsTails(int sockNum)
+   void playGame(int sockNum)
    {
       // client-side display and prompt
       char buff[1024] = {0};
@@ -121,11 +120,9 @@ public:
          cin >> guess;
       }
 
-         cout << "That was extreme!!!" << endl;
-// TODO
-         cout << "Rounds played: " << "->htGetNumRounds()";
-         cout << ".  Wins:" << "->htGetNumWins()" << endl;
+      cout << "That was extreme!!!" << endl;
 
+      // "rpc=getHTContext;"
 
    }
 

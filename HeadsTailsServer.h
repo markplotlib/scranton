@@ -16,7 +16,7 @@ private:
     ServerStats serverStats;
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
     char EXIT_MENU[1024] = "exitmenu";
-    char CONFIRMATION[1024] = "rpc=confirmed;";
+    // char CONFIRMATION[1024] = "rpc=confirmed;";
     char RPC_1[1024] = "rpc1";
     char RPC_2[1024] = "rpc2";
 

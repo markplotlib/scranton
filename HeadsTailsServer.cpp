@@ -82,8 +82,6 @@ std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << 
             send(socket, face, 2, 0);
         }
 
-
-
         // debug code:
         std::cout << "HeadsTailsServer.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;
 
@@ -91,9 +89,32 @@ std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << 
         if (strcmp(rpcKV.getValue(), EXIT_MENU) == 0)
         {
             connected = false;
-            std::cout << "BUGFIX server about to send" << std::endl;
-            send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
-            std::cout << "BUGFIX server about to send" << std::endl;
+
+char winsArr[2];
+cout << "context number: " << context.getWins() << endl;
+winsArr[0] = context.getWins();
+cout << "print winsArr" << winsArr << endl;
+// winsArr[1] = 0; // null termin8or
+char roundsArr[2];
+cout << "roundsArr = " << roundsArr << endl;
+cout << "context number: " << context.getRounds() << endl;
+roundsArr[0] = context.getRounds();
+// roundsArr[1] = 0;
+cout << winsArr << endl;
+cout << roundsArr << endl;
+
+
+            // limited to ~ 10 million rounds to preserve sanity of clients
+            char scores[64] = {0};
+            strcpy(scores, "wins: ");
+            strcat(scores, winsArr);
+            strcat(scores, "; rounds: ");
+            strcat(scores, roundsArr);
+
+            std::cout << "server about to send scores, line 95" << std::endl;
+            send(socket, scores, strlen(scores) , 0);
+
+            // send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
         }
 
     }
