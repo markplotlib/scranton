@@ -32,9 +32,13 @@ void HeadsTailsServer::updateScoreboard(string guess, string face, ThreadContext
     if (guess == face)  // did guess match the flipCoin face?
     {
         // win
-        context.incrementWins();
+        context.recordLastGuess(serverStats, 1);        
+    } 
+    
+    else 
+    {
+        context.recordLastGuess(serverStats, 0);
     }
-    context.incrementRounds();
 }
 
 
