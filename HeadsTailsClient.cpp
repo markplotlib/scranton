@@ -121,6 +121,12 @@ public:
          cin >> guess;
       }
 
+         cout << "That was extreme!!!" << endl;
+// TODO
+         cout << "Rounds played: " << "->htGetNumRounds()";
+         cout << ".  Wins:" << "->htGetNumWins()" << endl;
+
+
    }
 
 };

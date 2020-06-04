@@ -6,6 +6,7 @@
 #include <string.h> 
 #include <iostream>
 #include "HeadsTailsServer.h"
+#include "ThreadContext.h"
 
 HeadsTailsServer::HeadsTailsServer(int socket, ServerStats &serverStats) {
     std::cout << "HT ctor" << std::endl;
@@ -25,24 +26,18 @@ string HeadsTailsServer::flipCoin()
 }
 
 
-int HeadsTailsServer::htGetNumRounds() { return htRounds; }
-
-
-int HeadsTailsServer::htGetNumWins() { return htWins; }
-
-
-void HeadsTailsServer::updateScoreboard(string guess, string face)
+void HeadsTailsServer::updateScoreboard(string guess, string face, ThreadContext &context)
 {
     if (guess == face)  // did guess match the flipCoin face?
     {
         // win
-        htWins++;
+        context.incrementWins();
     }
-    htRounds++;
+    context.incrementRounds();
 }
 
 
-int HeadsTailsServer::gameMenu()
+int HeadsTailsServer::gameMenu(ThreadContext &context)
 {
     bool connected = true;
     int readStatus;
@@ -76,7 +71,7 @@ cout << rpcKV.getValue() << endl;
             {
                 winningFace = flipCoin();
 
-                updateScoreboard(guess, winningFace);
+                updateScoreboard(guess, winningFace, context);
             }
             char face[2];
             face[0] = winningFace[0];

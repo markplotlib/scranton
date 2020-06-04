@@ -10,10 +10,11 @@
 #include "MainMenu.cpp"
 #include "StringParser.h"
 #include "ServerStats.h"
+#include "ThreadContext.h"
 
 // next line from MM
 // #include "assert.h"
-#define PORT 12115
+#define PORT 12104
 using namespace std;
 
 ServerStats serverStats;
@@ -22,9 +23,14 @@ ServerStats serverStats;
 // prepares a way for a thread to be sent to a dynamically created menu.
 void *threadToMenu(void *arg) {
     int *socketPtr = (int *) arg;
+
+    // stores client context
+    ThreadContext *context = new ThreadContext();
+
     MainMenu *mainMenuPtr;
     mainMenuPtr = new MainMenu(*socketPtr);
-    mainMenuPtr->loopThread(serverStats);
+    mainMenuPtr->loopThread(serverStats, *context);
+    delete context;
     delete mainMenuPtr;
     serverStats.decrementNumActiveClients();
     pthread_exit(NULL);

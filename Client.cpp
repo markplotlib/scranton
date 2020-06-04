@@ -8,7 +8,7 @@
 #include <iostream>
 #include "ClientGame2.cpp"
 #include "HeadsTailsClient.cpp"
-#define PORT 12115
+#define PORT 12104
 using namespace std;
 
 

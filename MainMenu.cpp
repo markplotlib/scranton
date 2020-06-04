@@ -9,6 +9,8 @@
 #include "ServerStats.h"
 #include "GameClass2.h"
 #include "HeadsTailsServer.h"
+#include "ThreadContext.h"
+
 using namespace std;
 
 class MainMenu
@@ -32,7 +34,11 @@ public:
 
 
     // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
-    void loopThread(ServerStats &serverStats) {
+    void loopThread(ServerStats &serverStats, ThreadContext &context) {
+
+// cout << context.incrementWins() << endl;
+// cout << context.incrementRounds() << endl;
+
 
         bool connected = true;
         int readStatus;
@@ -59,11 +65,7 @@ public:
                 cout << "constructor about to be called" << endl;
                 HeadsTailsServer *htSession = nullptr;
                 htSession = new HeadsTailsServer(socket, serverStats);
-                int gameRetVal = htSession->gameMenu();
-
-                cout << "That was extreme!!!" << endl;
-                cout << "Rounds played: " << htSession->htGetNumRounds();
-                cout << ".  Wins:" << htSession->htGetNumWins() << endl;
+                int gameRetVal = htSession->gameMenu(context);
 
                 cout << "destructor about to be called" << endl;
                 delete htSession;
