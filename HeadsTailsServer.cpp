@@ -90,29 +90,42 @@ std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << 
         {
             connected = false;
 
-char winsArr[2];
+//char winsArr[2];
 cout << "context number: " << context.getWins() << endl;
-winsArr[0] = context.getWins();
-cout << "print winsArr" << winsArr << endl;
+int number = context.getWins();
+//cout << "print winsArr" << winsArr << endl;
 // winsArr[1] = 0; // null termin8or
-char roundsArr[2];
-cout << "roundsArr = " << roundsArr << endl;
+//char roundsArr[2];
+//cout << "roundsArr = " << roundsArr << endl;
 cout << "context number: " << context.getRounds() << endl;
-roundsArr[0] = context.getRounds();
+int rounds = context.getRounds();
 // roundsArr[1] = 0;
-cout << winsArr << endl;
-cout << roundsArr << endl;
+//cout << winsArr << endl;
+//cout << roundsArr << endl;
+char b[100];
+char c[10];
+sprintf(b, "%d", number);
+char w[7] = " Wins ";
+strcat(b, w);
+//cout << "Wins: " << b << endl; 
+sprintf(c, "%d", rounds);
+char r[8] = " Rounds";
+strcat(c, r);
+strcat(b, c);
+//cout << "Rounds: " << c << endl;
+send(socket, b, strlen(b) , 0);
+
 
 
             // limited to ~ 10 million rounds to preserve sanity of clients
-            char scores[64] = {0};
-            strcpy(scores, "wins: ");
-            strcat(scores, winsArr);
-            strcat(scores, "; rounds: ");
-            strcat(scores, roundsArr);
+            //char scores[64] = {0};
+            //strcpy(scores, "wins: ");
+            //strcat(scores, winsArr);
+            //strcat(scores, "; rounds: ");
+            //strcat(scores, roundsArr);
 
-            std::cout << "server about to send scores, line 95" << std::endl;
-            send(socket, scores, strlen(scores) , 0);
+           // std::cout << "server about to send scores, line 95" << std::endl;
+            //send(socket, scores, strlen(scores) , 0);
 
             // send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
         }

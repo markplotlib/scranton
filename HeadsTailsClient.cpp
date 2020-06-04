@@ -64,7 +64,7 @@ public:
                cout << "\nExiting menu\n";
                // placeholder read
                read(socket, buffer, 1024);
-               cout << "LINE 67 THE MAGIC:::::::" << buffer << endl;
+               cout << buffer << endl;
                return 2;
                break;
             } 
