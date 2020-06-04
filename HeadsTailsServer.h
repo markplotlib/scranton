@@ -35,6 +35,8 @@ public:
 
     int htGetNumRounds();
 
+    int htGetNumWins();
+
     void updateScoreboard(string, string);
 
     void getUserGuess();

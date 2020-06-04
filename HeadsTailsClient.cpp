@@ -23,6 +23,16 @@ public:
       cout << "Gclient2 destructed" << endl;
    }
 
+   int htGetNumRounds()
+   {
+      return htRounds;
+   }
+
+   int htGetNumWins()
+   {
+      return htWins;
+   }
+
    int getUserChoice() 
    {
       int userChoice; 
