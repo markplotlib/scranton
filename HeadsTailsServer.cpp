@@ -5,7 +5,7 @@
 #include <netinet/in.h>
 #include <string.h> 
 #include <iostream>
-#include "HeadsTails.h"
+#include "HeadsTailsServer.h"
 
 HeadsTails::HeadsTails(int socket, ServerStats &serverStats) {
     std::cout << "HT ctor" << std::endl;
@@ -15,8 +15,7 @@ HeadsTails::HeadsTails(int socket, ServerStats &serverStats) {
 
 HeadsTails::~HeadsTails() { 
     std::cout << "HT dtor" << std::endl;
-    }
-
+}
 
 string HeadsTails::flipCoin() 
 {
@@ -56,21 +55,29 @@ int HeadsTails::gameMenu()
         KeyValue rpcKV;
         interpreter.newRPC(buffer);
         interpreter.getNextKeyValue(rpcKV);
-
+        
 std::cout << "HeadsTails.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << std::endl;
         //disconnect rpc will skip this check
         if ((strcmp(rpcKV.getValue(), "flipcoin") == 0))
         {   
+            string winningFace;
             KeyValue guessKV;   // guess= h/t
             interpreter.getNextKeyValue(guessKV); // guess= h/t
             string guess = guessKV.getValue();
             if (guess == "h" || guess == "t")
             {
-                string winningFace = flipCoin();
+                winningFace = flipCoin();
 
                 updateScoreboard(guess, winningFace);
             }
+            char face[2];
+            face[0] = winningFace[0];
+            face[1] = 0;
+
+            send(socket, face, 1, 0);
         }
+
+
 
         // debug code:
         std::cout << "HeadsTails.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;

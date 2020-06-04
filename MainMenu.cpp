@@ -8,7 +8,7 @@
 #include "StringParser.h" 
 #include "ServerStats.h"
 #include "GameClass2.h"
-#include "HeadsTails.h"
+#include "HeadsTailsServer.h"
 using namespace std;
 
 class MainMenu
@@ -61,11 +61,10 @@ public:
                 int gameRetVal = htSession->gameMenu();
                 cout << "destructor about to be called" << endl;
                 delete htSession;
-                if (gameRetVal == 1) {
+                if (gameRetVal == 1)
+                {   // 1 is the disconnect code 
                     disconnectMainMenu(socket, DISCONNECT_RPC);
                     connected = false;
-                } else {
-                    send(socket , buffer, strlen(buffer) , 0 );
                 }
             }
             // end of HT selection ------------------------------

@@ -95,20 +95,29 @@ public:
          strcat(buff, ";");
 
          // sending game selection in buffer
-         send(sockNum, buff , strlen(buff) , 0 );
+         send(sockNum, buff , strlen(buff), 0 );
          
          // clear the buffer before overwriting it with incoming buffer
          memset(buff, 0, 1024);
          // read message
          read(sockNum, buff, 1024);
          cout << "####PRINTING: inside bottom of HeadsTailsClient.launchHeadsTails(), ~line 106, after reading. buffer received by Client: " << buff << endl;
+         char face[2];
+         face[0] = buff[0];
+         face[1] = 0;
 
-         // TEMP CODE. TODO: parse this out.
-         //string coin = "HARDCODED_heads";
-         
-         cout << "\n" << buff << endl; 
+         string coin = face[0] == 'h' ? "heads" : "tails";
+         cout << "The coin shows ___" << coin << "___. " << endl;
 
-         //cout << "The coin shows ___" << coin << "___. " << endl;
+         if (guess[0] == face[0])
+         {
+            cout << "You win! :)" << endl;
+         }
+         else
+         {
+            cout << "Sorry :(" << endl;
+         }
+
          cout << "Play again?  h)eads  t)ails.  Enter any other key to exit: ";
          cin >> guess;
       }
