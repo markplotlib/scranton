@@ -55,10 +55,16 @@ public:
                 // placeholder
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
+
                 cout << "constructor about to be called" << endl;
                 HeadsTailsServer *htSession = nullptr;
                 htSession = new HeadsTailsServer(socket, serverStats);
                 int gameRetVal = htSession->gameMenu();
+
+                cout << "That was extreme!!!" << endl;
+                cout << "Rounds played: " << htSession->htGetNumRounds();
+                cout << ".  Wins:" << htSession->htGetNumWins() << endl;
+
                 cout << "destructor about to be called" << endl;
                 delete htSession;
                 if (gameRetVal == 1)

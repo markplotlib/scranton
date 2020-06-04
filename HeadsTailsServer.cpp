@@ -28,6 +28,9 @@ string HeadsTailsServer::flipCoin()
 int HeadsTailsServer::htGetNumRounds() { return htRounds; }
 
 
+int HeadsTailsServer::htGetNumWins() { return htWins; }
+
+
 void HeadsTailsServer::updateScoreboard(string guess, string face)
 {
     if (guess == face)  // did guess match the flipCoin face?

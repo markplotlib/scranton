@@ -23,16 +23,6 @@ public:
       cout << "Gclient2 destructed" << endl;
    }
 
-   int htGetNumRounds()
-   {
-      return htRounds;
-   }
-
-   int htGetNumWins()
-   {
-      return htWins;
-   }
-
    int getUserChoice() 
    {
       int userChoice; 
@@ -111,8 +101,6 @@ public:
          memset(buff, 0, 1024);
          // read message
          read(sockNum, buff, 1024);
-cout << "============================================" << endl;
-         cout << "####PRINTING: inside bottom of HeadsTailsClient.launchHeadsTails(), ~line 106, after reading. buffer received by Client: " << buff << endl;
          char face[2];
          face[0] = buff[0];
          face[1] = 0;
@@ -120,8 +108,6 @@ cout << "============================================" << endl;
          string coin = face[0] == 'h' ? "heads" : "tails";
          cout << "The coin shows ___" << coin << "___. " << endl;
 
-cout << "guess[0] = " << guess[0] << endl;
-cout << "face[0] = " << face[0] << endl;
          if (guess[0] == face[0])
          {
             cout << "You win! :)" << endl;
@@ -135,11 +121,7 @@ cout << "face[0] = " << face[0] << endl;
          cin >> guess;
       }
 
-      cout << "That was extreme!!!" << endl;
-      cout << "    // TODO: show game stats here: wins and rounds played" << endl;
-      // TODO: show game stats here: wins and rounds played
    }
-
 
 };
 
