@@ -123,11 +123,13 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
 
                             // receive buffer from MainMenu
                             read(sock, buffer, 1024);
+                            
+                            // start up HeadsTails object
                             HeadsTailsClient *HeadsTailsClientPtr;
                             HeadsTailsClientPtr = new HeadsTailsClient(sock);
-                            cout << "Entering game" << endl;
+                            // this is where we interact with Heads Tails game
                             HeadsTailsClientPtr->gameMenu();
-                            cout << "Exited game" << endl;
+                            // session has ended
                             delete HeadsTailsClientPtr;
                             break; 
                         }
