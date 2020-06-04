@@ -171,9 +171,9 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                 // global serverstats context sent in from MainMenu LoopThread
                 memset(buffer, 0, 1024);
                 read(sock, buffer, 1024);
-                cout << "============================\n" <<
-                        "Server has " << buffer << " clients connected.\n" <<
-                        "============================" << endl;
+                cout << "========================================================\n" <<
+                        buffer << "\n" <<
+                        "========================================================" << endl;
                 break;
             default:
                 break; 

@@ -95,13 +95,31 @@ public:
 
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
-                // send buffer containing server stats over to..
-                // client, case 3 (request for global serverstats context)
+                
                 memset(buffer, 0, sizeof(buffer));
+                char lifetimeClientsBuffer[100];
+                char highScoreBuffer[100];
+                char lifetime[23] = ": Lifetime Clients || ";
+                char clients[21] = ": Active Clients || ";
+                char highScore[17] = ": High Score || ";
+
+                sprintf(lifetimeClientsBuffer,"%d", serverStats.getLifetimeConnections());
+                strcat(lifetimeClientsBuffer, lifetime);
+
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
+                strcat(buffer, clients);
+                
+                sprintf(highScoreBuffer,"%d", serverStats.getHeadsTailsHS());
+                strcat(highScoreBuffer, highScore);
+
+                strcat(buffer, lifetimeClientsBuffer);
+                strcat(buffer, highScoreBuffer);
+
+
+
+
                 send(socket, buffer, strlen(buffer), 0 );
             }
-            
             // disconnect rpc call made by client VOLUNTARILY
             else if (strcmp(buffer , DISCONNECT_RPC) == 0 )
             {
