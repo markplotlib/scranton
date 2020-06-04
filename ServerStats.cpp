@@ -1,30 +1,39 @@
 #include <iostream>
 #include "ServerStats.h"
-using namespace std;
 
 
-ServerStats::ServerStats() { numActiveClients = 0; }
-// ~ServerStats() { delete numActiveClients; }
-// ^-- I will not need this, unless it's instantiated dynamically (on the heap).
-
-void ServerStats::setHeadsTailsHS(int newScore) {
-   pthread_mutex_lock(&highscoreLock);
-   if (newScore > headsTailsHS) 
-   {
-      headsTailsHS = newScore;
-      pthread_mutex_unlock(&highscoreLock);
-   }
-   pthread_mutex_unlock(&highscoreLock);
+// ctor
+ServerStats::ServerStats()
+{
+    numActiveClients = 0;
 }
 
-int ServerStats::getHeadsTailsHS() {
-   return headsTailsHS;
-}
 
-int ServerStats::getLifetimeConnections() {
-   return lifetimeConnections;
-}
+// accessors (getters)
+int ServerStats::getHeadsTailsHS() { return headsTailsHS; }
+
+int ServerStats::getLifetimeConnections() { return lifetimeConnections; }
 
 int ServerStats::getNumActiveClients() { return numActiveClients; }
-void ServerStats::incrementNumActiveClients() { numActiveClients++; lifetimeConnections++; }
+
+
+// mutators (setters)
+void ServerStats::setHeadsTailsHS(int newScore)
+{
+    pthread_mutex_lock(&highscoreLock);
+    
+    if (newScore > headsTailsHS) 
+    {
+        headsTailsHS = newScore;
+        pthread_mutex_unlock(&highscoreLock);
+    }
+    pthread_mutex_unlock(&highscoreLock);
+}
+
+void ServerStats::incrementNumActiveClients()
+{ 
+    numActiveClients++;
+    lifetimeConnections++; 
+}
+
 void ServerStats::decrementNumActiveClients() { numActiveClients--; }
