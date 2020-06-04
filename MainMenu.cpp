@@ -18,14 +18,10 @@ private:
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
     char SELECT_HT_RPC[1024] = "rpc=selectgame;game=HT;";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
-    //  temporary -- TODO: parse this out.
-    char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
-    char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
 
     // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
-    StringParser interpreter;
 
 
 public:
@@ -35,110 +31,14 @@ public:
     }
 
 
-    void interpretHeadsTails() {
-
-            KeyValue rpcKV;     // "rpc=[exact_rpc]" (flipCoin)
-            KeyValue guessKV;   // guess= h/t
-
-            // interpreter receives client message in buffer
-            interpreter.newRPC(buffer);
-            interpreter.getNextKeyValue(rpcKV); // "rpc=[exact_rpc]" (flipCoin)
-            
-            //disconnect rpc will skip this check
-            if ((strcmp(rpcKV.getValue(), "flipCoin") == 0))
-                {
-                
-                interpreter.getNextKeyValue(guessKV); // guess= h/t
-
-                }
-
-            // At this point, the rpc=flipCoin
-            // Check to see if the next KV is guess 
-            if ((strcmp(guessKV.getKey(), "guess") != 0)){
-
-                // exit here, malformed rpc (second KV does not = guess)
-            }
-            // At this point, the rpc=flipcoin;guess=  
-            else {
-
-                // Does flip coin go here? We have the guess and we will compare here 
-                // initiates Heads or Tails game
-
-                string userGuess = guessKV.getValue();
-
-                // string winningFace = flipCoin();
-                // updateScoreboard(userGuess, winningFace);
-
-
-                /*
-                // if the guess value is equal to heads (h)
-                if (strcmp(guessKV.getValue(), "h") == 0){
-                    // if guess is heads and equal to the winning face
-                    if (winningFace == "h"){
-                        // reset buffer 
-                        memset(buffer, 0, sizeof(buffer));
-                        // add to buffer 
-
-                        std::cout << "\nThe winning flip is: " << winningFace << std::endl; 
-
-                        strcat(buffer, "\nGuess was Heads, flip resulted in Heads. You won!");
-                        // send buffer to client 
-                        send(socket, buffer , strlen(buffer) , 0 );
-                        //continue; 
-                    }
-                    // client has guessed heads but it is not the winning face.
-                    // reset buffer
-                    memset(buffer, 0, sizeof(buffer));
-                    // add to buffer 
-
-                    std::cout << "\nThe winning flip is: " << winningFace << std::endl;
-
-                    strcat(buffer, "\nGuess was Heads, flip resulted in Tails. You lose!");
-                    // send buffer to client
-                    send(socket, buffer , strlen(buffer) , 0 );
-                    //continue; 
-                }
-                // if the guess value is equal to tails (t)
-                else if (strcmp(guessKV.getValue(), "t") == 0){
-                    // if guess tails and equal to the winning face
-                    if (winningFace == "t") {
-                        // reset buffer 
-                        memset(buffer, 0, sizeof(buffer));
-                        // add to buffer 
-
-                        std::cout << "\nThe winning flip is: " << winningFace << std::endl;
-
-                        strcat(buffer, "\nGuess was Tails, flip resulted in Tails. You won!");
-                        // send buffer to client 
-                        send(socket, buffer , strlen(buffer) , 0 );
-                        //continue; 
-                    }
-                    // client has guessed tails but it is not the winning face.
-                    // reset buffer
-                    memset(buffer, 0, sizeof(buffer));
-                    // add to buffer 
-
-                    std::cout << "\nThe winning flip is: " << winningFace << std::endl;
-
-                    strcat(buffer, "\nGuess was Tails, flip resulted in Heads. You lose!");
-                    // send buffer to client
-                    send(socket, buffer , strlen(buffer) , 0 );
-                   // continue; 
-
-                } 
-                */
-            }
-
-        }
-
-
     // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
     void loopThread(ServerStats &serverStats) {
 
         bool connected = true;
         int readStatus;
 
-        while (connected) {
+        while (connected)
+        {
             memset(buffer, 0, sizeof(buffer));
 
             // Here is where we read the flipcoin guess for the client
@@ -149,7 +49,6 @@ public:
             }
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
-            interpretHeadsTails(); 
 
             // start HTselection ------------------------------
             if (strcmp(buffer , SELECT_HT_RPC) == 0 )
@@ -158,11 +57,11 @@ public:
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
                 cout << "constructor about to be called" << endl;
-                HeadsTails *HTPtr = nullptr;
-                HTPtr = new HeadsTails(socket, serverStats);
-                int gameRetVal = HTPtr->gameMenu();
+                HeadsTails *htSession = nullptr;
+                htSession = new HeadsTails(socket, serverStats);
+                int gameRetVal = htSession->gameMenu();
                 cout << "destructor about to be called" << endl;
-                delete HTPtr;
+                delete htSession;
                 if (gameRetVal == 1) {
                     disconnectMainMenu(socket, DISCONNECT_RPC);
                     connected = false;
