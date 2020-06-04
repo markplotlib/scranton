@@ -11,16 +11,16 @@
 #include "StringParser.h"
 #include "ServerStats.h"
 #include "ThreadContext.h"
-// next line from MM
-// #include "assert.h"
 #define PORT 12104
 using namespace std;
 
+// global context object: saves parameters/attributes around the server session.
 ServerStats serverStats;
 
-//TODO check this for mutex lock
+
 // Prepares a way for a thread to be sent to a dynamically created menu.
-void *threadToMenu(void *arg) {
+void *threadToMenu(void *arg)
+{
     int *socketPtr = (int *) arg;
     // stores client context
     ThreadContext *context = new ThreadContext();
@@ -34,21 +34,23 @@ void *threadToMenu(void *arg) {
 }
 
 // Connects the client socket to the server socket
-// TODO candidate
 // return 0 if password/username passed.
 // return -2 if incorrect password
 // return -1 if username does not exist
-int passwordVaultStub(char *username, char *password) {
+int passwordVaultStub(char *username, char *password)
+{
     const char *CORRECT_UN = "mike";
     const char *CORRECT_PW = "123";
 
-    if (strcmp(username, CORRECT_UN) == 0) {
+    if (strcmp(username, CORRECT_UN) == 0)
+    {
         if (strcmp(password, CORRECT_PW) == 0)
+        {
             return 0;
-        else
-            return -2;
-    } else
-        return -1;
+        }
+        return -2;
+    }
+    return -1;
 }
 
 // Authenticates user credentials
@@ -56,7 +58,8 @@ int passwordVaultStub(char *username, char *password) {
 // returns -2 for bad password
 // returns -3 for bad RPC
 // returns 0 if passed
-int authenticate(char *buffer, StringParser &parser) {
+int authenticate(char *buffer, StringParser &parser)
+{
     KeyValue rpcKV;     // "rpc=[exact_rpc]"
     KeyValue usernameKV;
     KeyValue passwordKV;
@@ -80,15 +83,19 @@ int authenticate(char *buffer, StringParser &parser) {
     return retValue;
 }
 
+
 // Sends a message to client, and then closes the socket assigned to current client.
 // return 0 if successful 
 // return -1 if failed
-int disconnect(int socket_num, char *buff){
-    // char disconnectMsg[1024] = {0};
+int disconnect(int socket_num, char *buff)
+{
+    // sent message gets received by Client.cpp 
     send(socket_num, buff, strlen(buff) , 0 ); 
+
     // close active socket
     return close(socket_num);
 }
+
 
 // Establishes a socket connection 
 int startServer(struct sockaddr_in m_address)
@@ -124,13 +131,13 @@ int startServer(struct sockaddr_in m_address)
     return m_server_fd;
 }
 
+
 // Runs the server program 
 int main(int argc, char const *argv[]) 
 { 
     const int MAX_CLIENTS = 5;
     int server_fd, new_socket;
     struct sockaddr_in m_address;
-    // int opt = 1;
     int addrlen = sizeof(m_address); 
     char buffer[1024] = {0};
     char DISCONNECT_RPC[1024] = "rpc=disconnect;"; 
@@ -145,24 +152,31 @@ int main(int argc, char const *argv[])
     pthread_t singleThread;
 
     // This loop is the server remaining active
-    while (true) {
+    while (true)
+    {
         cout << "Waiting for connection" << endl << "... ... ... ..." << endl;
 
         // Establish a new connection.
-        if (listen(server_fd, 3) < 0) {
+        if (listen(server_fd, 3) < 0)
+        {
             cout << endl << "Listen error" << endl;
             perror("listen");
             exit(EXIT_FAILURE); 
         }
 
         // if number of clients exceeds the maximum, then new incoming client will be disconnected.
-        if (serverStats.getNumActiveClients() >= MAX_CLIENTS) {
+        if (serverStats.getNumActiveClients() >= MAX_CLIENTS)
+        {
             read(new_socket, buffer, 1024);
             disconnect(new_socket, DISCONNECT_RPC);
-        } else {
+        }
+        
+        else
+        {
             // new_socket is where we'll be communicating to the client
             if ((new_socket = accept(server_fd, (struct sockaddr *)&m_address, 
-                                (socklen_t*)&addrlen))<0) { 
+                                (socklen_t*)&addrlen))<0)
+            { 
                 cout << endl << "accept error" << endl;
                 perror("accept");
                 exit(EXIT_FAILURE); 
@@ -176,19 +190,29 @@ int main(int argc, char const *argv[])
             connectReturn = authenticate(buffer, *parser);
             cout << "Login result: " << connectReturn << endl;
 
-            if (connectReturn < 0) {
+            if (connectReturn < 0)
+            {
                 // client disconnected due to bad credentials
                 connectReturn = disconnect(new_socket, DISCONNECT_RPC);
-            } else {
+            }
+            else
+            {
                 // client remains connected
-                // In a function create dynamic mainmenu, and populate it with a single thread
-                // FIXME: have this check for a return from pthread_create, in case a new pthread can't be created.
                 serverStats.incrementNumActiveClients();
+
+                // In a function create dynamic mainmenu, and populate it with a single thread
                 pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
+
+                // sent message gets received by Client.cpp 
                 send(new_socket , buffer , strlen(buffer) , 0 );
             }
+
             cout << "Thread created, returning to listening state" << endl;
+        
         }
+    
     }
+    
     return 0; 
+
 }
