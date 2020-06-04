@@ -127,7 +127,7 @@ int startServer(struct sockaddr_in m_address)
 // Runs the server program 
 int main(int argc, char const *argv[]) 
 { 
-    const int MAX_CLIENTS = 5;
+    const int MAX_CLIENTS = 10;
     int server_fd, new_socket;
     struct sockaddr_in m_address;
     // int opt = 1;

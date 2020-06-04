@@ -51,7 +51,7 @@ void login(char* buffer, char* username, char* password)
     strcat(buffer, ";password=");
     strcat(buffer, password);
     strcat(buffer, ";");
-    puts(buffer);  // another way to print to screen
+    // puts(buffer);  // another way to print to screen
 }
 
 // Get credentials from the user
@@ -144,9 +144,9 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             read(sock, buffer, 1024);
                             ClientGame2 *clientGame2Ptr;
                             clientGame2Ptr = new ClientGame2(sock);
-                            cout << "Entering game" << endl;
+                            // cout << "Entering game" << endl;
                             int game2RetVal = clientGame2Ptr->gameMenu();
-                            cout << "Exited game" << endl;
+                            // cout << "Exited game" << endl;
                             delete clientGame2Ptr;
                             if (game2RetVal == 1) 
                             {
