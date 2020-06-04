@@ -184,8 +184,10 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
             
             case 3:
             {
-                // 
+                // request for global serverstats context
                 send(sock , SERVER_STATS_RPC, strlen(SERVER_STATS_RPC) , 0 );
+
+                // global serverstats context sent in from MainMenu LoopThread
                 memset(buffer, 0, 1024);
                 read(sock, buffer, 1024);
                 cout << "============================\n" <<

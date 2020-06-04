@@ -43,7 +43,7 @@ public:
         {
             memset(buffer, 0, sizeof(buffer));
 
-            // Here is where we read the flipcoin guess for the client
+            // Here is where we read all RPCs from client
             readStatus = read(socket, buffer, 1024);
 
             if (readStatus == 0)
@@ -103,7 +103,8 @@ public:
 
             else if (strcmp(buffer, SERVER_STATS_RPC) == 0 ) 
             {
-                
+                // send buffer containing server stats over to..
+                // client, case 3 (request for global serverstats context)
                 memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
                 send(socket, buffer, strlen(buffer), 0 );
