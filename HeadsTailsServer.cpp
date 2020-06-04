@@ -44,6 +44,10 @@ int HeadsTails::gameMenu()
     bool connected = true;
     int readStatus;
     while (connected) {
+cout << "============================================" << endl;
+cout << "============================================" << endl;
+cout << "============================================" << endl;
+
         memset(buffer, 0, sizeof(buffer));
         readStatus = read(socket, buffer, 1024);
 
@@ -56,8 +60,10 @@ int HeadsTails::gameMenu()
         interpreter.newRPC(buffer);
         interpreter.getNextKeyValue(rpcKV);
         
-std::cout << "HeadsTails.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << std::endl;
+std::cout << "HeadsTailsServer.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << std::endl;
         //disconnect rpc will skip this check
+cout << "=========== rpcKV.getValue() =================================";
+cout << rpcKV.getValue() << endl;
         if ((strcmp(rpcKV.getValue(), "flipcoin") == 0))
         {   
             string winningFace;
@@ -74,13 +80,15 @@ std::cout << "HeadsTails.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << st
             face[0] = winningFace[0];
             face[1] = 0;
 
-            send(socket, face, 1, 0);
+cout << "============================================" << endl;
+std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << std::endl;
+            send(socket, face, 2, 0);
         }
 
 
 
         // debug code:
-        std::cout << "HeadsTails.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;
+        std::cout << "HeadsTailsServer.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;
 
         // Exit menu
         if (strcmp(rpcKV.getValue(), EXIT_MENU) == 0)

@@ -16,7 +16,7 @@ class MainMenu
 private:
     char buffer[1024] = {0};                                // buffer for socket listening
     char DISCONNECT_RPC[1024] = "rpc=disconnect;";
-    char SELECT_HT_RPC[1024] = "rpc=selectgame;game=HT;";
+    char SELECT_HT_RPC[1024] = "rpc=selectgame;game=1;";
     char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
 
     // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";

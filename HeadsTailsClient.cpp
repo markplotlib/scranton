@@ -101,6 +101,7 @@ public:
          memset(buff, 0, 1024);
          // read message
          read(sockNum, buff, 1024);
+cout << "============================================" << endl;
          cout << "####PRINTING: inside bottom of HeadsTailsClient.launchHeadsTails(), ~line 106, after reading. buffer received by Client: " << buff << endl;
          char face[2];
          face[0] = buff[0];
@@ -109,6 +110,8 @@ public:
          string coin = face[0] == 'h' ? "heads" : "tails";
          cout << "The coin shows ___" << coin << "___. " << endl;
 
+cout << "guess[0] = " << guess[0] << endl;
+cout << "face[0] = " << face[0] << endl;
          if (guess[0] == face[0])
          {
             cout << "You win! :)" << endl;
