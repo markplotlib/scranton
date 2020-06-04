@@ -15,7 +15,7 @@ server: ServerGateway.cpp
 	$(CC) $(CFLAGS) ServerGateway.cpp MainMenu.cpp ServerStats.cpp ServerStats.h StringParser.cpp StringParser.h KeyValue.cpp KeyValue.h HeadsTails.cpp GameClass2.cpp GameClass2.h ClientGame2.cpp -o serverGateway -lpthread
 # same goes for "make client"
 client: Client.cpp
-	$(CC) $(CFLAGS) Client.cpp -o client
+	$(CC) $(CFLAGS) Client.cpp HeadsTailsClient.cpp -o client
 
 # type "make clean" into the terminal here
 # to only remove all .o file
