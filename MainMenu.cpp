@@ -49,7 +49,6 @@ public:
             }
             std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
 
-
             // start HTselection ------------------------------
             if (strcmp(buffer , SELECT_HT_RPC) == 0 )
             {

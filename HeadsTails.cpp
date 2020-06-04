@@ -8,13 +8,13 @@
 #include "HeadsTails.h"
 
 HeadsTails::HeadsTails(int socket, ServerStats &serverStats) {
-    std::cout << "GC2 ctor" << std::endl;
+    std::cout << "HT ctor" << std::endl;
     this->socket = socket;
     this->serverStats = serverStats;
 }
 
 HeadsTails::~HeadsTails() { 
-    std::cout << "GC2 dtor" << std::endl;
+    std::cout << "HT dtor" << std::endl;
     }
 
 
@@ -57,7 +57,7 @@ int HeadsTails::gameMenu()
         interpreter.newRPC(buffer);
         interpreter.getNextKeyValue(rpcKV);
 
-
+std::cout << "HeadsTails.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << std::endl;
         //disconnect rpc will skip this check
         if ((strcmp(rpcKV.getValue(), "flipcoin") == 0))
         {   
@@ -73,7 +73,7 @@ int HeadsTails::gameMenu()
         }
 
         // debug code:
-        std::cout << "Buffer reads \'" << buffer << "\', in Heads Tails." << std::endl;
+        std::cout << "HeadsTails.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;
 
         // Exit menu
         if (strcmp(rpcKV.getValue(), EXIT_MENU) == 0)
