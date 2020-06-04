@@ -2,26 +2,30 @@
 #define SERVER_STATS_H
 #include <pthread.h>
 
-class ServerStats {
+class ServerStats
+{
 
 private: 
     volatile int numActiveClients;
     volatile int headsTailsHS;
     volatile int lifetimeConnections;
     pthread_mutex_t highscoreLock;
+
 public:
     ServerStats();
-    // ~ServerStats() { delete numActiveClients; }
-        // ^-- I will not need this, unless it's instantiated dynamically (on the heap).
-    int getNumActiveClients();
-
-    // returns void instead of bool.
-    void setHeadsTailsHS(int newScore);
+    
+    // accessors (getters)
+    int getHeadsTailsHS();
 
     int getLifetimeConnections();
     
-    int getHeadsTailsHS();
+    int getNumActiveClients();
+
+    // mutators (setters)
+    void setHeadsTailsHS(int newScore);
+
     void incrementNumActiveClients();
+
     void decrementNumActiveClients();
 };
 
