@@ -42,7 +42,7 @@ void displayGameMenu()
     cout << "\nUser Selection: ";
 }
 
-// Add the user arguments to the buffer fpr connect rpc 
+// Add the user arguments to the character array buffer for connect rpc
 void login(char* buffer, char* username, char* password)
 {
     strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
@@ -54,7 +54,7 @@ void login(char* buffer, char* username, char* password)
     puts(buffer);  // another way to print to screen
 }
 
-// Get credentials from the user 
+// Get credentials from the user
 void getUserCredentials(char* username, char* password)
 {
     cout << "\nPlease enter username ('mike'): ";
@@ -65,6 +65,7 @@ void getUserCredentials(char* username, char* password)
 }
 
 // Create buffer for selectGame RPC
+// buffer contains instructions for server to interpret number of client's selection choice
 void selectGame(char* buffer, int gameNumber)
 {
     // rpc format     "rpc=selectgame;game=1;"
@@ -84,8 +85,9 @@ void selectGame(char* buffer, int gameNumber)
 }
 
 // Initiates user menu loop for menu and game selections
+// Loop is exited by: bad login, or user selecting exit.
 int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STATS_RPC, const char *DISCONNECT_RPC){
- // Client start menu loop
+// Client start menu loop
   
     do 
     { 
@@ -131,7 +133,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             memset(buffer, 0, 1024);
                             // TODO: Game 2 is not implemented yet 
                             selectGame(buffer, 2); 
-                            
+
                             send(sock , buffer , strlen(buffer) , 0 );
                             read(sock, buffer, 1024);
                             ClientGame2 *clientGame2Ptr;
@@ -178,7 +180,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
 int main(int argc, char** argv)
 {
     int choice = 0; // to store user choice 
-    int sock = 0;
+    int sock = 0;   // socket id for client-server binding
     struct sockaddr_in serv_addr; 
     char buffer[1024] = {0}; 
     char argv1[40];
@@ -191,18 +193,20 @@ int main(int argc, char** argv)
     login(buffer, argv1, argv2); 
 
     const char *SERVER_STATS_RPC = "rpc=returnStats;";
-    const char *DISCONNECT_RPC = "rpc=disconnect;"; // thisfix: DISCONNECT_RPC = "disconnect". NOTE: the discrepancy/ambiguity: "disconnect" is the rpc command. "disconnected" is displayed to user.
-    
+    const char *DISCONNECT_RPC = "rpc=disconnect;"; 
+
+    // creates socket on client side
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
     { 
         printf("\n Socket creation error \n"); 
         return -1; 
     } 
 
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
+    // pass struct attributes in: port number,  
+    serv_addr.sin_family = AF_INET;  // AF_INET is IPv4 protocol (AF_INET6 is IPv6)
+    serv_addr.sin_port = htons(PORT);  // convert IP port number, from host byte order, to network byte order
     
-    // Convert IPv4 and IPv6 addresses from text to binary form 
+    // Convert IPv4 addresses from text to binary form 
     if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
     { 
         printf("\nInvalid address/ Address not supported \n"); 
@@ -221,9 +225,10 @@ int main(int argc, char** argv)
     send(sock , buffer , strlen(buffer) , 0 );
     // resetting the buffer
     memset(buffer, 0, 1024);
-    // reading 
+    // receiving buffer sent from server
     read(sock, buffer, 1024); // remember: read returns an int, corresponding the number of characters entered
 
+    // disconnect RPC sent due to bad login credentials
     if (strcmp(buffer, DISCONNECT_RPC) == 0)
     {
         // server is in listening loop
@@ -231,11 +236,8 @@ int main(int argc, char** argv)
         return 0;
     }
     
-    // user enters do while menu loop 
+    // user enters while menu loop 
     userMenuLoop(sock, choice, buffer, SERVER_STATS_RPC, DISCONNECT_RPC);
    
     return 0; 
 } 
-
-
-
