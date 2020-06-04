@@ -11,7 +11,6 @@
 #include "StringParser.h"
 #include "ServerStats.h"
 #include "ThreadContext.h"
-
 // next line from MM
 // #include "assert.h"
 #define PORT 12104
@@ -20,13 +19,11 @@ using namespace std;
 ServerStats serverStats;
 
 //TODO check this for mutex lock
-// prepares a way for a thread to be sent to a dynamically created menu.
+// Prepares a way for a thread to be sent to a dynamically created menu.
 void *threadToMenu(void *arg) {
     int *socketPtr = (int *) arg;
-
     // stores client context
     ThreadContext *context = new ThreadContext();
-
     MainMenu *mainMenuPtr;
     mainMenuPtr = new MainMenu(*socketPtr);
     mainMenuPtr->loopThread(serverStats, *context);
@@ -34,7 +31,6 @@ void *threadToMenu(void *arg) {
     delete mainMenuPtr;
     serverStats.decrementNumActiveClients();
     pthread_exit(NULL);
-    // don't need to return null in a void method
 }
 
 // Connects the client socket to the server socket
@@ -55,6 +51,11 @@ int passwordVaultStub(char *username, char *password) {
         return -1;
 }
 
+// Authenticates user credentials
+// returns a -1 for bad username
+// returns -2 for bad password
+// returns -3 for bad RPC
+// returns 0 if passed
 int authenticate(char *buffer, StringParser &parser) {
     KeyValue rpcKV;     // "rpc=[exact_rpc]"
     KeyValue usernameKV;
@@ -73,12 +74,11 @@ int authenticate(char *buffer, StringParser &parser) {
     char *username = usernameKV.getValue();
     char *password = passwordKV.getValue();
 
-    // returns a -1 for bad username, -2 for bad password, -3 for bad RPC, 0 if passed.
+    // Returns a -1 for bad username, -2 for bad password, -3 for bad RPC, 0 if passed.
     int retValue = passwordVaultStub(username, password);
     cout << retValue << endl;
     return retValue;
 }
-
 
 // Sends a message to client, and then closes the socket assigned to current client.
 // return 0 if successful 
@@ -90,7 +90,7 @@ int disconnect(int socket_num, char *buff){
     return close(socket_num);
 }
 
-
+// Establishes a socket connection 
 int startServer(struct sockaddr_in m_address)
 {
     int m_port = PORT;
@@ -103,9 +103,8 @@ int startServer(struct sockaddr_in m_address)
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-
-    // helps manipulate socket options referred by the file descriptor sockfd. 
-    // helps in reuse of address and port. Prevents error such as: “address already in use”.
+    // Helps manipulate socket options referred by the file descriptor sockfd. 
+    // Helps in reuse of address and port. Prevents error such as: “address already in use”.
     if (setsockopt(m_server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
         &opt, sizeof(opt)))
     {
@@ -114,9 +113,7 @@ int startServer(struct sockaddr_in m_address)
     }
     m_address.sin_family = AF_INET;
     m_address.sin_addr.s_addr = INADDR_ANY;
-
     m_address.sin_port = (uint16_t) htons((uint16_t) m_port);
-
     // bind socket to address and port number 
     if (bind(m_server_fd, (struct sockaddr *)&m_address,
         sizeof(m_address)) < 0)
@@ -124,10 +121,10 @@ int startServer(struct sockaddr_in m_address)
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-
     return m_server_fd;
 }
 
+// Runs the server program 
 int main(int argc, char const *argv[]) 
 { 
     const int MAX_CLIENTS = 5;
@@ -141,16 +138,16 @@ int main(int argc, char const *argv[])
     StringParser *parser = new StringParser; 
     KeyValue rpcKeyValue;
 
-    // server creates socket file descriptor, sets socket options, and binds socket
+    // Server creates socket file descriptor, sets socket options, and binds socket
     server_fd = startServer(m_address);
     
-    // TODO Upgrade this when threads are dynamically created
+    // To store thread
     pthread_t singleThread;
 
-    // this loop is the server remaining active
+    // This loop is the server remaining active
     while (true) {
         cout << "Waiting for connection" << endl << "... ... ... ..." << endl;
-        
+
         // Establish a new connection.
         if (listen(server_fd, 3) < 0) {
             cout << endl << "Listen error" << endl;
@@ -174,7 +171,7 @@ int main(int argc, char const *argv[])
             // Username and password RPC should be sent in here.
             read(new_socket, buffer, 1024);
 
-            /* A password is sent into this, and out of it comes a response: password is good or bad.*/
+            // A password is sent into this, and out of it comes a response: password is good or bad
             int connectReturn = -4; // -4 represents a disconnect (due to too many clients, for example)
             connectReturn = authenticate(buffer, *parser);
             cout << "Login result: " << connectReturn << endl;
@@ -188,15 +185,10 @@ int main(int argc, char const *argv[])
                 // FIXME: have this check for a return from pthread_create, in case a new pthread can't be created.
                 serverStats.incrementNumActiveClients();
                 pthread_create(&singleThread, NULL, threadToMenu, (void *) &new_socket);
-
-
                 send(new_socket , buffer , strlen(buffer) , 0 );
             }
-
-            // makes 
             cout << "Thread created, returning to listening state" << endl;
         }
     }
-
     return 0; 
 }
