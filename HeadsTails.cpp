@@ -40,40 +40,59 @@ void HeadsTails::updateScoreboard(string guess, string face)
 }
 
 
+int HeadsTails::gameMenu()
+{
+    bool connected = true;
+    int readStatus;
+    while (connected) {
+        memset(buffer, 0, sizeof(buffer));
+        readStatus = read(socket, buffer, 1024);
 
-int HeadsTails::gameMenu() {
+        if (readStatus == 0) {
+            // error checking: socket didn't receive message
+            connected = false;
+        }
 
-        bool connected = true;
-        int readStatus;
-        while (connected) {
-            memset(buffer, 0, sizeof(buffer));
-            readStatus = read(socket, buffer, 1024);
-            
-            if (readStatus == 0) {
-                connected = false;
+        KeyValue rpcKV;
+        interpreter.newRPC(buffer);
+        interpreter.getNextKeyValue(rpcKV);
+
+
+        //disconnect rpc will skip this check
+        if ((strcmp(rpcKV.getValue(), "flipcoin") == 0))
+        {   
+            KeyValue guessKV;   // guess= h/t
+            interpreter.getNextKeyValue(guessKV); // guess= h/t
+            string guess = guessKV.getValue();
+            if (guess == "h" || guess == "t")
+            {
+                string winningFace = flipCoin();
+
+                updateScoreboard(guess, winningFace);
             }
+        }
 
-            // debug code:
-            std::cout << "Buffer reads \'" << buffer << "\', in Game2." << std::endl;
+        // debug code:
+        std::cout << "Buffer reads \'" << buffer << "\', in Heads Tails." << std::endl;
 
-            // Exit menu
-            if (strcmp(buffer , EXIT_MENU) == 0 ) {
-                connected = false;
-                std::cout << "BUGFIX server about to send" << std::endl;
-                send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
-                std::cout << "BUGFIX server about to send" << std::endl;
-            }
-            
-            // whatever you want
-            else if (strcmp(buffer, RPC_2) == 0 ) {
-
-            }
-            
-            // else you need to return something
-            else { 
-                return 0;
-            }                    
+        // Exit menu
+        if (strcmp(rpcKV.getValue(), EXIT_MENU) == 0)
+        {
+            connected = false;
+            std::cout << "BUGFIX server about to send" << std::endl;
+            send(socket , CONFIRMATION, strlen(CONFIRMATION) , 0);
+            std::cout << "BUGFIX server about to send" << std::endl;
         }
         
-        return 0;
+        // whatever you want
+    // char FLIPGUESS_H_RPC[1024] = "rpc=flipcoin;guess=h;";
+    // char FLIPGUESS_T_RPC[1024] = "rpc=flipcoin;guess=t;";
+        
+        // else you need to return something
+        else { 
+            return 0;
+        }                    
     }
+    
+    return 0;
+}
