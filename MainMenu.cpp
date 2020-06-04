@@ -26,13 +26,15 @@ private:
 
 public:
 
-    MainMenu(int socket) {
+    MainMenu(int socket)
+    {
         this->socket = socket;
     }
 
 
     // MAIN MENU LOOP: takes a thread and reads/sends until it reads the disconnect RPC
-    void loopThread(ServerStats &serverStats, ThreadContext &context) {
+    void loopThread(ServerStats &serverStats, ThreadContext &context)
+    {
 
         bool connected = true;
         int readStatus;
@@ -44,24 +46,28 @@ public:
             // Here is where we read the flipcoin guess for the client
             readStatus = read(socket, buffer, 1024);
 
-            if (readStatus == 0) {
+            if (readStatus == 0)
+            {
                 connected = false;
             }
-            std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;
+            
+            // std::cout << "Buffer reads \'" << buffer << "\', in MM." << std::endl;   // DEBUGGING TOOL
 
             // start of game 1: Heads-Tails selection ------------------------------
             if (strcmp(buffer , SELECT_HT_RPC) == 0 )
             {
+                // message is received by Client
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
 
-                cout << "constructor about to be called" << endl;
+                // cout << "constructor about to be called" << endl;   // DEBUGGING TOOL
                 HeadsTailsServer *htSession = nullptr;
                 htSession = new HeadsTailsServer(socket, serverStats);
                 int gameRetVal = htSession->gameMenu(context);
 
-                cout << "destructor about to be called" << endl;
+                // cout << "destructor about to be called" << endl;   // DEBUGGING TOOL
                 delete htSession;
+
                 if (gameRetVal == 1)
                 {   // 1 is the disconnect code 
                     disconnectMainMenu(socket, DISCONNECT_RPC);
@@ -70,12 +76,10 @@ public:
             }
             // end of of game 1: Heads-Tails selection ------------------------------
 
-
             // start of game slot 2 selection ------------------------------
             // Application Programmer: your game can be interfaced here.
             if (strcmp(buffer , SELECTGAME2_RPC) == 0 ) 
             {
-                // placeholder
                 send(socket, buffer , strlen(buffer) , 0 );
                 memset(buffer, 0, sizeof(buffer));
                 cout << "constructor about to be called" << endl;
@@ -84,10 +88,14 @@ public:
                 int gameRetVal = GameClass2Ptr->gameMenu();
                 cout << "destructor about to be called" << endl;
                 delete GameClass2Ptr;
-                if (gameRetVal == 1) {
+                if (gameRetVal == 1)
+                {
                     disconnectMainMenu(socket, DISCONNECT_RPC);
                     connected = false;
-                } else {
+                }
+                else
+                {
+                    // message is received by Client 
                     send(socket , buffer, strlen(buffer) , 0 );
                 }
             }
@@ -118,7 +126,8 @@ public:
 
     // Sends a message to client, and then closes the socket assigned to current client.
     // return 0 if successful, -1 if failed
-    int disconnectMainMenu(int socket_num, char *buff) {
+    int disconnectMainMenu(int socket_num, char *buff)
+    {
         // char disconnectMsg[1024] = {0};
         send(socket_num, buff, strlen(buff) , 0 );
         // close active socket
