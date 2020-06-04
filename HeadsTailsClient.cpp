@@ -31,13 +31,12 @@ public:
    }
 
    // display menu options to the user 
-   void displayGameMenu() 
+   void displayMenuWithinThisGame()
    {
       cout << "\nGame Options\n";
       cout << "\nSelect from the following options\n";
-      cout << "1 - Disconnect\n";
-      cout << "2 - Exit menu\n";
-      cout << "3 - The gamey things\n";
+      cout << "1 - make a guess\n";
+      cout << "2 - exit this game\n";
       // TODO: add game menu/ more options 
       cout << "\nUser Selection: ";
    }
@@ -51,30 +50,29 @@ public:
       do
       { 
          cout << "Buffer in CG2 = " << buffer << endl;
-         displayGameMenu(); 
+         displayMenuWithinThisGame(); 
          choice = getUserChoice();
          switch(choice)
          {
-            case 1: {
-               return 1;
+            case 1:
+            {
+               launchHeadsTails(socket);
                break;
             }
-            case 2: {
+            case 2:
+            {
                send(socket , EXIT_MENU, strlen(EXIT_MENU) , 0);
                cout << "\nExiting menu\n";
                // placeholder read
                read(socket, buffer, 1024);
                cout << "Has read" << endl;
                return 2;
-            } 
-            case 3: {
-               launchHeadsTails(socket);
                break;
-            }
+            } 
             default:
-                  break; 
+               break; 
             }
-         } while (true);
+      } while (true);
 
    return 0;
    }
@@ -82,8 +80,6 @@ public:
 
    void launchHeadsTails(int sockNum)
    {
-   // char pause; // THIS IS TEMPORARY TEMPORARY TEMPORARY TEMPORARY LINE
-
       // client-side display and prompt
       char buff[1024] = {0};
       cout << "\nYou have chosen Extreme Heads or Tails\nGuess the coin flip.  h)eads  t)ails.  Enter any other key to exit: ";
@@ -92,7 +88,7 @@ public:
       guess[1] = 0;  // 0 is the null terminator
       while (guess[0] == 'h' || guess[0] == 't')
       {
-         // build the flipcoin rpc
+         // build the flipcoin rpc: "rpc=flipcoin;guess=h"  (or "guess=t")
          strcpy(buff, "rpc=flipcoin;");
          strcat(buff, "guess=");
          strcat(buff, guess);

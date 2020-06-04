@@ -11,8 +11,6 @@
 #define PORT 12115
 using namespace std;
 
-// void launchHeadsTails(int, char*); deadcode
-void launchHeadsTails(int);
 
 // get user choice for menu switch
 int getUserChoice() 
@@ -116,16 +114,8 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                     choice = getUserChoice(); 
                     switch(choice)
                     {
-                        /*
                         case 1: {
-                            // launchHeadsTails(sock, buffer); deadcode
-                            launchHeadsTails(sock);
-                            break;
-                            }
-                        */
-
-                        case 1: {
-                            cout << "\nYou have chosen the Legendary Game... II!\n";
+                            cout << "\nYou have chosen Extreme Heads or Tails!\n";
                             // clear the buffer just in case 
                             memset(buffer, 0, 1024);
                             // TODO: Game 2 is not implemented yet 
@@ -133,22 +123,12 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             cout << "####Buffer is : " << buffer << endl; 
                             send(sock , buffer , strlen(buffer) , 0 );
                             read(sock, buffer, 1024);
-                            ClientGame2 *clientGame2Ptr;
-                            clientGame2Ptr = new ClientGame2(sock);
+                            HeadsTailsClient *HeadsTailsClientPtr;
+                            HeadsTailsClientPtr = new HeadsTailsClient(sock);
                             cout << "Entering game" << endl;
-                            int game2RetVal = clientGame2Ptr->gameMenu();
+                            HeadsTailsClientPtr->gameMenu();
                             cout << "Exited game" << endl;
-                            delete clientGame2Ptr;
-                            if (game2RetVal == 1) 
-                            {
-                                cout << "\nDisconnecting from the Server\n"; 
-                                // Send choice to server to disconnect
-                                send(sock , DISCONNECT_RPC , strlen(DISCONNECT_RPC) , 0 );
-                                printf("Disconnect message sent\n");    
-                                read(sock, buffer, 1024);
-                                return 0;      
-                            }
-
+                            delete HeadsTailsClientPtr;
                             break; 
                         }
 

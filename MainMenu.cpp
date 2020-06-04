@@ -25,8 +25,6 @@ private:
     // char SELECTGAME2_RPC[1024] = "rpc=selectgame;game=2;";
     char SERVER_STATS_RPC[1024] = "rpc=returnStats;";
     int socket;                                                 // socket to listen from
-    int htWins = 0;
-    int htRounds = 0;
     StringParser interpreter;
 
 
@@ -34,17 +32,6 @@ public:
 
     MainMenu(int socket) {
         this->socket = socket;
-    }
-
-
-    void updateScoreboard(string guess, string face)
-    {
-        if (guess == face)  // did guess match the flipCoin face?
-        {
-            // win
-            htWins++;  // TODO -- EASY
-        }
-        htRounds++;
     }
 
 
@@ -76,11 +63,11 @@ public:
 
                 // Does flip coin go here? We have the guess and we will compare here 
                 // initiates Heads or Tails game
-                string winningFace = flipCoin();
 
                 string userGuess = guessKV.getValue();
 
-                updateScoreboard(userGuess, winningFace);
+                // string winningFace = flipCoin();
+                // updateScoreboard(userGuess, winningFace);
 
 
                 /*
@@ -253,20 +240,6 @@ public:
     }
 
 */
-
-    string flipCoin() 
-    {
-        srand (time(NULL));
-        string face = rand() % 2 == 0 ? "h" : "t";
-        return face;
-    }
-
-    // TODO: activate this
-    // int htGetNumWins() { return htWins; }
-    // TODO: activate this
-
-    int htGetNumRounds() { return htRounds; }
-
 
 
     // Sends a message to client, and then closes the socket assigned to current client.

@@ -17,6 +17,30 @@ HeadsTails::~HeadsTails() {
     std::cout << "GC2 dtor" << std::endl;
     }
 
+
+string HeadsTails::flipCoin() 
+{
+    srand (time(NULL));
+    string face = rand() % 2 == 0 ? "h" : "t";
+    return face;
+}
+
+
+int HeadsTails::htGetNumRounds() { return htRounds; }
+
+
+void HeadsTails::updateScoreboard(string guess, string face)
+{
+    if (guess == face)  // did guess match the flipCoin face?
+    {
+        // win
+        htWins++;
+    }
+    htRounds++;
+}
+
+
+
 int HeadsTails::gameMenu() {
 
         bool connected = true;
@@ -44,11 +68,6 @@ int HeadsTails::gameMenu() {
             else if (strcmp(buffer, RPC_2) == 0 ) {
 
             }
-
-            // check for disconnect rpc call.
-            else if (strcmp(buffer , DISCONNECT_RPC) == 0 ) {
-                return 1;
-            } 
             
             // else you need to return something
             else { 

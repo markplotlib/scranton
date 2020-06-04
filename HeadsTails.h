@@ -2,6 +2,8 @@
 #define HEADSTAILS_H
 
 #include "ServerStats.h"
+#include <string>
+using namespace std;
 
 class HeadsTails {
 
@@ -16,6 +18,9 @@ private:
    char RPC_1[1024] = "rpc1";
    char RPC_2[1024] = "rpc2";
 
+   int htWins = 0;
+   int htRounds = 0;
+
 public:
 
     explicit HeadsTails(int socket, ServerStats &serverStats);
@@ -24,7 +29,13 @@ public:
 
     ~HeadsTails();
 
-   int gameMenu();
+    string flipCoin();
+
+    int htGetNumRounds();
+
+    void updateScoreboard(string, string);
+
+    int gameMenu();
 
     // Sends a message to client, and then closes the socket assigned to current client.
     // return 0 if successful, -1 if failed
