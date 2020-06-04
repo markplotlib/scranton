@@ -96,10 +96,10 @@ public:
                 
                 memset(buffer, 0, sizeof(buffer));
                 char lifetimeClientsBuffer[100];
-                char highScoreBuffer[100];
+                //char highScoreBuffer[100];
                 char lifetime[23] = ": Lifetime Clients || ";
                 char clients[21] = ": Active Clients || ";
-                char highScore[17] = ": High Score || ";
+                // char highScore[17] = ": High Score || ";
 
                 sprintf(lifetimeClientsBuffer,"%d", serverStats.getLifetimeConnections());
                 strcat(lifetimeClientsBuffer, lifetime);
@@ -107,14 +107,11 @@ public:
                 sprintf(buffer,"%d", serverStats.getNumActiveClients());
                 strcat(buffer, clients);
                 
-                sprintf(highScoreBuffer,"%d", serverStats.getHeadsTailsHS());
-                strcat(highScoreBuffer, highScore);
+                // sprintf(highScoreBuffer,"%d", serverStats.getHeadsTailsHS());
+                // strcat(highScoreBuffer, highScore);
 
                 strcat(buffer, lifetimeClientsBuffer);
-                strcat(buffer, highScoreBuffer);
-
-
-
+                // strcat(buffer, highScoreBuffer);
 
                 send(socket, buffer, strlen(buffer), 0 );
             }
