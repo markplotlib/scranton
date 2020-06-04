@@ -114,7 +114,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             // Clear the buffer just in case 
                             memset(buffer, 0, 1024);
                             selectGame(buffer, 1); 
-                            cout << "Client.cpp, line 123. ####Buffer is : " << buffer << endl; 
+
                             send(sock , buffer , strlen(buffer) , 0 );
                             read(sock, buffer, 1024);
                             HeadsTailsClient *HeadsTailsClientPtr;
@@ -131,7 +131,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             memset(buffer, 0, 1024);
                             // TODO: Game 2 is not implemented yet 
                             selectGame(buffer, 2); 
-                            cout << "####Buffer is : " << buffer << endl; 
+                            
                             send(sock , buffer , strlen(buffer) , 0 );
                             read(sock, buffer, 1024);
                             ClientGame2 *clientGame2Ptr;
