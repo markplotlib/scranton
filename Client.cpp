@@ -11,8 +11,7 @@
 #define PORT 12104
 using namespace std;
 
-
-// get user choice for menu switch
+// Get user choice for menu switch
 int getUserChoice() 
 {
     int userChoice; 
@@ -20,7 +19,7 @@ int getUserChoice()
     return userChoice; 
 }
 
-// display menu options to the user 
+// Display menu options to the user 
 void displayUserMenu() 
 {
     cout << "\nMenu Options\n";
@@ -32,6 +31,7 @@ void displayUserMenu()
     cout << "\nUser Selection: ";
 }
 
+// Display game menu options to the user
 void displayGameMenu() 
 {
     cout << "\nGame Menu Options\n";
@@ -39,11 +39,10 @@ void displayGameMenu()
     cout << "1 - Extreme Heads or Tails\n";
     cout << "2 - GAME2\n";
     cout << "3 - Back to Main Menu\n";
-    // TODO: add games/ more options 
     cout << "\nUser Selection: ";
 }
 
-// add the user arguments to the buffer 
+// Add the user arguments to the buffer fpr connect rpc 
 void login(char* buffer, char* username, char* password)
 {
     strcpy(buffer, "rpc=connect;");  // take note: this is strcpy, not strcat! (easy to overlook)
@@ -55,7 +54,7 @@ void login(char* buffer, char* username, char* password)
     puts(buffer);  // another way to print to screen
 }
 
-// get credentials from the user 
+// Get credentials from the user 
 void getUserCredentials(char* username, char* password)
 {
     cout << "\nPlease enter username ('mike'): ";
@@ -65,16 +64,14 @@ void getUserCredentials(char* username, char* password)
     cout << "\nYou've typed " << username << " and " << password << endl;
 }
 
+// Create buffer for selectGame RPC
 void selectGame(char* buffer, int gameNumber)
 {
     // rpc format     "rpc=selectgame;game=1;"
-  
     // add select rpc info to the buffer 
     strcpy(buffer, "rpc=selectgame;");
     strcat(buffer, "game=");
-// TODO: cast gameNumber as string or char
-// char c = (char) gameNumber;
-// strcat(buffer, c);
+
     if(gameNumber == 1)
     {
         strcat(buffer, "1");
@@ -84,16 +81,14 @@ void selectGame(char* buffer, int gameNumber)
         strcat(buffer, "2");
     } 
     strcat(buffer, ";");
-    // does the send need to be here?
-    // Mark: No it does not. login function has no send.
 }
 
+// Initiates user menu loop for menu and game selections
 int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STATS_RPC, const char *DISCONNECT_RPC){
  // Client start menu loop
   
     do 
     { 
-        // clear screen goes here
         displayUserMenu(); 
         choice = getUserChoice(); 
         switch(choice)
@@ -116,7 +111,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                     {
                         case 1: {
                             cout << "\nYou have chosen Extreme Heads or Tails!\n";
-                            // clear the buffer just in case 
+                            // Clear the buffer just in case 
                             memset(buffer, 0, 1024);
                             selectGame(buffer, 1); 
                             cout << "Client.cpp, line 123. ####Buffer is : " << buffer << endl; 
@@ -130,7 +125,6 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                             delete HeadsTailsClientPtr;
                             break; 
                         }
-
                         case 2: {
                             cout << "\nYou have chosen the Legendary Game... II!\n";
                             // clear the buffer just in case 
@@ -155,7 +149,6 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                                 read(sock, buffer, 1024);
                                 return 0;      
                             }
-
                             break; 
                         }
                         case 3: {
@@ -165,9 +158,7 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                     }
 
                 } while (choice != 3); 
-                
                 break;
-            
             case 3: 
                 send(sock , SERVER_STATS_RPC, strlen(SERVER_STATS_RPC) , 0 );
                 memset(buffer, 0, 1024);
@@ -176,29 +167,27 @@ int userMenuLoop(int sock, int choice, char buffer[1024], const char *SERVER_STA
                         "Server has " << buffer << " clients connected.\n" <<
                         "============================" << endl;
                 break;
-
             default:
                 break; 
         }
-
     } while (choice != 1);
     return 0; 
 }
 
-
+// Runs the client program
 int main(int argc, char** argv)
 {
-    // to store user choice 
-    int choice = 0;
+    int choice = 0; // to store user choice 
     int sock = 0;
     struct sockaddr_in serv_addr; 
     char buffer[1024] = {0}; 
     char argv1[40];
     char argv2[40]; 
 
+    // Get credentials from the user 
     getUserCredentials(argv1, argv2);
 
-    // user login 
+    // User login for buffer
     login(buffer, argv1, argv2); 
 
     const char *SERVER_STATS_RPC = "rpc=returnStats;";
