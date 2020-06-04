@@ -8,15 +8,16 @@
 #include "HeadsTailsServer.h"
 #include "ThreadContext.h"
 
-HeadsTailsServer::HeadsTailsServer(int socket, ServerStats &serverStats) {
-    std::cout << "HT ctor" << std::endl;
+
+HeadsTailsServer::HeadsTailsServer(int socket, ServerStats &serverStats)
+{
     this->socket = socket;
     this->serverStats = serverStats;
 }
 
-HeadsTailsServer::~HeadsTailsServer() { 
-    std::cout << "HT dtor" << std::endl;
-}
+
+HeadsTailsServer::~HeadsTailsServer() { }
+
 
 string HeadsTailsServer::flipCoin() 
 {
@@ -41,14 +42,13 @@ int HeadsTailsServer::gameMenu(ThreadContext &context)
 {
     bool connected = true;
     int readStatus;
-    while (connected) {
-        cout << "====================== entering Heads Tails Server ======================" << endl;
-
-
+    while (connected)
+    {
         memset(buffer, 0, sizeof(buffer));
         readStatus = read(socket, buffer, 1024);
 
-        if (readStatus == 0) {
+        if (readStatus == 0)
+        {
             // error checking: socket didn't receive message
             connected = false;
         }
@@ -57,10 +57,7 @@ int HeadsTailsServer::gameMenu(ThreadContext &context)
         interpreter.newRPC(buffer);
         interpreter.getNextKeyValue(rpcKV);
         
-std::cout << "HeadsTailsServer.cpp, LINE 60. Buffer reads \'" << buffer << "\'." << std::endl;
         //disconnect rpc will skip this check
-cout << "=========== rpcKV.getValue() =================================";
-cout << rpcKV.getValue() << endl;
         if ((strcmp(rpcKV.getValue(), "flipcoin") == 0))
         {   
             string winningFace;
@@ -77,32 +74,26 @@ cout << rpcKV.getValue() << endl;
             face[0] = winningFace[0];
             face[1] = 0;
 
-cout << "============================================" << endl;
-std::cout << "HeadsTailsServer.cpp, LINE 77. face reads \'" << face << "\'." << std::endl;
             send(socket, face, 2, 0);
         }
-
-        // debug code:
-        std::cout << "HeadsTailsServer.cpp, LINE 76. Buffer reads \'" << buffer << "\'." << std::endl;
 
         // Exit menu
         if (strcmp(rpcKV.getValue(), EXIT_MENU) == 0)
         {
             connected = false;
 
-            //char winsArr[2];
             cout << "context number: " << context.getWins() << endl;
             int number = context.getWins();
             cout << "context number: " << context.getRounds() << endl;
             int rounds = context.getRounds();
 
-            //Add context nunbers to char arrays and add those together
+            // Add context nunbers to char arrays and add those together
             char winBuffer[100];
             char roundBuffer[10];
             sprintf(winBuffer, "%d", number);
             char winsArr[7] = " Wins ";
             strcat(winBuffer, winsArr);
-            //cout << "Wins: " << b << endl; 
+
             sprintf(roundBuffer, "%d", rounds);
             char roundsArr[8] = " Rounds";
             strcat(roundBuffer, roundsArr);
